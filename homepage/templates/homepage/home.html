@@ -1,0 +1,48 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header>
+        <nav >
+            <div class="logo">🏆<span>SportsBoard</span></div>
+                <ul >
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/viewmatch">View Matches</a></li>
+                    <li><a href="/notice">News and Notices</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            <div class="auth-links">
+                <a href="#" class="login">Log in</a>
+                <a href="#" class="signup">Sign up</a>
+            </div>
+       </nav>
+    </header>
+    <section class="hero">
+        <div class="hero-content">
+            <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
+            <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
+            <button class="join-btn">Join This</button>
+        </div>
+        <div class="hero-image">
+            <img src="{% static 'images/cricket.jpeg' %}" alt="Sports" />
+        </div>
+    </section>
+    
+    <!-- <div class="content">
+        <h1>Welcome to SportsBoard!</h1>
+        <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
+    </div> -->
+
+    <footer>
+    <p>© 2025 SportsZone. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
