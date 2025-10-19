@@ -1,11 +1,11 @@
 
 {% load static %}
 
-<!DOCTYPE html>
+
 <html>
 <head>
     <title>Home</title>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/main.css' %}">
 </head>
 <body>
     <header>
@@ -19,8 +19,8 @@
                     <li><a href="/contact">Contact</a></li>
                 </ul>
             <div class="auth-links">
-                <a href="#" class="login">Log in</a>
-                <a href="#" class="signup">Sign up</a>
+                <a href="{% url 'account_login' %}" class="login">Log in</a>
+    <a href="{% url 'account_signup' %}" class="signup">Sign up</a>
             </div>
        </nav>
     </header>
@@ -31,7 +31,7 @@
             <button class="join-btn">Join This</button>
         </div>
         <div class="hero-image">
-            <img src="{% static 'images/cricket.jpeg' %}" alt="Sports" />
+            <img src="{% static 'accounts/images/cricket.jpeg' %}" alt="Sports" />
         </div>
     </section>
     

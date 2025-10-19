@@ -1,0 +1,300 @@
+/* E:\SportsBoard\SportsBoard\accounts\static\accounts\css\auth.css */
+
+/* --- Import Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+/* --- Root CSS Variables for Consistent Theming --- */
+:root {
+    --primary-color: #007bff;          /* Standard blue for primary actions/links/focus rings */
+    --black-color: #000000;            /* Explicit black for specific elements */
+    --danger-color: #dc3545;           /* Red for error messages */
+
+    /* Glassmorphism card background */
+    --form-bg-color-transparent: rgba(255, 255, 255, 0.15); /* Light, highly transparent white */
+
+    /* Input field appearance */
+    --input-bg-color: rgba(255, 255, 255, 0.85); /* Mostly opaque white for readability */
+    --input-border-color: rgba(255, 255, 255, 0.4); /* Subtle white border */
+
+    /* Text Colors for different contexts */
+    --text-color-on-transparent-bg: #ffffff; /* White text for labels, titles, etc. on the frosted card */
+    --text-color-on-input-bg: #212529;       /* Dark grey for text *inside* input fields */
+    --text-color-muted-on-transparent-bg: rgba(255, 255, 255, 0.9); /* Muted white for secondary text (e.g., "Don't have an account?") */
+
+    /* Shadows and Hovers */
+    --shadow-medium: rgba(0, 0, 0, 0.3);
+    --button-hover-black: #333333; /* Slightly lighter black on hover for black buttons */
+}
+
+/* --- Base Body & HTML Styles (Centering Content) --- */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent scrollbars */
+    background-color: transparent; /* No default body background */
+}
+
+/* --- Full-screen Video Background --- */
+.video-background {
+    position: fixed; /* Fixed to viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -2; /* Behind all other content */
+}
+
+#bg-video { /* The actual <video> element */
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Scale to cover container, cropping as needed */
+    object-position: center; /* Center video content */
+    filter: brightness(0.7); /* Darken video for better text contrast */
+    min-width: 100%; /* Ensure full coverage */
+    min-height: 100%;
+}
+
+/* --- Overlay Layer over Video --- */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent dark overlay */
+    z-index: -1; /* Between video and login box */
+}
+
+/* --- Main Login/Auth Card Container (Glassmorphism) --- */
+.login-container {
+    z-index: 1; /* Above video and overlay */
+    padding: 20px; /* Space around the login-box */
+    width: 100%;
+    max-width: 600px; /* Constrain max width of the card */
+}
+
+.login-box { /* The frosted glass card itself */
+
+    border-radius: 70px; /* Very rounded corners */
+    padding: 50px;
+   /* box-shadow: 0 15px 50px var(--shadow-medium); /* Deep shadow for depth */
+    text-align: center;
+    animation: fadeInUp 0.8s ease-in-out; /* Fade-in animation */
+    /* Default text color for elements in the box */
+}
+
+/* --- Specific Styles for Elements within the Login Box --- */
+
+/* Main Title "Welcome to SportsBoard" */
+.login-title, h3 {
+    color: var(--text-color-on-transparent-bg); /* White title */
+    margin-bottom: 40px;
+    font-size: 2.5em; /* Large, prominent title */
+    font-weight: 800; /* Extra bold */
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for pop */
+    letter-spacing: 0.5px;
+}
+
+/* Labels for "Username", "Password", "Login As" */
+label {
+    color: var(--text-color-on-transparent-bg); /* White labels for contrast */
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: left;
+    display: block;
+    font-size: 0.95em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3); /* Subtle shadow */
+}
+
+/* Input Fields (e.g., Username, Password) */
+.form-control {
+    background-color: var(--input-bg-color); /* Mostly opaque white background */
+    color: var(--text-color-on-input-bg); /* Dark text color *inside* the inputs */
+    border: 1px solid var(--input-border-color); /* Subtle white border */
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 1.1em;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color); /* Blue border on focus */
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Blue focus ring */
+    outline: none;
+}
+
+/* Crispy Forms adjustments for "Login As" (Radio Buttons Section) */
+.role-selection {
+    text-align: left;
+    margin-top: 25px;
+    margin-bottom: 30px;
+    padding-left: 0;
+    border-left: none; /* Remove any default border */
+}
+
+/* Explicitly target the "Login As" label (Crispy Forms output might vary) */
+.role-selection > label {
+    color: var(--text-color-on-transparent-bg) !important; /* Force white color for "Login As" */
+    font-weight: 600; /* Bold like other labels */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Text for "Athlete/User" and "Organizer" next to radio buttons */
+.role-selection .form-check-label {
+    color: var(--text-color-on-transparent-bg) !important; /* Force white color */
+    font-weight: 400; /* Normal weight */
+    text-shadow: none; /* No shadow */
+}
+
+/* --- Radio Button Appearance (Checked state to Black) --- */
+.form-check-input:checked {
+    background-color: var(--black-color) !important; /* Black fill when checked */
+    border-color: var(--black-color) !important; /* Black border when checked */
+}
+
+/* Keep the focus ring blue for standard usability */
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+
+/* Submit Button */
+.btn-primary {
+    background-color: var(--black-color); /* Black background for button */
+    border-color: var(--black-color); /* Black border for button */
+    color: var(--text-color-on-transparent-bg); /* White text on button */
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 15px;
+    border-radius: 8px;
+}
+
+.btn-primary:hover {
+    background-color: var(--button-hover-black); /* Slightly lighter black on hover */
+    border-color: var(--button-hover-black);
+    transform: translateY(-1px); /* Slight lift effect */
+}
+
+/* Link Styles (Forgot Password, Register) */
+.forgot-password-link {
+    display: block;
+    margin-top: 15px;
+    font-size: 0.95em;
+    text-align: center;
+}
+.forgot-password-link a {
+    color: var(--text-color-on-transparent-bg) !important; /* White link text */
+    text-decoration: none;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    margin-top: 25px;
+}
+.forgot-password-link a:hover {
+    text-decoration: underline;
+    color: var(--primary-color) !important; /* Blue on hover */
+}
+
+/* "Don't have an account?" text */
+.text-muted {
+    color: var(--text-color-muted-on-transparent-bg) !important; /* Muted white text */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.text-primary { /* The 'Register' link */
+    color: var(--text-color-on-transparent-bg) !important; /* Blue for the link */
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+     text-decoration: none;
+}
+.text-primary:hover {
+ text-decoration: underline;
+    color: var(--primary-color) !important; /* Blue on hover */
+
+}
+
+/* Error Message Styling */
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: var(--danger-color); /* Red for errors */
+    font-size: 0.9em;
+    font-weight: 600;
+    text-align: left;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Animation for the login box */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- NEW: Divider for OR --- */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 25px 0; /* Space above/below the divider */
+    color: var(--text-color-muted-on-transparent-bg); /* Muted white color for 'OR' text */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Thin white line */
+}
+
+.divider:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.divider:not(:empty)::after {
+    margin-left: .5em;
+}
+
+/* --- NEW: Google Sign-up Button --- */
+.btn-google {
+    background-color: var(--black-color); /* Google blue */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.05em;
+    font-weight: 600;
+    border-radius: 8px;
+    display: flex; /* Allows logo and text to be side-by-side */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Make it full width */
+}
+
+.btn-google:hover {
+    background-color: var(--button-hover-black); /* Darker blue on hover */
+    color: white;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.google-logo {
+    width: 60px; /* Adjust size as needed */
+    height: 60px;
+    margin-right: 10px; /* Space between logo and text */
+    margin-left: 10px;
+    background-color: white; /* Ensures logo has a white background */
+    padding: 2px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+

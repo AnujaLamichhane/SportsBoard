@@ -1,0 +1,39 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load socialaccount %}  {# Needed for Google login button #}
+
+{% block title %}Login | SportsBoard{% endblock %}
+
+{% block content %}
+<div class="login-box">
+    <h3 class="login-title">Welcome to SportsBoard</h3>
+
+    <form method="post" action="{% url 'account_login' %}"> {# ✅ Correct allauth login URL #}
+        {% csrf_token %}
+        {{ form|crispy }}  {# or form.as_crispy_form is also fine #}
+
+        <button type="submit" class="btn btn-primary btn-block mt-3">Log In</button>
+    </form>
+
+    <div class="divider mt-4">
+        <span>OR</span>
+    </div>
+
+    {# ✅ Google sign-in button #}
+    <a href="{% provider_login_url 'google' %}" class="btn btn-google btn-block mt-3" type="button">
+        <img src="{% static 'accounts/images/googlelogo.png' %}" alt="Google logo" class="google-logo">
+        Sign in with Google
+    </a>
+
+
+
+    <p class="forgot-password-link mt-4">
+        <a href="{% url 'account_reset_password' %}" class="text-primary">Forgot Password?</a>
+    </p>
+
+    <p class="text-center mt-3 text-muted">
+        Don’t have an account? <a href="{% url 'account_signup' %}" class="text-primary">Sign up</a>
+    </p>
+</div>
+{% endblock %}
