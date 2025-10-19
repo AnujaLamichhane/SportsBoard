@@ -84,7 +84,7 @@
   width: 450px;
   overflow-x: auto;
   overflow-y: hidden;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scroll-behavior: smooth;
 }
 .carousel .carousel-box .thumbnail {
