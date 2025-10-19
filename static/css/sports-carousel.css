@@ -76,15 +76,16 @@
   position: absolute;
   bottom: 20px;
   right: 60px;
-  z-index: 15;
   background: rgba(0, 0, 0, 0.5);
   gap: 20px;
   z-index: 10;
   padding: 10px 20px;
   border-radius: 15px;
   width: 450px;
-  overflow: visible;
-  /* transform: translateX(-50%); */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
 }
 .carousel .carousel-box .thumbnail {
   display: flex;

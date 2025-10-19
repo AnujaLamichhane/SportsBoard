@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("next");
   const prevBtn = document.getElementById("prev");
   let current = 0; // index of active slide
+  
   // Function to update the visible slide and thumbnail
   function showSlide(index) {
     // Remove "active" from all
@@ -36,8 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //   showSlide(current);
   // }, 5000);
 });
-
-
 
 
 
