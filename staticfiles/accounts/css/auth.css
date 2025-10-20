@@ -19,7 +19,7 @@
     /* Text Colors for different contexts */
     --text-color-on-transparent-bg: #ffffff; /* White text for labels, titles, etc. on the frosted card */
     --text-color-on-input-bg: #212529;       /* Dark grey for text *inside* input fields */
-    --text-color-muted-on-transparent-bg: rgba(255, 255, 255, 0.7); /* Muted white for secondary text (e.g., "Don't have an account?") */
+    --text-color-muted-on-transparent-bg: rgba(255, 255, 255, 0.9); /* Muted white for secondary text (e.g., "Don't have an account?") */
 
     /* Shadows and Hovers */
     --shadow-medium: rgba(0, 0, 0, 0.3);
@@ -213,7 +213,7 @@ label {
     text-shadow: 0 1px 3px rgba(0,0,0,0.3);
      text-decoration: none;
 }
-.text-primary a:hover {
+.text-primary:hover {
  text-decoration: underline;
     color: var(--primary-color) !important; /* Blue on hover */
 
@@ -296,3 +296,5 @@ label {
     border-radius: 50%;
     object-fit: contain;
 }
+
+

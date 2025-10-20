@@ -1,4 +1,3 @@
-
 {% load static %}
 
 
@@ -6,6 +5,9 @@
 <head>
     <title>Home</title>
     <link rel="stylesheet" href="{% static 'accounts/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/sports-carousel.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
 </head>
 <body>
     <header>
@@ -19,30 +21,41 @@
                     <li><a href="/contact">Contact</a></li>
                 </ul>
             <div class="auth-links">
-                <a href="{% url 'account_login' %}" class="login">Log in</a>
-    <a href="{% url 'account_signup' %}" class="signup">Sign up</a>
+                
+                <a href="{% url 'login' %}" class="login">Log in</a>
+                <a href="{% url 'signup' %}" class="signup">Sign up</a>
             </div>
        </nav>
     </header>
     <section class="hero">
         <div class="hero-content">
+            
             <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
             <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
             <button class="join-btn">Join This</button>
         </div>
-        <div class="hero-image">
-            <img src="{% static 'accounts/images/cricket.jpeg' %}" alt="Sports" />
-        </div>
+        
     </section>
     
     <!-- <div class="content">
         <h1>Welcome to SportsBoard!</h1>
         <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
     </div> -->
+    
+    
+    {% include 'homepage/sports-carousel.html' %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- <script src="{% static 'js/swiper.js' %}"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="{% static 'accounts/js/custom.js' %}"></script>
     <footer>
-    <p>© 2025 SportsZone. All rights reserved.</p>
-</footer>
+        <p>© 2025 SportsZone. All rights reserved.</p>
+    </footer>
 
 </body>
 </html>
+
