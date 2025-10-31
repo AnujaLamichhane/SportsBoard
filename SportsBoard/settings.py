@@ -31,7 +31,9 @@ INSTALLED_APPS = [
 
     'matches',
     'homepage',
-    'accounts',  # Your accounts app
+    # 'accounts',
+    'accounts.apps.AccountsConfig',
+
 
     'crispy_forms',
     'crispy_bootstrap5',
@@ -194,3 +196,10 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
+SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_SIGNUP_REDIRECT_URL = '/your-redirect-url/'
+SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
+
+# Session settings for Remember Me
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_SAVE_EVERY_REQUEST = True
