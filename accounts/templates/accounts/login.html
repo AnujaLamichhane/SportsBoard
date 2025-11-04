@@ -43,6 +43,15 @@
     <a href="{% url 'account_reset_password' %}" class="text-primary">Forgot Password?</a>
 </p>
 
+{% if not user.is_authenticated %}
+<p class="forgot-password-link mt-4">
+    <a href="{% url 'account_reset_password' %}" class="text-primary">Forgot Password?</a>
+</p>
+{% endif %}
+
+
+
+
 <p class="text-center mt-3 text-muted">
     Don’t have an account? <a href="{% url 'signup' %}" class="text-primary">Sign up</a>
 </p>
