@@ -198,6 +198,8 @@ SOCIALACCOUNT_PROVIDERS = {
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 SOCIALACCOUNT_AUTO_SIGNUP = True
 ACCOUNT_SIGNUP_REDIRECT_URL = '/your-redirect-url/'
+# Skip the intermediate confirmation page
+SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
 
 # Session settings for Remember Me
