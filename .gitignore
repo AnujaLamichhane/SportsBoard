@@ -1,8 +1,23 @@
 ".env" 
 .env 
+
 # Python cache
 __pycache__/
 *.py[cod]
 
 # SQLite database
 db.sqlite3
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# SQLite DB (never push)
+db.sqlite3
+
+# Virtual environment
+.venv/
+
+# Media uploads
+media/
+#>>>>>>> dd1c68e (Player form setup, dashboard fixes, event updates)

@@ -22,9 +22,11 @@
                     <li><a href="/contact">Contact</a></li>
                 </ul>
             <div class="auth-links">
+                <a href="{% url 'accounts:login' %}" class="login">Log in</a>
+
+                <a href="{% url 'accounts:signup' %}" class="signup">Sign up</a>
                 
-                <a href="{% url 'login' %}" class="login">Log in</a>
-                <a href="{% url 'signup' %}" class="signup">Sign up</a>
+
             </div>
        </nav>
     </header>

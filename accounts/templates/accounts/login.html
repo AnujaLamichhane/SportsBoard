@@ -28,11 +28,11 @@
 <div class="role-selection mt-3">
     <p>Sign in with Google as:</p>
     <div class="d-flex gap-2 justify-content-center">
-        <a href="{% url 'custom_google_login' %}?role=user" class="btn btn-google d-flex align-items-center gap-2">
+        <a href="{% url 'accounts:custom_google_login' %}?role=user" class="btn btn-google d-flex align-items-center gap-2">
             <img src="{% static 'accounts/images/googlelogo.png' %}" alt="Google logo" class="google-logo">
             User
         </a>
-        <a href="{% url 'custom_google_login' %}?role=organizer" class="btn btn-google d-flex align-items-center gap-2">
+        <a href="{% url 'accounts:custom_google_login' %}?role=organizer" class="btn btn-google d-flex align-items-center gap-2">
             <img src="{% static 'accounts/images/googlelogo.png' %}" alt="Google logo" class="google-logo">
             Organizer
         </a>
@@ -53,7 +53,7 @@
 
 
 <p class="text-center mt-3 text-muted">
-    Don’t have an account? <a href="{% url 'signup' %}" class="text-primary">Sign up</a>
+    Don’t have an account? <a href="{% url 'accounts:signup' %}" class="text-primary">Sign up</a>
 </p>
 </div>
 
