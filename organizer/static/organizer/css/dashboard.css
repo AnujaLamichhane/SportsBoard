@@ -1,0 +1,135 @@
+/* organizer/static/organizer/css/dashboard.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+body {
+    font-family: "Poppins", sans-serif !important;
+    background-color: #121212; /* Very dark background */
+}
+
+/* Custom Card for Dark Theme */
+.bg-dark-card {
+    background-color: #1e1e1e !important;
+    border: 1px solid #333;
+    color: #f0f0f0;
+}
+
+/* Overriding Bootstrap list group items */
+.list-group-item.bg-dark-card {
+    background-color: #1e1e1e !important;
+    border-color: #333 !important;
+}
+/* --- Input Fields (Text, Select, File) --- */
+.form-control, .form-select {
+    /* Use a better looking font (e.g., modern sans-serif like system-ui or fallbacks) */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff; /* White text */
+    background-color: #2b2b2b !important; /* Slightly lighter dark background for contrast */
+    border: 1px solid #444; /* Subtle border */
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    color: #fff;
+    background-color: #333 !important;
+    border-color: #ff9900; /* Focus color matching your warning/accent button */
+    box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25); /* Glow effect */
+}
+/* --- Crispy Forms Labels and Help Text --- */
+label {
+    color: #f0f0f0; /* Near-white label color */
+    font-weight: 500;
+}
+.help-block {
+    color: #aaa; /* Lighter gray for help text */
+    font-size: 0.85rem;
+}
+
+/* Status Tags to match the image */
+.status-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+}
+.status-live { background-color: #dc3545; } /* Red */
+.status-upcoming { background-color: #ff9900; } /* Orange */
+.status-completed { background-color: #28a745; } /* Green */
+
+/* Payment Status Badges */
+.bg-paid { background-color: #28a745 !important; }
+.bg-pending { background-color: #ffc107 !important; }
+.bg-rejected { background-color: #dc3545 !important; }
+
+/* Custom Button */
+.create-event-btn {
+    background-color: #ff9900 !important;
+    border-color: #ff9900 !important;
+    color: white !important;
+}
+
+.dashboard-container {
+    padding-top: 20px;
+    padding-bottom: 50px;
+}
+/* --- Buttons --- */
+.btn-warning {
+    background-color: #ff9900 !important;
+    border-color: #ff9900 !important;
+    color: #1a1a1a !important; /* Dark text on orange button */
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn-warning:hover {
+    background-color: #cc7a00 !important;
+    border-color: #cc7a00 !important;
+}
+
+/* --- Date Time Picker Icon (If using bootstrap 5) --- */
+.form-control::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Makes the calendar icon white */
+}
+
+/* Target the delete checkbox input and its label */
+.formset-item .form-check {
+    /* Hides the entire div containing the checkbox and label */
+    display: none;
+}
+
+/* Stat Cards - Equal Height */
+.stat-card {
+min-height: 140px;
+border-radius: 15px;
+padding: 20px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+background: #1e1e1e;
+color: white;
+}
+
+
+.stat-icon {
+font-size: 30px;
+}
+
+
+.text-small {
+font-size: 13px;
+opacity: 0.8;
+}
+
+
+.bg-dark-card {
+background: #1b1b1b !important;
+border-radius: 15px !important;
+}
+
+
+.create-event-btn,
+.create-form-btn {
+border-radius: 12px;
+font-weight: 500;
+}
