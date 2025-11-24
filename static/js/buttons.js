@@ -1,9 +1,28 @@
-      const matchCards = document.querySelectorAll('.match-card');
-      const modal = document.getElementById('matchModal');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalDesc = document.getElementById('modalDesc');
-      const closeModal = document.getElementById('closeModal');
+document.addEventListener("DOMContentLoaded", () => {
+  function updateDateTime() {
+    const now = new Date();
+    const options = { 
+      weekday: 'short', 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    };
+    const date = now.toLocaleDateString('en-NP', options);
+    const time = now.toLocaleTimeString('en-NP');
+    document.getElementById('datetime').innerText = `${date} ${time}`;
+  }
 
+  // Update every second
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
+
+  const matchCards = document.querySelectorAll('.match-card');
+  const modal = document.getElementById('matchModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalDesc = document.getElementById('modalDesc');
+  const closeModal = document.getElementById('closeModal');
+
+  if (matchCards && modal) {
       matchCards.forEach(card => {
         card.addEventListener('click', () => {
           modal.style.display = 'flex';
@@ -11,14 +30,19 @@
           modalDesc.innerHTML = card.getAttribute('data-desc');
         });
       });
-
-      closeModal.addEventListener('click', () => modal.style.display = 'none');
-      window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
-
-    const bookButtons = document.querySelectorAll('.book-btn');
-        bookButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-      // If user is not logged in, redirect to login page
+  }
+  modal.addEventListener("click", (e) => {
+      if (e.target === modal) {          // works only inside modal
+        modal.style.display = "none";
+      }
+  });
+  if (closeModal) {
+    closeModal.addEventListener('click', () => modal.style.display = 'none');
+  }
+    // Login Redirect
+  const bookButtons = document.querySelectorAll('.book-btn');
+  bookButtons.forEach(btn => {
+    btn.addEventListener('click', () => {      
       window.location.href = "{% url 'login' %}";
     //     if (isLoggedIn) {
     //      window.location.href = "/book/";
@@ -28,56 +52,57 @@
     });
   });
 
-document.addEventListener("DOMContentLoaded", () => {
   // Navbar toggle
-  const menuToggle = document.querySelector(".menu-toggle");
-  const navLinks = document.querySelector(".nav-links");
-  if (menuToggle) {
-      menuToggle.addEventListener("click", () => {
+  
+  const menuToggle = document.getElementById("menuToggle");
+  const navLinks = document.getElementById("navLinks");
+  
+  menuToggle.addEventListener("click", () => {
       navLinks.classList.toggle("active");
   });
-  }
-});
-  document.addEventListener("DOMContentLoaded", () => {
-    const scrollContainer = document.querySelector(".match-cards");
-    const btnNext = document.querySelector(".scroll-btn.next");
-    const btnPrev = document.querySelector(".scroll-btn.prev");
+  
+  const sportsDropdown = document.getElementById("sportsDropdown");
+  const sportsMenu = document.getElementById("sportsMenu");
 
-    if (btnNext && btnPrev && scrollContainer) {
-      btnNext.addEventListener("click", () => {
-        scrollContainer.scrollBy({ left: 300, behavior: "smooth" });
-      });
+  sportsDropdown.addEventListener("click", (e) => {
+    // Prevent page jumping
+    e.preventDefault();
 
-      btnPrev.addEventListener("click", () => {
-      scrollContainer.scrollBy({ left: -300, behavior: "smooth" });
-      });
+    // Only activate on mobile
+    if (window.innerWidth <= 850) {
+      sportsMenu.classList.toggle("open");
     }
   });
+  
 
-  // Scroll buttons
-  // const scrollContainer = document.querySelector(".match-cards");
-  // const scrollLeft = document.getElementById("scrollLeft");
-  // const scrollRight = document.getElementById("scrollRight");
+});
+// document.addEventListener("DOMContentLoaded", () => {
+  //   const scrollContainer = document.querySelector(".match-cards");
+  //   const btnNext = document.querySelector(".scroll-btn.next");
+  //   const btnPrev = document.querySelector(".scroll-btn.prev");
 
-  // if (scrollContainer && scrollLeft && scrollRight) {
-  //   scrollLeft.addEventListener("click", () => {
+  //   if (btnNext && btnPrev && scrollContainer) {
+  //     btnNext.addEventListener("click", () => {
+  //       scrollContainer.scrollBy({ left: 300, behavior: "smooth" });
+  //     });
+
+  //     btnPrev.addEventListener("click", () => {
   //     scrollContainer.scrollBy({ left: -300, behavior: "smooth" });
-  //   });
-  //   scrollRight.addEventListener("click", () => {
-  //     scrollContainer.scrollBy({ left: 300, behavior: "smooth" });
-  //   });
-  // }
+  //     });
+  //   }
+  // });
+
 
   // Book button
-//   const isLoggedIn = window.isUserLoggedIn || false;
-//   document.querySelectorAll(".book-btn").forEach((btn) => {
-//     btn.addEventListener("click", () => {
-//       if (isLoggedIn) {
-//         window.location.href = "/book/";
-//       } else {
-//         window.location.href = "/login/";
-//       }
-//     });
-//   });
+  //   const isLoggedIn = window.isUserLoggedIn || false;
+  //   document.querySelectorAll(".book-btn").forEach((btn) => {
+  //     btn.addEventListener("click", () => {
+  //       if (isLoggedIn) {
+  //         window.location.href = "/book/";
+  //       } else {
+  //         window.location.href = "/login/";
+  //       }
+  //     });
+  //   });
 
 

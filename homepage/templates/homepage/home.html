@@ -1,6 +1,4 @@
 {% load static %}
-
-
 <html>
 <head>
     <title>Home</title>
@@ -8,47 +6,214 @@
 <!--    <link rel="stylesheet" href="{% static 'accounts/css/sports-carousel.css' %}">-->
 <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />-->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'js/buttons.js' %}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
 </head>
 <body>
     <header>
-        <nav >
-            <div class="logo">🏆<span>SportsBoard</span></div>
-                <ul >
+        <div id="datetime"></div>
+        <nav class="navbar">
+            <div class="logo">🏆 <span>SportsBoard</span></div>
+                <ul class="nav-links" id="navLinks">
                     <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
+                    <!-- <li><a href="/about">About</a></li> -->
+                    <li class="dropdown">
+                        <a href="#" id="sportsDropdown">Sports </a>
+                        <div class="dropdown-content" id="sportsMenu">
+                            <a href="/cricket">🏏 Cricket</a>
+                            <a href="{% url 'football' %}">⚽ Football</a>
+                            <a href="{% url 'volleyball' %}">🏐 Volleyball</a>
+                            <a href="{% url 'basketball' %}">🏀 Basketball</a>
+                            <a href="{% url 'badminton' %}">🏸 Badminton</a>          
+                        </div>
+                    </li>
                     <li><a href="/viewmatch">View Matches</a></li>
-                    <li><a href="/notice">News and Notices</a></li>
+                    <li><a href="/notice">News</a></li>
                     <li><a href="/contact">Contact</a></li>
                 </ul>
-            <div class="auth-links">
-                
-                <a href="{% url 'login' %}" class="login">Log in</a>
-                <a href="{% url 'signup' %}" class="signup">Sign up</a>
-            </div>
-       </nav>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+        </nav>    
     </header>
-    <section class="hero">
-        <div class="hero-content">
-            
-            <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
-            <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
-            <button class="join-btn">Join This</button>
+        <div class="hero">
+            <img src="{% static 'images/im2.png' %}" alt="Sports" />
+            <div class="hero-content">  
+                <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
+                <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
+                <!-- <button class="join-btn">Join This</button> -->
+            <div class="auth-links">
+                <a href="{% url 'login' %}" class="login">🔒LOGIN/SIGN UP</a>
+                <!-- <a href="{% url 'signup' %}" class="signup">Sign up</a> -->
+            </div>
         </div>
-        
-    </section>
+    </div> 
+ 
+    <!-- <section class="featured-section">
+        <h2>Today's Featured Matches</h2>
+        <div class="featured-container">
+            {% for match in featured_matches %}
+            <div class="match-card" >  
+                onclick="window.location.href='{% url 'match_detail' match.id %}'"
+            <img src="{{ match.image.url }}" alt="{{ match.title }}">
+            <div class="match-info">
+                <h3>{{ match.title }}</h3>
+                <p>{{ match.date|date:"M d, Y" }} | {{ match.time }}</p>
+                <span class="match-type">{{ match.match_type }}</span>
+                {% if match.is_free %}
+                <span class="tag free">Free</span>
+                {% elif match.tickets_available %}
+                <span class="tag tickets">Tickets Available</span>
+                {% else %}
+                <span class="tag soldout">Sold Out</span>
+                {% endif %}
+            </div>
+            </div>
+            {% empty %}
+            <p>No featured matches available today.</p>
+            {% endfor %}
+        </div>
+    </section> -->
+
+
+    <!-- <div class="modal" id="matchModal">
+        <div class="modal-content">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc"></p>
+            <button class="close-btn" id="closeModal">Close</button>
+            <button class="book-btn">Book Now</button>
+        </div>
+    </div> -->
+    <section class="value-section">
+        <h2 class="value-title">Value Propesition</h2>
+
+        <div class="value-cards">
+            <div class="value-card">
+                <div class="icon icon-athlete">
+                    <i class="fas fa-running"></i>
+                </div>
+                <h3>For Athletes: Find Your Opportunity</h3>
+                <p>Apply for trials, track selections, and build your profile.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="icon icon-organizer">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>For Organizers: Simplify & Manage</h3>
+                <p>Post notices, handle applications, and manage ticket sales easily.</p>
+            </div>
+
+            <div class="value-card">
+                <div class="icon icon-fans">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <h3>For Fans: Your Ticket to the Action</h3>
+                <p>Never miss a match — buy tickets securely and stay updated.</p>
+            </div>
+        </div>
+        <div class="photos">
+            <div class="ph">
+                <img src="{% static 'images/cricket1s.jpg' %}" alt="Sports" />
+            </div> 
+            <div class="ph">
+                <img src="{% static 'images/foot.jpg' %}" alt="Sports" />
+                <div class="overlay-text">EASIER PARTICIPATION</div>
+            </div>
+            <div class="ph">
+                <img src="{% static 'images/vollyball.jpg' %}" alt="Sports" />
+            </div>
+            <div class="ph">
+                <img src="{% static 'images/basketballs.jpg' %}" alt="Sports" />
+                <div class="overlay-text">SUPPORT NEPALI SPORTS</div>
+            </div>
+            <div class="ph">
+                <img src="{% static 'images/badminton.jpg' %}" alt="Sports" />
+                <div class="overlay-text">LOCALIZE DATA</div>
+            </div>
+            <div class="ph">
+                <img src="{% static 'images/swimming.jpg' %}" alt="Sports" />
+            </div>
+            <div class="ph">
+                <img src="{% static 'images/kabbadi.jpg' %}" alt="Sports" />
+                <div class="overlay-text">UNIFIED PLATFORM</div>
+            </div>
+            <div class="ph">
+                <img src="{% static 'images/boxing.jpg' %}" alt="Sports" />
+            </div>
     
+        </div>
+    </section>
+    <!-- <section class="value-section">
+        <h2>Value Proposition</h2>
+        <div class="value-buttons">
+            <img src="{% static 'images/ath2rr.png' %}" alt="Sports" />
+            <div class="value-btn">
+                <h3>🏃‍♂️ For Athletes</h3>
+                <p>Find trials, build your profile, and get scouted!</p>
+            </div>
+            <div class="value-btn">
+                <h3>🎯 For Organizers</h3>
+                <p>Manage tournaments, handle applications easily.</p>
+            </div>
+            <div class="value-btn">
+                <h3>🎟️ For Fans</h3>
+                <p>Buy tickets securely and never miss a match.</p>
+            </div>
+        </div>
+    </section> -->
     <!-- <div class="content">
         <h1>Welcome to SportsBoard!</h1>
         <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
     </div> -->
-    
+    <!-- time- free ho ki nai in book now / ticket available or not -->
     
 
-    <footer>
-        <p>© 2025 SportsZone. All rights reserved.</p>
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+            <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo">
+            <h3>SportsHub Nepal</h3>
+            <p>Powered by Robust Technology</p>
+            </div>
+
+            <div class="footer-links">
+            <h4>Company</h4>
+            <a href="/about">About Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            </div>
+
+            <div class="footer-social">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            </div>
+
+            <div class="footer-cta">
+            <h4>Ready to Join?</h4>
+            <a href="{% url 'signup' %}" class="footer-btn">Get Started</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 SportsBoard. All Rights Reserved.</p>
+        </div>
     </footer>
 
+    <script>
+    window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
+    window.loginUrl = "{% url 'login' %}";
+    
+    </script>
+
+    <script src="{% static 'js/buttons.js' %}"></script>
+
+
 </body>
-</html>
+</html>             
 

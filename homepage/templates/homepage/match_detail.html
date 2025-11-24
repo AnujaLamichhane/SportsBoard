@@ -1,0 +1,35 @@
+{% extends 'home.html' %}
+{% block content %}
+<div class="match-detail">
+  <img src="{{ match.image.url }}" alt="{{ match.title }}" class="banner">
+  <div class="match-content">
+    <h1>{{ match.title }}</h1>
+    <p><strong>Type:</strong> {{ match.match_type }}</p>
+    <p><strong>Date:</strong> {{ match.date }}</p>
+    <p><strong>Time:</strong> {{ match.time }}</p>
+    <p><strong>Venue:</strong> {{ match.venue }}</p>
+    <p><strong>Free Entry:</strong> {{ match.is_free|yesno:"Yes,No" }}</p>
+    <p><strong>Tickets Available:</strong> {{ match.tickets_available|yesno:"Yes,No" }}</p>
+    <h3>Highlights</h3>
+    <p>{{ match.highlights }}</p>
+  </div>
+</div>
+
+<style>
+.match-detail {
+  color: white;
+  background-color: #1e1e2f;
+  padding: 2rem;
+  text-align: left;
+}
+.match-detail .banner {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+.match-content {
+  max-width: 700px;
+  margin: auto;
+}
+</style>
+{% endblock %}
