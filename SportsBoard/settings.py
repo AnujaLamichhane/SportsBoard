@@ -33,6 +33,8 @@ INSTALLED_APPS = [
 
     'matches',
     'homepage',
+    'organizer',
+
     # 'accounts',
     'accounts.apps.AccountsConfig',
 
