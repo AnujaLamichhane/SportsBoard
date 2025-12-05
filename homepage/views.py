@@ -1,9 +1,32 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 # Create your views here.
 def home(request):
     return render(request, 'homepage/home.html')
     # return HttpResponse("Homepage is working!")
+
+
+def is_organizer(user):
+
+    if not user.is_authenticated:
+        return False
+    return user.groups.filter(name='Organizer').exists()
+
+@login_required(login_url='accounts:login')
+def handle_athlete_redirect(request):
+    return redirect('accounts:user_dashboard')
+
+@login_required(login_url='accounts:login')
+def handle_organizer_redirect(request):
+    if is_organizer(request.user):
+        # Uses the name 'organizer_dashboard' defined in organizer/urls.py
+        return redirect('organizer:dashboard')
+    else:
+
+        messages.error(request, "You do not have organizer privileges.")
+        return redirect('accounts:user_dashboard')
 
 def about(request):
     return render(request, 'homepage/about.html')
@@ -17,17 +40,3 @@ def basketball(request):
     return HttpResponse("Welcome to basketball page.")
 def badminton(request):
     return HttpResponse("Welcome to badminton page.")
-# def table_tennish(request):
-#     return HttpResponse("Welcome to table_tennish page.")
-
-# from django.shortcuts import render, get_object_or_404
-# from datetime import date
-# from .models import Match
-
-# def home(request):
-#     featured_matches = Match.objects.filter(date__gte=date.today()).order_by('date')[:5]
-#     return render(request, 'homepage/home.html', {'featured_matches': featured_matches})
-
-# def match_detail(request, match_id):
-#     match = get_object_or_404(Match, id=match_id)
-#     return render(request, 'homepage/match_detail.html', {'match': match})

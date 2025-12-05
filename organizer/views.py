@@ -8,7 +8,8 @@ from django.contrib import messages
 
 
 def is_organizer_check(user):
-    return user.is_staff
+    # return user.is_staff
+    return user.is_authenticated and user.groups.filter(name='Organizer').exists()
 
 
 # --- Existing organizer_dashboard view (omitted for brevity, but it's fine) ---

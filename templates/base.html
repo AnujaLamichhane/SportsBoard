@@ -1,0 +1,107 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# Define a block for the page title #}
+    <title>{% block title %}SportsBoard{% endblock %}</title>
+
+    {# Link global CSS and Font Awesome here #}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    {# Define a block for any page-specific CSS or HEAD elements #}
+    {% block head_extra %}{% endblock %}
+
+</head>
+<body>
+    {# ------------------ HEADER/NAVBAR (Copied from home.html) ------------------ #}
+    <header>
+        <div id="datetime"></div>
+        <nav class="navbar">
+            <div class="logo">🏆 <span>SportsBoard</span></div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="{% url 'homepage:home' %}">Home</a></li>
+
+                    <li class="dropdown">
+                        <a href="#" id="sportsDropdown">Sports </a>
+                        <div class="dropdown-content" id="sportsMenu">
+                            <a href="{% url 'homepage:cricket' %}">🏏 Cricket</a>
+                            <a href="{% url 'homepage:football' %}">⚽ Football</a>
+                            <a href="{% url 'homepage:volleyball' %}">🏐 Volleyball</a>
+                            <a href="{% url 'homepage:basketball' %}">🏀 Basketball</a>
+                            <a href="{% url 'homepage:badminton' %}">🏸 Badminton</a>
+                        </div>
+                    </li>
+                    <li><a href="/viewmatch">View Matches</a></li>
+                    <li><a href="/notice">News</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+        </nav>
+    </header>
+    {# ------------------ END HEADER/NAVBAR ------------------ #}
+
+    <main>
+        {# ------------------ CONTENT BLOCK ------------------ #}
+        {# This is the main block where user_dashboard.html content will be inserted #}
+        <div id="content-area">
+            {% block content %}
+            {% endblock %}
+        </div>
+        {# ------------------ END CONTENT BLOCK ------------------ #}
+    </main>
+
+    {# ------------------ FOOTER (Copied from home.html) ------------------ #}
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+            <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo">
+            <h3>SportsHub Nepal</h3>
+            <p>Powered by Robust Technology</p>
+            </div>
+
+            <div class="footer-links">
+            <h4>Company</h4>
+            <a href="/about">About Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            </div>
+
+            <div class="footer-social">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            </div>
+
+            <div class="footer-cta">
+            <h4>Ready to Join?</h4>
+            <a href="{% url 'accounts:signup' %}" class="footer-btn">Get Started</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 SportsBoard. All Rights Reserved.</p>
+        </div>
+    </footer>
+    {# ------------------ END FOOTER ------------------ #}
+
+    <script>
+        window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
+        window.loginUrl = "{% url 'accounts:login' %}";
+    </script>
+
+    {# Link global JavaScript here #}
+    <script src="{% static 'js/buttons.js' %}"></script>
+
+    {# Define a block for page-specific JS #}
+    {% block javascript %}{% endblock %}
+
+</body>
+</html>

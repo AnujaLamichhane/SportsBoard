@@ -540,3 +540,17 @@
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     padding-top: 15px;
   }
+
+
+
+
+
+
+
+/* --- New Styles for Interactive Role Cards (To be added to your CSS) --- */
+.value-cards a.value-card {
+    text-decoration: none; /* Removes the underline */
+    color: inherit;      /* Ensures text color remains white/default */
+    display: block;      /* Ensures the whole card acts as the link */
+}
+

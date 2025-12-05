@@ -75,7 +75,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = True  # User must still provide a username
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Or "optional" if you don't want to force email verification
-LOGIN_REDIRECT_URL = '/'  # Where to go after a successful login
+LOGIN_REDIRECT_URL ='/accounts/dashboard-redirect/' # Where to go after a successful login
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # Where to go after logout
 LOGIN_URL = '/accounts/login/'  # The URL where allauth's login form is located
 

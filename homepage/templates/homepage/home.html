@@ -1,4 +1,4 @@
-git{% load static %}
+{% load static %}
 <html>
 <head>
     <title>Home</title>
@@ -6,7 +6,7 @@ git{% load static %}
 <!--    <link rel="stylesheet" href="{% static 'accounts/css/sports-carousel.css' %}">-->
 <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />-->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'js/buttons.js' %}"> 
+    <link rel="stylesheet" href="{% static 'js/buttons.js' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
@@ -17,43 +17,46 @@ git{% load static %}
         <nav class="navbar">
             <div class="logo">🏆 <span>SportsBoard</span></div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'homepage:home' %}">Home</a></li>
+<!--                    <li><a href="/">Home</a></li>-->
                     <!-- <li><a href="/about">About</a></li> -->
                     <li class="dropdown">
                         <a href="#" id="sportsDropdown">Sports </a>
                         <div class="dropdown-content" id="sportsMenu">
-                            <a href="/cricket">🏏 Cricket</a>
-                            <a href="{% url 'football' %}">⚽ Football</a>
-                            <a href="{% url 'volleyball' %}">🏐 Volleyball</a>
-                            <a href="{% url 'basketball' %}">🏀 Basketball</a>
-                            <a href="{% url 'badminton' %}">🏸 Badminton</a>          
+                            <a href="{% url 'homepage:cricket' %}">🏏 Cricket</a>
+                            <a href="{% url 'homepage:football' %}">⚽ Football</a>
+                            <a href="{% url 'homepage:volleyball' %}">🏐 Volleyball</a>
+                            <a href="{% url 'homepage:basketball' %}">🏀 Basketball</a>
+                            <a href="{% url 'homepage:badminton' %}">🏸 Badminton</a>
                         </div>
+
+
                     </li>
                     <li><a href="/viewmatch">View Matches</a></li>
                     <li><a href="/notice">News</a></li>
                     <li><a href="/contact">Contact</a></li>
                 </ul>
                 <button class="menu-toggle" id="menuToggle">☰</button>
-        </nav>    
+        </nav>
     </header>
         <div class="hero">
             <img src="{% static 'images/im2.png' %}" alt="Sports" />
-            <div class="hero-content">  
+            <div class="hero-content">
                 <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
                 <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
                 <!-- <button class="join-btn">Join This</button> -->
             <div class="auth-links">
-                <a href="{% url 'login' %}" class="login">🔒LOGIN/SIGN UP</a>
-                <!-- <a href="{% url 'signup' %}" class="signup">Sign up</a> -->
+                <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>
+
             </div>
         </div>
-    </div> 
- 
+    </div>
+
     <!-- <section class="featured-section">
         <h2>Today's Featured Matches</h2>
         <div class="featured-container">
             {% for match in featured_matches %}
-            <div class="match-card" >  
+            <div class="match-card" >
                 onclick="window.location.href='{% url 'match_detail' match.id %}'"
             <img src="{{ match.image.url }}" alt="{{ match.title }}">
             <div class="match-info">
@@ -87,24 +90,46 @@ git{% load static %}
     <section class="value-section">
         <h2 class="value-title">Value Propesition</h2>
 
+<!--        <div class="value-cards">-->
+<!--            <div class="value-card">-->
+<!--                <div class="icon icon-athlete">-->
+<!--                    <i class="fas fa-running"></i>-->
+<!--                </div>-->
+<!--                <h3>For Athletes: Find Your Opportunity</h3>-->
+<!--                <p>Apply for trials, track selections, and build your profile.</p>-->
+<!--            </div>-->
+
+<!--            <div class="value-card">-->
+<!--                <div class="icon icon-organizer">-->
+<!--                    <i class="fas fa-clipboard-list"></i>-->
+<!--                </div>-->
+<!--                <h3>For Organizers: Simplify & Manage</h3>-->
+<!--                <p>Post notices, handle applications, and manage ticket sales easily.</p>-->
+<!--            </div>-->
+
+<!--            <div class="value-card">-->
+<!--                <div class="icon icon-fans">-->
+<!--                    <i class="fas fa-ticket-alt"></i>-->
+<!--                </div>-->
+<!--                <h3>For Fans: Your Ticket to the Action</h3>-->
+<!--                <p>Never miss a match — buy tickets securely and stay updated.</p>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="value-cards">
-            <div class="value-card">
+
+            <a href="{% url 'homepage:go_athlete' %}" class="value-card">
                 <div class="icon icon-athlete">
                     <i class="fas fa-running"></i>
                 </div>
                 <h3>For Athletes: Find Your Opportunity</h3>
                 <p>Apply for trials, track selections, and build your profile.</p>
-            </div>
-
-            <div class="value-card">
+            </a> <a href="{% url 'homepage:go_organizer' %}" class="value-card">
                 <div class="icon icon-organizer">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <h3>For Organizers: Simplify & Manage</h3>
                 <p>Post notices, handle applications, and manage ticket sales easily.</p>
-            </div>
-
-            <div class="value-card">
+            </a> <div class="value-card">
                 <div class="icon icon-fans">
                     <i class="fas fa-ticket-alt"></i>
                 </div>
@@ -112,10 +137,11 @@ git{% load static %}
                 <p>Never miss a match — buy tickets securely and stay updated.</p>
             </div>
         </div>
+
         <div class="photos">
             <div class="ph">
                 <img src="{% static 'images/cricket1s.jpg' %}" alt="Sports" />
-            </div> 
+            </div>
             <div class="ph">
                 <img src="{% static 'images/foot.jpg' %}" alt="Sports" />
                 <div class="overlay-text">EASIER PARTICIPATION</div>
@@ -141,7 +167,7 @@ git{% load static %}
             <div class="ph">
                 <img src="{% static 'images/boxing.jpg' %}" alt="Sports" />
             </div>
-    
+
         </div>
     </section>
     <!-- <section class="value-section">
@@ -167,7 +193,7 @@ git{% load static %}
         <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
     </div> -->
     <!-- time- free ho ki nai in book now / ticket available or not -->
-    
+
 
     <footer class="main-footer">
         <div class="footer-container">
@@ -196,7 +222,7 @@ git{% load static %}
 
             <div class="footer-cta">
             <h4>Ready to Join?</h4>
-            <a href="{% url 'signup' %}" class="footer-btn">Get Started</a>
+            <a href="{% url 'accounts:signup' %}" class="footer-btn">Get Started</a>
             </div>
         </div>
 
@@ -207,13 +233,13 @@ git{% load static %}
 
     <script>
     window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
-    window.loginUrl = "{% url 'login' %}";
-    
+    window.loginUrl = "{% url 'accounts:login' %}";
+
     </script>
 
     <script src="{% static 'js/buttons.js' %}"></script>
 
 
 </body>
-</html>             
+</html>
 
