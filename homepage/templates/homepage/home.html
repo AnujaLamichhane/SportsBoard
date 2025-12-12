@@ -1,3 +1,4 @@
+
 {% load static %}
 <html>
 <head>
@@ -39,18 +40,37 @@
                 <button class="menu-toggle" id="menuToggle">☰</button>
         </nav>
     </header>
+
+{% extends 'homepage/base.html' %}
+{% load static %}
+        {% block title %}Home - SportsBoard{% endblock %}
+        {% block content %}
+
         <div class="hero">
             <img src="{% static 'images/im2.png' %}" alt="Sports" />
             <div class="hero-content">
                 <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
                 <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
                 <!-- <button class="join-btn">Join This</button> -->
+
             <div class="auth-links">
                 <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>
 
+
+                <div class="auth-links">
+                    <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>       
+                </div>
+
             </div>
+        </div> 
+        
+        <div class="featured-section">
+            <h1>Today's Featured Matches</h1>
         </div>
+
     </div>
+
+
 
     <!-- <section class="featured-section">
         <h2>Today's Featured Matches</h2>
@@ -88,7 +108,7 @@
         </div>
     </div> -->
     <section class="value-section">
-        <h2 class="value-title">Value Propesition</h2>
+        <h2 class="value-title">Why Choose SportsBoard?</h2>
 
 <!--        <div class="value-cards">-->
 <!--            <div class="value-card">-->
@@ -231,6 +251,7 @@
         </div>
     </footer>
 
+
     <script>
     window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
     window.loginUrl = "{% url 'accounts:login' %}";
@@ -242,4 +263,7 @@
 
 </body>
 </html>
+
+{% endblock %}
+
 

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'crispy_bootstrap5',
-
+    'news',
     # django-allauth apps
     'django.contrib.sites',  # Required by allauth
     'allauth',

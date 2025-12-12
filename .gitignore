@@ -1,5 +1,6 @@
-".env" 
-.env 
+# Environment variables
+.env
+
 
 # SQLite database
 db.sqlite3
@@ -10,9 +11,33 @@ __pycache__/
 
 
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
 # Virtual environment
 .venv/
+venv/
+env/
+
+# SQLite database (Do NOT push)
+db.sqlite3
 
 # Media uploads
 media/
-#>>>>>>> dd1c68e (Player form setup, dashboard fixes, event updates)
+
+# Django staticfiles compiled output
+staticfiles/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SportsBoard - Nepali Sports News</title>
+    <link rel="stylesheet" href="{% static 'news/css/style.css' %}">
+</head>
+<body>
+    <h1>SportsBoard - Latest Sports News</h1>
+    <div id="news-feed">
+        {% for article in articles %}
+            <div class="news-card">
+                <h2><a href="{{ article.link }}" target="_blank">{{ article.title }}</a></h2>
+                <p>{{ article.summary|truncatewords:30 }}</p>
+                <span>{{ article.source }} | {{ article.published }}</span>
+            </div>
+        {% endfor %}
+    </div>
+    <script src="{% static 'js/news.js' %}"></script>
+</body>
+</html>
+

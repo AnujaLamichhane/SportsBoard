@@ -1,0 +1,15 @@
+.news-card {
+    background: #111;
+    color: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.news-card a {
+    color: #1e90ff;
+    text-decoration: none;
+}
+.news-card a:hover {
+    text-decoration: underline;
+}

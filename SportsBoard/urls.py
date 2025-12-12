@@ -15,6 +15,7 @@ urlpatterns = [
 
     path('accounts/', include('allauth.urls')),
     path('organizer/', include('organizer.urls', namespace='organizer')),
+    path('news/', include('news.urls')),
 ]
 
 if settings.DEBUG:

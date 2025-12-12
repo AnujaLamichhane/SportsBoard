@@ -1,16 +1,10 @@
-
+{% extends 'homepage/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="{% static 'css/about.css' %}">
-        <title>About Us - SportsBoard</title>
+{% block title %}About Us - SportsBoard{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">{% endblock %}
 
-    </head>
-    <body>
-
+{% block content %}
         <!-- Hero Section -->
         <div class="hero">
             <h1>About SportsBoard</h1>
@@ -70,6 +64,4 @@
         <footer>
             © 2025 SportsBoard. All Rights Reserved.
         </footer>
-
-    </body>
-</html>
+{% endblock %}

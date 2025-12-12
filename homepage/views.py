@@ -30,6 +30,8 @@ def handle_organizer_redirect(request):
 
 def about(request):
     return render(request, 'homepage/about.html')
+def news(request):
+    return render(request, 'news/index.html')
 def cricket(request):
     return HttpResponse("Welcome to cricket page.")
 def football(request):
