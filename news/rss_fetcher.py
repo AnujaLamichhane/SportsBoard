@@ -9,7 +9,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SportsBoard.settings")
 django.setup()
 # -------------------
-
 from news.models import Article
 
 RSS_FEEDS = {
@@ -32,7 +31,7 @@ def fetch_news():
                     link=entry.link,
                     source=source,
                     published=published
-                )
+               )
     print("News fetched successfully!")
 
 if __name__ == "__main__":

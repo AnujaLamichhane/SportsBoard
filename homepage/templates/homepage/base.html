@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -39,9 +39,53 @@
 
     <!-- Page content -->
     <main>
+
         {% block content %}
         {% endblock %}
+
     </main>
+
+        <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+            <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo">
+            <h3>SportsHub Nepal</h3>
+            <p>Powered by Robust Technology</p>
+            </div>
+
+            <div class="footer-links">
+            <h4>Company</h4>
+            <a href="/about">About Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            </div>
+
+            <div class="footer-social">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            </div>
+
+            <div class="footer-cta">
+            <h4>Ready to Join?</h4>
+            <a href="{% url 'accounts:signup' %}" class="footer-btn">Get Started</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 SportsBoard. All Rights Reserved.</p>
+        </div>
+    </footer>
+<script>
+    window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
+    window.loginUrl = "{% url 'accounts:login' %}";
+
+    </script>
+
     <script src="{% static 'js/buttons.js' %}"></script>
 </body>
 </html>

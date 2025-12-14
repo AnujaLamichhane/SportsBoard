@@ -26,6 +26,13 @@
     --button-hover-black: #333333; /* Slightly lighter black on hover for black buttons */
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box; /* Ensures padding/border is included in element's total width/height */
+}
+
+
 /* --- Base Body & HTML Styles (Centering Content) --- */
 html, body {
     /*height: 100%;
@@ -109,7 +116,7 @@ html, body {
     max-width: 600px;
 
     /* ✅ centers vertically while allowing scroll */
-    margin: 60px auto;
+    margin: 30px auto;
 
 
 }
@@ -117,7 +124,8 @@ html, body {
 .login-box { /* The frosted glass card itself */
 
     border-radius: 70px; /* Very rounded corners */
-    padding: 50px;
+    padding: 80px 20px 30px 20px;
+    ;
    /* box-shadow: 0 15px 50px var(--shadow-medium); /* Deep shadow for depth */
     text-align: center;
 
@@ -135,10 +143,14 @@ html, body {
 .login-title, h3 {
     color: var(--text-color-on-transparent-bg); /* White title */
     margin-bottom: 40px;
-    font-size: 2.5em; /* Large, prominent title */
+    font-size: 3.2em; /* Scales based on screen size*/
+    margin-top: 0;
+    margin-bottom: 40px;
     font-weight: 800; /* Extra bold */
     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for pop */
     letter-spacing: 0.5px;
+
+
 }
 
 /* Labels for "Username", "Password", "Login As" */
@@ -352,4 +364,23 @@ label {
 
 
 
+/* --- Media Query for Small Mobile Devices (Screens < 576px wide) --- */
+@media (max-width: 576px) {
+    /* Make the title smaller on phones */
+    .login-title, h3 {
+        font-size: 8vw; /* Use Viewport Width, which scales aggressively on small screens */
+        margin-top: 50px; /* Set a specific pixel value for top margin on phones */
+        margin-bottom: 25px; /* Reduce bottom margin */
 
+    }
+
+    /* FIX: Reduce padding on the card itself for small screens */
+    .login-box {
+        padding: 40px 15px; /* Less top/bottom padding, tighter side padding */
+    }
+
+    /* FIX: Reduce overall container margin for small screens */
+    .login-container {
+        margin: 20px auto;
+    }
+}

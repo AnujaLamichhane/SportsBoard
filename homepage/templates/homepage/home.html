@@ -1,46 +1,4 @@
 
-{% load static %}
-<html>
-<head>
-    <title>Home</title>
-   <!-- <link rel="stylesheet" href="{% static 'accounts/css/main.css' %}"> -->
-<!--    <link rel="stylesheet" href="{% static 'accounts/css/sports-carousel.css' %}">-->
-<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />-->
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'js/buttons.js' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-</head>
-<body>
-    <header>
-        <div id="datetime"></div>
-        <nav class="navbar">
-            <div class="logo">🏆 <span>SportsBoard</span></div>
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="{% url 'homepage:home' %}">Home</a></li>
-<!--                    <li><a href="/">Home</a></li>-->
-                    <!-- <li><a href="/about">About</a></li> -->
-                    <li class="dropdown">
-                        <a href="#" id="sportsDropdown">Sports </a>
-                        <div class="dropdown-content" id="sportsMenu">
-                            <a href="{% url 'homepage:cricket' %}">🏏 Cricket</a>
-                            <a href="{% url 'homepage:football' %}">⚽ Football</a>
-                            <a href="{% url 'homepage:volleyball' %}">🏐 Volleyball</a>
-                            <a href="{% url 'homepage:basketball' %}">🏀 Basketball</a>
-                            <a href="{% url 'homepage:badminton' %}">🏸 Badminton</a>
-                        </div>
-
-
-                    </li>
-                    <li><a href="/viewmatch">View Matches</a></li>
-                    <li><a href="/notice">News</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
-                <button class="menu-toggle" id="menuToggle">☰</button>
-        </nav>
-    </header>
-
 {% extends 'homepage/base.html' %}
 {% load static %}
         {% block title %}Home - SportsBoard{% endblock %}
@@ -53,13 +11,11 @@
                 <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
                 <!-- <button class="join-btn">Join This</button> -->
 
-            <div class="auth-links">
-                <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>
-
-
                 <div class="auth-links">
-                    <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>       
+                    <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>
+
                 </div>
+
 
             </div>
         </div> 
@@ -68,7 +24,7 @@
             <h1>Today's Featured Matches</h1>
         </div>
 
-    </div>
+
 
 
 
@@ -213,57 +169,6 @@
         <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
     </div> -->
     <!-- time- free ho ki nai in book now / ticket available or not -->
-
-
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-logo">
-            <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo">
-            <h3>SportsHub Nepal</h3>
-            <p>Powered by Robust Technology</p>
-            </div>
-
-            <div class="footer-links">
-            <h4>Company</h4>
-            <a href="/about">About Us</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            </div>
-
-            <div class="footer-social">
-            <h4>Follow Us</h4>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-            </div>
-            </div>
-
-            <div class="footer-cta">
-            <h4>Ready to Join?</h4>
-            <a href="{% url 'accounts:signup' %}" class="footer-btn">Get Started</a>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>© 2025 SportsBoard. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-
-    <script>
-    window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
-    window.loginUrl = "{% url 'accounts:login' %}";
-
-    </script>
-
-    <script src="{% static 'js/buttons.js' %}"></script>
-
-
-</body>
-</html>
-
 {% endblock %}
 
 
