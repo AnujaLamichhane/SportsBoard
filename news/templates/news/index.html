@@ -1,8 +1,8 @@
+
 {% extends 'homepage/base.html' %}
 {% load static %}
         {% block title %}News - SportsBoard{% endblock %}
         {% block content %}
-
 
 
     <h1>SportsBoard - Latest Sports News</h1>
@@ -10,14 +10,25 @@
         {% for article in articles %}
             <div class="news-card">
                 <h2><a href="{{ article.link }}" target="_blank">{{ article.title }}</a></h2>
+
 <!--                {{ article.summary|truncatewords:30 }}-->
                <p>
     {{ article.content|striptags}}
 </p>
+
+                {{ article.summary|truncatewords:30 }}
+
                 <span>{{ article.source }} | {{ article.published }}</span>
             </div>
         {% endfor %}
     </div>
     <script src="{% static 'js/news.js' %}"></script>
+
 {% endblock %}
+
+    
+{% endblock %}
+<!-- </body> -->
+<!-- </html> -->
+
 

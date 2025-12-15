@@ -12,6 +12,7 @@ urlpatterns = [
     path('volleyball/', views.volleyball, name='volleyball'),
     path('basketball/', views.basketball, name='basketball'),
     path('badminton/', views.badminton, name='badminton'),
+    path('logout/', views.logout_user, name='logout'),
    ]
 
 

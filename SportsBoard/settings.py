@@ -205,7 +205,7 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 ACCOUNT_SIGNUP_REDIRECT_URL = '/your-redirect-url/'
 # Skip the intermediate confirmation page
 SOCIALACCOUNT_LOGIN_ON_GET = True
-# SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
 
 # Session settings for Remember Me
 SESSION_COOKIE_AGE = 1209600  # 2 weeks

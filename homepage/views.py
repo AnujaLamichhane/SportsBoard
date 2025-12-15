@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth import logout
 # Create your views here.
 def home(request):
     return render(request, 'homepage/home.html')
@@ -42,3 +43,6 @@ def basketball(request):
     return HttpResponse("Welcome to basketball page.")
 def badminton(request):
     return HttpResponse("Welcome to badminton page.")
+def logout_user(request):
+    logout(request)     # <-- THIS clears login
+    return redirect("/")

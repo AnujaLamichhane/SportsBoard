@@ -3,8 +3,8 @@
     --text-color: #111111;
     --nav-bg: #ffffff;
     --nav-text:#111111;
-    --footer-bg: #111111;
-    --footer-text: #ffffff;
+    --footer-bg: #ffffff;
+    --footer-text: #111111;
   }
 
 /* Light mode overrides */
@@ -190,15 +190,101 @@ body.dark-mode {
       color: #ff7b00;
     }
     #themeToggle {
-      position: fixed;
+      /* position: fixed; */
       top: 24px;
-      right: 40px;
+      right: 20px;
       background: none;
       border: none;
       font-size: 1.5rem;
       cursor: pointer;
       z-index: 999;
     }
+
+    /* --- 1. Container Styling: .user-box --- */
+      .user-box {
+          display: flex;
+          align-items: center;
+          gap: 15px; /* Space between the user info block and the logout button/login buttons */
+          padding: 10px 15px;
+          border-radius: 50px;
+          margin-right: 35px; 
+          
+          /* Subtle Glassmorphism/Dark background effect for contrast in the navbar */
+          background-color: rgba(255, 255, 255, 0.05); /* Very light, transparent background */
+          backdrop-filter: blur(2px); /* Slight blur effect if supported */
+          
+          /* Thin white border for definition */
+          border: 1px solid rgba(255, 255, 255, 0.15); 
+          
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /*Soft shadow for depth*/
+      }
+
+      /* --- 2. Authenticated User Info Styling --- */
+
+      .user-info {
+          display: flex;
+          align-items: center;
+          gap: 8px; /* Space between icon and text */
+      }
+
+      .user-icon {
+          font-size: 1.2em; /* Slightly larger icon */
+          color: #007bff; /* Use your primary blue color for the icon */
+      }
+
+      .welcome-text {
+          font-size: 1em;
+          font-weight: 600;
+          color: var(--nav-text); 
+      }
+
+      /* --- 3. Buttons Styling (Login/Signup/Logout) --- */
+
+      /* Base style for all links/buttons within the box */
+      .user-box a {
+          text-decoration: none;
+          padding: 8px 15px;
+          border-radius: 20px;
+          font-size: 0.95em;
+          font-weight: 700;
+          transition: all 0.3s ease;
+      }
+
+      /* Logout Button (Important Action) */
+      .logout-btn {
+          background-color:var(--bg-color); /* Danger/Red color for high visibility, emphasizing exit */
+          color: var(--nav-text);
+          border: 1px solid #dc3545;
+      }
+
+      .logout-btn:hover {
+          background-color: #c82333;
+          transform: translateY(-1px);
+      }
+
+      /* Login Button (Primary Action) */
+      .login-btn {
+          background: linear-gradient(90deg, #00c6ff, #0072ff);
+          color: var(--nav-text);
+          border: 1px solid var(--nav-text);
+      }
+
+      .login-btn:hover {
+          background-color:var(--bg-color)
+      }
+
+      /* Sign Up Button (Secondary/Outline Style) */
+      .signup-btn {
+          /* background: linear-gradient(90deg, #00c6ff, #0072ff); */
+          background-color: transparent;
+          color: var(--nav-text);/* White text */
+          border: 1px solid var(--nav-text);; /* White outline */
+      }
+
+      .signup-btn:hover {
+          background-color:var(--bg-color); /* White background on hover */
+          color: var(--nav-text);/* Dark text on white background */
+      }
 
     
     @media (max-width: 850px) {
@@ -268,6 +354,14 @@ body.dark-mode {
       .hero.auth-links a{
         margin-top: 5px;
       }
+      .user-box{
+        display: flex;
+      }
+      .theme-toggle-container{
+        order: 3;
+        margin-right:10px;
+      }
+      
     }
 
 .hero {
@@ -280,6 +374,12 @@ body.dark-mode {
   background-color: var(--bg-color);
   color: var(--text-color);
   position: relative;
+} 
+.hero img{
+width: 100%;
+object-fit: cover;
+display: block;
+/* position: fixed; */
 }
 .hero-content {
   position: absolute;
@@ -524,7 +624,7 @@ body.dark-mode {
      
    .main-footer {
       /* background-color: #0f1722; */
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      border-top: 1px solid var(--text-color);
       background-color: var(--footer-bg);
       color: var(--footer-text);
       padding: 50px 40px 20px;
@@ -546,31 +646,31 @@ body.dark-mode {
 
   .footer-logo h3 {
     font-size: 18px;
-    color: #fff;
+    color: var(--footer-text);
   }
 
   .footer-links h4,
   .footer-social h4,
   .footer-cta h4 {
-    color: #fff;
+    color:var(--footer-text);
     font-size: 16px;
     margin-bottom: 10px;
   }
 
   .footer-links a {
     display: block;
-    color: #a0aec0;
+    color:var(--footer-text);
     text-decoration: none;
     margin: 4px 0;
     transition: color 0.3s ease;
   }
 
   .footer-links a:hover {
-    color: #fff;
+    color:var(--footer-bg);
   }
 
   .social-icons a {
-    color: #a0aec0;
+    color:var(--footer-text);
     margin-right: 12px;
     font-size: 18px;
     transition: color 0.3s ease;
@@ -583,7 +683,7 @@ body.dark-mode {
   .footer-btn {
     display: inline-block;
     background: linear-gradient(90deg, #00c6ff, #0072ff);
-    color: white;
+    color:var(--footer-text);
     text-decoration: none;
     padding: 10px 18px;
     border-radius: 8px;
@@ -598,9 +698,9 @@ body.dark-mode {
   .footer-bottom {
     text-align: center;
     font-size: 13px;
-    color: #a0aec0;
+    color: var(--footer-bg);
     margin-top: 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid var(--footer-bg);
     padding-top: 15px;
   }
 

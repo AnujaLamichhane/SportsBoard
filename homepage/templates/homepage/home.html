@@ -1,4 +1,8 @@
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4d785c6 (logout button added)
 {% extends 'homepage/base.html' %}
 {% load static %}
         {% block title %}Home - SportsBoard{% endblock %}
@@ -9,6 +13,7 @@
             <div class="hero-content">
                 <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
                 <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
+<<<<<<< HEAD
                 <!-- <button class="join-btn">Join This</button> -->
 
                 <div class="auth-links">
@@ -17,17 +22,25 @@
                 </div>
 
 
+=======
+                <div class="auth-links">
+                    <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>
+                </div>
+>>>>>>> 4d785c6 (logout button added)
             </div>
         </div> 
         
         <div class="featured-section">
             <h1>Today's Featured Matches</h1>
         </div>
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> 4d785c6 (logout button added)
     <!-- <section class="featured-section">
         <h2>Today's Featured Matches</h2>
         <div class="featured-container">
@@ -65,47 +78,22 @@
     </div> -->
     <section class="value-section">
         <h2 class="value-title">Why Choose SportsBoard?</h2>
-
-<!--        <div class="value-cards">-->
-<!--            <div class="value-card">-->
-<!--                <div class="icon icon-athlete">-->
-<!--                    <i class="fas fa-running"></i>-->
-<!--                </div>-->
-<!--                <h3>For Athletes: Find Your Opportunity</h3>-->
-<!--                <p>Apply for trials, track selections, and build your profile.</p>-->
-<!--            </div>-->
-
-<!--            <div class="value-card">-->
-<!--                <div class="icon icon-organizer">-->
-<!--                    <i class="fas fa-clipboard-list"></i>-->
-<!--                </div>-->
-<!--                <h3>For Organizers: Simplify & Manage</h3>-->
-<!--                <p>Post notices, handle applications, and manage ticket sales easily.</p>-->
-<!--            </div>-->
-
-<!--            <div class="value-card">-->
-<!--                <div class="icon icon-fans">-->
-<!--                    <i class="fas fa-ticket-alt"></i>-->
-<!--                </div>-->
-<!--                <h3>For Fans: Your Ticket to the Action</h3>-->
-<!--                <p>Never miss a match — buy tickets securely and stay updated.</p>-->
-<!--            </div>-->
-<!--        </div>-->
         <div class="value-cards">
-
             <a href="{% url 'homepage:go_athlete' %}" class="value-card">
                 <div class="icon icon-athlete">
                     <i class="fas fa-running"></i>
                 </div>
                 <h3>For Athletes: Find Your Opportunity</h3>
                 <p>Apply for trials, track selections, and build your profile.</p>
-            </a> <a href="{% url 'homepage:go_organizer' %}" class="value-card">
+            </a> 
+            <a href="{% url 'homepage:go_organizer' %}" class="value-card">
                 <div class="icon icon-organizer">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <h3>For Organizers: Simplify & Manage</h3>
                 <p>Post notices, handle applications, and manage ticket sales easily.</p>
-            </a> <div class="value-card">
+            </a> 
+            <div class="value-card">
                 <div class="icon icon-fans">
                     <i class="fas fa-ticket-alt"></i>
                 </div>
@@ -169,6 +157,10 @@
         <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
     </div> -->
     <!-- time- free ho ki nai in book now / ticket available or not -->
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4d785c6 (logout button added)
 {% endblock %}
 
 

@@ -144,7 +144,11 @@ html, body {
     color: var(--text-color-on-transparent-bg); /* White title */
     margin-bottom: 40px;
     font-size: 3.2em; /* Scales based on screen size*/
+
     margin-top: 0;
+
+    margin-top: 0; 
+
     margin-bottom: 40px;
     font-weight: 800; /* Extra bold */
     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for pop */
@@ -372,7 +376,20 @@ label {
         margin-top: 50px; /* Set a specific pixel value for top margin on phones */
         margin-bottom: 25px; /* Reduce bottom margin */
 
+
+       
     }
+
+    /* FIX: Reduce padding on the card itself for small screens */
+    .login-box {
+        padding: 40px 15px; /* Less top/bottom padding, tighter side padding */
+    }
+
+    /* FIX: Reduce overall container margin for small screens */
+    .login-container {
+        margin: 20px auto; 
+    }
+}
 
     /* FIX: Reduce padding on the card itself for small screens */
     .login-box {
@@ -383,4 +400,3 @@ label {
     .login-container {
         margin: 20px auto;
     }
-}
