@@ -3,9 +3,18 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import logout
+from organizer.models import Event
+from django.shortcuts import render, get_object_or_404
+
 # Create your views here.
 def home(request):
-    return render(request, 'homepage/home.html')
+    featured_events = Event.objects.filter(
+        status__in=['LIVE', 'UPCOMING']
+    ).order_by('-created_at') 
+
+    return render(request, 'homepage/home.html',{
+        'featured_events': featured_events
+    })
     # return HttpResponse("Homepage is working!")
 
 
@@ -46,3 +55,7 @@ def badminton(request):
 def logout_user(request):
     logout(request)     # <-- THIS clears login
     return redirect("/")
+# def event_detail(request, id):
+#     event = get_object_or_404(Event, id=id)
+#     return render(request, 'homepage/event_detail.html', {'event': event})
+

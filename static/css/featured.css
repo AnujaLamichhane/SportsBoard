@@ -1,0 +1,150 @@
+
+:root {
+    --bg-color: #ffffff;
+    --text-color: #111111;
+    --nav-bg: #ffffff;
+    --nav-text:#111111;
+    --footer-bg: #ffffff;
+    --footer-text: #111111;
+  }
+
+/* Light mode overrides */
+body.dark-mode {
+    --bg-color: #111111;
+    --text-color: #ffffff;
+    --nav-bg: #111111;
+    --nav-text: #ffffff;
+    --footer-bg: #111111;
+    --footer-text: #ffffff;
+  }
+
+/* --- 1. Featured Section Container --- */
+.featured-section {
+    padding: 60px 20px;
+    background-color: var(--bg-color); /* Deep dark background */
+    color:var(--text-color);
+    width: 95%;
+    height: 50%;
+    max-width: 1100px;
+    overflow: hidden;
+    position: relative;
+    margin-left: 5%;
+}
+
+.featured-title {
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: var(--text-color);
+    padding-left: 10px; /* Aligns with the grid padding */
+}
+
+.featured-title .flame-icon {
+    color: #ff9800; /* Bright Orange accent */
+    margin-right: 10px;
+}
+
+/* --- 2. Grid Layout --- */
+.featured-grid {
+    /* Responsive grid: 3 columns on desktop, adapts down to 1 */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 10px;
+}
+
+/* --- 3. Individual Featured Card (The <a> tag) --- */
+.featured-card {
+    display: flex;
+    flex-direction: column;
+    height: 350px; /* Fixed height for consistent grid appearance */
+    border-radius: 10px;
+    overflow: hidden; /* Ensures image and content stay within rounded corners */
+    text-decoration: none; /* Remove underline from the anchor tag */
+    background-color: #333333; /* Fallback/background for the card body */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 30%;
+}
+
+.featured-card:hover {
+    transform: translateY(-8px); /* Lift card on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+}
+
+/* --- 4. Image Container and Styling --- */
+.featured-img {
+    position: absolute; /* Allows image to be the full background */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.featured-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures image covers the entire card area */
+    display: block;
+    filter: brightness(0.7); /* Darken the image for better text contrast */
+    transition: filter 0.3s;
+}
+
+.featured-card:hover .featured-img img {
+    filter: brightness(0.5); /* Darken slightly more on hover */
+}
+
+/* --- 5. Featured Content (Text Overlay) --- */
+.featured-content {
+    position: relative; /* CRITICAL: Lifts content above the image/overlay */
+    z-index: 10;
+    
+    /* Layout: Push content to the bottom of the card */
+    margin-top: auto; 
+    padding: 20px;
+    width: 100%;
+    
+    /* Gradient overlay for text readability over the image */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+    color: #ffffff;
+}
+
+.featured-content h3 {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.event-status {
+    font-size: 0.9em;
+    color: #ff9800; /* Orange accent for status */
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* --- 6. Book Button (Call to Action) --- */
+.book-btn {
+    display: block;
+    width: 80%;
+    padding: 10px;
+    background-color: #007bff; /* Primary Blue CTA */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+}
+
+.book-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Ensure the empty message is visible */
+.featured-section p {
+    padding-left: 10px;
+}

@@ -13,10 +13,8 @@
 
 <!--                {{ article.summary|truncatewords:30 }}-->
                <p>
-    {{ article.content|striptags}}
-</p>
-
-                {{ article.summary|truncatewords:30 }}
+                    {{ article.content|striptags}}
+                </p>
 
                 <span>{{ article.source }} | {{ article.published }}</span>
             </div>
@@ -25,10 +23,5 @@
     <script src="{% static 'js/news.js' %}"></script>
 
 {% endblock %}
-
-    
-{% endblock %}
-<!-- </body> -->
-<!-- </html> -->
 
 

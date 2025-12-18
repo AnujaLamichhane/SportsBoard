@@ -1,6 +1,5 @@
 # from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 # from django.shortcuts import redirect
-<<<<<<< HEAD
 #
 #
 # class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
@@ -55,7 +54,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 group_name = 'Organizer'
             else:  # Defaults to 'user' or 'athlete'
 
-         role = request.session.pop('login_role', None) 
+             role = request.session.pop('login_role', None) 
         
         # Only process if this is a new signup
         if role and not sociallogin.is_existing:

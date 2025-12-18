@@ -58,9 +58,9 @@ body.dark-mode {
   main {
     padding-top: 95px ;
     padding-left: 1% ;
-    /*padding-right: 5%;*/
+    /* padding-right: 5%; */
     box-sizing: border-box;
-}
+ } 
     .logo {
       display: flex;              
       align-items: center;        
@@ -374,6 +374,7 @@ body.dark-mode {
   background-color: var(--bg-color);
   color: var(--text-color);
   position: relative;
+  
 } 
 .hero img{
 width: 100%;
@@ -698,9 +699,9 @@ display: block;
   .footer-bottom {
     text-align: center;
     font-size: 13px;
-    color: var(--footer-bg);
+    color: var(--footer-text);
     margin-top: 40px;
-    border-top: 1px solid var(--footer-bg);
+    border-top: 1px solid var(--footer-text);
     padding-top: 15px;
   }
 

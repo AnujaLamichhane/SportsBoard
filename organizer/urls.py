@@ -11,5 +11,6 @@ urlpatterns = [
     path('selection/create/', views.selection_form_create, name='selection_form_create'),
     path('events/<int:event_id>/edit/', views.event_edit, name='event_edit'),  # NEW
     path('events/<int:event_id>/delete/', views.event_delete, name='event_delete'),
-
+    path('events/<int:event_id>/', views.event_detail, name='event_detail'),
+    path('book/<int:event_id>/', views.start_booking_process, name='start_booking'),
 ]

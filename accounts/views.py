@@ -15,8 +15,7 @@ def register_view(request):
             user.role = form.cleaned_data.get('role')
             user.save()
             messages.success(request, "Account created successfully! Please login.")
-            return redirect('login')
-    else:
+            return redirect('accounts:login')
         form = CustomUserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 

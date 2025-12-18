@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,14 +24,18 @@
                     <p><strong>Location:</strong> {{ event.location }}</p>
                     <p><strong>Current Status:</strong> <span class="badge bg-warning">{{ event.status }}</span></p>
 
-                    {% if ticket_tiers %}
+                    <!-- {% if ticket_tiers %}
                         <h5 class="mt-3">Ticket Tiers</h5>
                         <ul>
                             {% for tier in ticket_tiers %}
                                 <li>{{ tier.name }}: NRP {{ tier.price }} ({{ tier.available_quantity }} available)</li>
                             {% endfor %}
                         </ul>
-                    {% endif %}
+                    {% endif %} -->
+                    <h4 class="mt-4">Description</h4>
+                    <p>{{ event.description }}</p>
+                    <!-- <button class="book-btn">Book Now</button> -->
+                    <a href="{% url 'organizer:start_booking' event.id %}" class="btn btn-lg book-now-public">Book Now</a>
                 </div>
                 <div class="col-md-6">
                     {% if event.photo %}
@@ -43,8 +46,6 @@
                 </div>
             </div>
 
-            <h4 class="mt-4">Description</h4>
-            <p>{{ event.description }}</p>
 
             <a href="{% url 'organizer:dashboard' %}" class="btn btn-secondary mt-4">Back to Dashboard</a>
         </div>
