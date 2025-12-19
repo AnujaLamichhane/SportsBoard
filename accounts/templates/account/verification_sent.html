@@ -1,0 +1,29 @@
+{% extends "accounts/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your Email" %} | SportsBoard{% endblock %}
+
+{% block content %}
+<h3 class="login-title" style="margin-bottom: 25px;">{% trans "Verify Your Email Address" %}</h3>
+
+<div class="text-white" style="font-weight: 300; opacity: 0.9;">
+    <p>
+        {% blocktrans %}
+        We have sent an email to you for verification. Follow the link provided to finalize the signup process.
+        {% endblocktrans %}
+    </p>
+
+    <p class="mt-4" style="font-size: 0.85rem; color: #ced4da; line-height: 1.5;">
+        {% blocktrans %}
+        If you do not see the verification email in your main inbox, check your spam folder.
+        Please contact us if you do not receive the verification email within a few minutes.
+        {% endblocktrans %}
+    </p>
+</div>
+
+<div class="mt-4 pt-2">
+    <a href="{% url 'account_login' %}" class="btn btn-primary w-100 py-2" style="font-weight: 500; border-radius: 8px;">
+        Return to Login
+    </a>
+</div>
+{% endblock %}

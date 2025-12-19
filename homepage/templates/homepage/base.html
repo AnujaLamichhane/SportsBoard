@@ -40,8 +40,14 @@
                 {% if user.is_authenticated %}
                     <div class="user-info">
                         <i class="fa-solid fa-user-circle user-icon"></i>
+
+
+                      <a href="{% url 'accounts:dashboard_redirect' %}" style="text-decoration: none; color: inherit;">
+
                         <span class="welcome-text">Welcome, {{ user.username }}</span>
+                        </a>
                     </div>
+
 
                     <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
 
@@ -55,47 +61,41 @@
         </nav>
     </header>
 
-    <!-- Page content -->
-    <main>
 
+
+<main>
         {% block content %}
         {% endblock %}
-
     </main>
 
-
-        <footer class="main-footer">
-
-    <!-- footer -->
     <footer class="main-footer">
-
         <div class="footer-container">
             <div class="footer-logo">
-            <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo">
-            <h3>SportsHub Nepal</h3>
-            <p>Powered by Robust Technology</p>
+                <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo" onerror="this.style.display='none'">
+                <h3>SportsHub Nepal</h3>
+                <p>Powered by Robust Technology</p>
             </div>
 
             <div class="footer-links">
-            <h4>Company</h4>
-            <a href="/about">About Us</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+                <h4>Company</h4>
+                <a href="/about">About Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
             </div>
 
             <div class="footer-social">
-            <h4>Follow Us</h4>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-            </div>
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
             </div>
 
             <div class="footer-cta">
-            <h4>Ready to Join?</h4>
-            <a href="{% url 'accounts:signup' %}" class="footer-btn">Get Started</a>
+                <h4>Ready to Join?</h4>
+                <a href="{% url 'account_signup' %}" class="footer-btn">Get Started</a>
             </div>
         </div>
 
@@ -104,19 +104,13 @@
         </div>
     </footer>
 
-<script>
-    window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
-    window.loginUrl = "{% url 'accounts:login' %}";
-
-    </script>
-
-
-
     <script>
         window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
-        window.loginUrl = "{% url 'accounts:login' %}";
+        window.loginUrl = "{% url 'account_login' %}";
     </script>
-
     <script src="{% static 'js/buttons.js' %}"></script>
+
+
+
 </body>
 </html>

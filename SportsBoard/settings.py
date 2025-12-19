@@ -19,7 +19,15 @@ DEBUG = True
 
 # ALLOWED_HOSTS is not strictly required when DEBUG is True,
 # but keeping it is harmless.
-ALLOWED_HOSTS = ['127.0.0.1','localhost']
+ALLOWED_HOSTS = ['127.0.0.1','localhost',
+                 'unliquefiable-barbra-streakily.ngrok-free.dev',
+                ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://unliquefiable-barbra-streakily.ngrok-free.dev'
+]
+
+
 
 # Application definition
 
@@ -63,6 +71,11 @@ MIDDLEWARE = [
 
 SITE_ID = 2 # Required for django.contrib.sites (for allauth)
 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/accounts/login/"
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/"
+
 # --- django-allauth Specific Settings ---
 # Authentication backends (unified and correct)
 AUTHENTICATION_BACKENDS = [
@@ -75,10 +88,10 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = True  # User must still provide a username
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Or "optional" if you don't want to force email verification
-LOGIN_REDIRECT_URL ='/accounts/dashboard-redirect/' # Where to go after a successful login
+# LOGIN_REDIRECT_URL ='/accounts/dashboard-redirect/' # Where to go after a successful login
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # Where to go after logout
 LOGIN_URL = '/accounts/login/'  # The URL where allauth's login form is located
-
+LOGIN_REDIRECT_URL = 'accounts:dashboard_redirect'
 # Forms customisation (if you have them; comment out if not using yet)
 # ACCOUNT_FORMS = {
 #     'login': 'accounts.forms.MyCustomLoginForm',
@@ -166,6 +179,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+DOMAIN = "unliquefiable-barbra-streakily.ngrok-free.dev"
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -174,15 +190,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 # Email settings for allauth's verification (essential if ACCOUNT_EMAIL_VERIFICATION is 'mandatory')
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development: prints emails to console
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development: prints emails to console
 # For production, you'd use a real email backend like SendGrid, Mailgun, etc.
-# EMAIL_HOST = 'smtp.example.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your_email@example.com'
-# EMAIL_HOST_PASSWORD = 'your_email_password'
-# DEFAULT_FROM_EMAIL = 'webmaster@example.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')
+
+DEFAULT_FROM_EMAIL = f"SportsBoard <{os.getenv('EMAIL_USER')}>"
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         # 'APP': {
@@ -202,9 +223,14 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 SOCIALACCOUNT_AUTO_SIGNUP = True
-ACCOUNT_SIGNUP_REDIRECT_URL = '/your-redirect-url/'
+# ACCOUNT_SIGNUP_REDIRECT_URL = LOGIN_URL
+ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login/?verify_email=true'
+
 # Skip the intermediate confirmation page
 SOCIALACCOUNT_LOGIN_ON_GET = True
+# 1. The Adapter for standard Email (Fixes the 127.0.0.1 link)
+ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
+
 SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
 
 # Session settings for Remember Me

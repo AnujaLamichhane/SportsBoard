@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   function updateDateTime() {
     const now = new Date();
-    const options = { 
-      weekday: 'short', 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    const options = {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
     };
     const date = now.toLocaleDateString('en-NP', options);
     const time = now.toLocaleTimeString('en-NP');
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Login Redirect
   const bookButtons = document.querySelectorAll('.book-btn');
   bookButtons.forEach(btn => {
-    btn.addEventListener('click', () => {      
+    btn.addEventListener('click', () => {
       window.location.href = "{% url 'login' %}";
     //     if (isLoggedIn) {
     //      window.location.href = "/book/";
@@ -30,14 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Navbar toggle
-  
+
   const menuToggle = document.getElementById("menuToggle");
   const navLinks = document.getElementById("navLinks");
-  
+
   menuToggle.addEventListener("click", () => {
       navLinks.classList.toggle("active");
   });
-  
+
   const sportsDropdown = document.getElementById("sportsDropdown");
   const sportsMenu = document.getElementById("sportsMenu");
 
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sportsMenu.classList.toggle("open");
     }
   });
-  
+
 
 });
 
