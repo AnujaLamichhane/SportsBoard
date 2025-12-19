@@ -13,6 +13,8 @@ urlpatterns = [
     path('basketball/', views.basketball, name='basketball'),
     path('badminton/', views.badminton, name='badminton'),
     path('logout/', views.logout_user, name='logout'),
+    # path('event/<int:id>/', views.event_detail, name='event_detail'),
+
    ]
 
 

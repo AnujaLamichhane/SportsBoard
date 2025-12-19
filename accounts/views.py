@@ -21,6 +21,7 @@ def register_view(request):
             user.role = role_selected
             user.save()
 
+
             if role_selected == 'organizer':
                 group, created = Group.objects.get_or_create(name='Organizer')
                 user.groups.add(group)
@@ -39,7 +40,11 @@ def register_view(request):
             )
 
     else:
-        form = CustomUserCreationForm()
+
+            # messages.success(request, "Account created successfully! Please login.")
+            # return redirect('accounts:login')
+
+            form = CustomUserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
 

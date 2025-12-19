@@ -5,6 +5,7 @@ from .models import Event, Application, TicketSale, TicketType  # Ensure all mod
 from .forms import EventCreationForm, TicketTypeFormset  # Ensure forms are imported
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from django.conf import settings
 
 
 def is_organizer_check(user):
@@ -177,17 +178,89 @@ def event_delete(request, event_id):
     return render(request, 'organizer/event_confirm_delete.html', {'event': event})
 
 
-def event_detail(request, event_id):
-    # Find the event, ensuring it belongs to the current organizer
-    event = get_object_or_404(Event, pk=event_id, organizer=request.user)
+# def event_detail(request, event_id):
+#     # Find the event, ensuring it belongs to the current organizer
+#     event = get_object_or_404(Event, pk=event_id, organizer=request.user)
 
-    # You can fetch related data here (e.g., applications, sales)
-    # 🚨 Fetch related ticket tiers 🚨
-    ticket_tiers = event.ticket_tiers.all()
+#     # You can fetch related data here (e.g., applications, sales)
+#     # 🚨 Fetch related ticket tiers 🚨
+#     ticket_tiers = event.ticket_tiers.all()
+
+#     context = {
+#         'event': event,
+#         'page_title': event.name,
+#         # ... fetch related stats if needed
+#     }
+#     return render(request, 'organizer/event_detail.html', context)
+
+def event_detail(request, event_id):
+    """
+    Handles both public viewing and secured organizer management access for an event.
+    """
+    
+    # 1. PUBLIC ACCESS: Fetch the event details (no organizer check needed here)
+    event = get_object_or_404(
+        Event.objects.prefetch_related('ticket_tiers'), 
+        pk=event_id
+    )
 
     context = {
         'event': event,
         'page_title': event.name,
-        # ... fetch related stats if needed
+        'is_organizer': False, # Default flag for template logic
+        'ticket_tiers': event.ticket_tiers.all(),
+        # Other necessary public context
     }
+
+    # 2. ORGANIZER DASHBOARD LOGIC (Secured)
+    # Check if the user is authenticated AND the current user is the event's organizer
+    if request.user.is_authenticated and event.organizer == request.user:
+        
+        # Set flag to true to display management sections in the template
+        context['is_organizer'] = True 
+        
+        # --- Calculate and add SECURE STATS to context ---
+        
+        applications = event.application_set.all()
+        paid_sales = event.ticketsale_set.filter(payment_status='PAID') 
+
+        # Financial & Sales Stats
+        total_revenue_result = paid_sales.aggregate(total=Sum('price'))
+        context['total_revenue'] = total_revenue_result['total'] if total_revenue_result['total'] else 0
+        context['total_tickets_sold'] = paid_sales.count()
+        
+        total_capacity_result = event.ticket_tiers.aggregate(total_qty=Sum('available_quantity'))
+        context['total_capacity'] = total_capacity_result['total_qty'] if total_capacity_result['total_qty'] else 0
+
+        # Application Stats
+        context['pending_applications_count'] = applications.filter(status='PENDING').count()
+        context['total_applications_count'] = applications.count()
+        
+        context['recent_applications'] = applications.order_by('-submitted_at')[:5]
+        context['recent_sales'] = paid_sales.order_by('-sale_date')[:5]
+
     return render(request, 'organizer/event_detail.html', context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def start_booking_process(request, event_id):
+    """
+    Handles the booking process start. Access is restricted to logged-in users.
+    If not logged in, redirects to the LOGIN_URL (usually /accounts/login/).
+    """
+    # 1. Check Login Status (Handled automatically by @login_required)
+    
+    # 2. Fetch Event (Now safe to proceed as the user is authenticated)
+    event = get_object_or_404(Event, pk=event_id)
+    
+    # 3. Check for available tickets, etc. (Placeholder logic)
+    if not event.ticket_tiers.exists():
+        return redirect('homepage') # Redirect somewhere safe if no tickets
+        
+    # 4. Proceed to Checkout/Booking Form
+    context = {
+        'event': event,
+        'page_title': f"Booking: {event.name}"
+    }
+    
+    # Assuming you have a template for the actual booking form
+    return render(request, 'organizer/booking_form.html', context)

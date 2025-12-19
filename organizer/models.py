@@ -49,6 +49,8 @@ class Event(models.Model):
     game_type = models.CharField(max_length=20, choices=GAME_TYPE_CHOICES, default='FOOTBALL')
     game_type_other = models.CharField(max_length=100, blank=True, null=True, verbose_name="Specify Other Game")
     photo = models.ImageField(upload_to='event_photos/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return self.name
