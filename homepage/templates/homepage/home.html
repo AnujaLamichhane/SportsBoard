@@ -20,44 +20,33 @@
             </div>
         </div> 
         
-        <div class="featured-section">
-            <h1>Today's Featured Matches</h1>
-        </div>
-    <!-- <section class="featured-section">
-        <h2>Today's Featured Matches</h2>
-        <div class="featured-container">
-            {% for match in featured_matches %}
-            <div class="match-card" >
-                onclick="window.location.href='{% url 'match_detail' match.id %}'"
-            <img src="{{ match.image.url }}" alt="{{ match.title }}">
-            <div class="match-info">
-                <h3>{{ match.title }}</h3>
-                <p>{{ match.date|date:"M d, Y" }} | {{ match.time }}</p>
-                <span class="match-type">{{ match.match_type }}</span>
-                {% if match.is_free %}
-                <span class="tag free">Free</span>
-                {% elif match.tickets_available %}
-                <span class="tag tickets">Tickets Available</span>
-                {% else %}
-                <span class="tag soldout">Sold Out</span>
-                {% endif %}
-            </div>
-            </div>
+
+    <section class="featured-section">
+     <h2 class="featured-title">🔥 Today's Featured Matches</h2>
+
+        <div class="featured-grid">
+            {% for event in featured_events %}
+            <a href="{% url 'organizer:event_detail' event.id %}" class="featured-card">
+
+                <div class="featured-img">
+                    {% if event.photo %}
+                        <img src="{{ event.photo.url }}" alt="{{ event.name }}">
+                    {% endif %}
+                </div>
+
+                <div class="featured-content">
+                    <h3>{{ event.name }}</h3>
+                    <p class="event-status">{{ event.get_status_display }}</p>
+                    <!-- <button class="book-btn">Book Now</button> -->
+                </div>
+
+            </a>
             {% empty %}
-            <p>No featured matches available today.</p>
+            <p style="color:white;">No featured matches yet.</p>
             {% endfor %}
         </div>
-    </section> -->
+    </section>
 
-
-    <!-- <div class="modal" id="matchModal">
-        <div class="modal-content">
-            <h2 id="modalTitle"></h2>
-            <p id="modalDesc"></p>
-            <button class="close-btn" id="closeModal">Close</button>
-            <button class="book-btn">Book Now</button>
-        </div>
-    </div> -->
     <section class="value-section">
         <h2 class="value-title">Why Choose SportsBoard?</h2>
         <div class="value-cards">
@@ -118,30 +107,11 @@
 
         </div>
     </section>
-    <!-- <section class="value-section">
-        <h2>Value Proposition</h2>
-        <div class="value-buttons">
-            <img src="{% static 'images/ath2rr.png' %}" alt="Sports" />
-            <div class="value-btn">
-                <h3>🏃‍♂️ For Athletes</h3>
-                <p>Find trials, build your profile, and get scouted!</p>
-            </div>
-            <div class="value-btn">
-                <h3>🎯 For Organizers</h3>
-                <p>Manage tournaments, handle applications easily.</p>
-            </div>
-            <div class="value-btn">
-                <h3>🎟️ For Fans</h3>
-                <p>Buy tickets securely and never miss a match.</p>
-            </div>
-        </div>
-    </section> -->
     <!-- <div class="content">
         <h1>Welcome to SportsBoard!</h1>
         <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
     </div> -->
     <!-- time- free ho ki nai in book now / ticket available or not -->
-
 {% endblock %}
 
 
