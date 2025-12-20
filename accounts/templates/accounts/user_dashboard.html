@@ -1,27 +1,84 @@
-{% extends "base.html" %}
+{% extends 'homepage/base.html' %}
 {% load static %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h2>👋 Welcome to Your Athlete Dashboard, {{ user.first_name }}!</h2>
+<div class="dashboard-container" style="display: flex; min-height: 90vh; background: var(--bg-color); transition: 0.3s;">
 
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
+    <aside style="width: 280px; background: var(--nav-bg); padding: 2.5rem 1.5rem; border-right: 1px solid rgba(128,128,128,0.1); display: flex; flex-direction: column;">
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <div style="position: relative; display: inline-block;">
+                <img src="{{ user.profile.image.url }}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-color); padding: 3px; background: var(--bg-color);">
+                <div style="position: absolute; bottom: 5px; right: 5px; width: 18px; height: 18px; background: #28a745; border-radius: 50%; border: 3px solid var(--nav-bg);"></div>
             </div>
-        {% endif %}
-
-        <p class="lead">View your match history, team invitations, and manage your profile.</p>
-
-        <div class="card p-4 my-4 border-info">
-            <h4>Complete Your Player Application</h4>
-            <p>Ensure your profile is complete to be eligible for team selections and event participation.</p>
-            <a href="{% url 'accounts:player_application' %}" class="btn btn-info btn-lg">
-                ✍️ View/Submit Player Application
-            </a>
+            <h3 style="margin-top: 15px; color: var(--text-color); font-size: 1.2rem; font-weight: 700;">{{ user.username }}</h3>
+            <p style="font-size: 0.8rem; color: var(--accent-color); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Athlete Account</p>
         </div>
 
+        <nav style="display: flex; flex-direction: column; gap: 8px;">
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; background: var(--accent-color); color: white; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 10px;">🏠 Overview</a>
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; transition: 0.2s; display: flex; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">🏅 My Trials</a>
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; transition: 0.2s; display: flex; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main style="flex: 1; padding: 2.5rem; max-width: 1100px; margin: 0 auto; width: 100%;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+            <div>
+                <h1 style="color: var(--text-color); margin: 0; font-size: 1.8rem;">Performance Dashboard</h1>
+                <p style="color: var(--text-color); opacity: 0.6; margin-top: 5px;">Track your trial applications and event status.</p>
+            </div>
+            <div style="text-align: right;">
+                <div style="color: var(--text-color); font-weight: 600;">{% now "l" %}</div>
+                <div style="color: var(--text-color); opacity: 0.5; font-size: 0.9rem;">{% now "F j, Y" %}</div>
+            </div>
+        </header>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 3.5rem;">
+            <div style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);">
+                <p style="margin: 0; opacity: 0.6; font-size: 0.85rem; font-weight: 600; color: var(--text-color);">Applied Trials</p>
+                <h2 style="margin: 10px 0 0 0; color: var(--accent-color); font-size: 2rem;">{{ total_joined }}</h2>
+            </div>
+            <div style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);">
+                <p style="margin: 0; opacity: 0.6; font-size: 0.85rem; font-weight: 600; color: var(--text-color);">Notifications</p>
+                <h2 style="margin: 10px 0 0 0; color: #ff7b00; font-size: 2rem;">0</h2>
+            </div>
         </div>
-{% endblock content %}
+
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--text-color); font-size: 1.3rem;">My Applied Events</h3>
+                <a href="{% url 'homepage:view_events' %}" style="color: var(--accent-color); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Find More +</a>
+            </div>
+
+            {% for app in user_apps %}
+            <div style="background: var(--nav-bg); padding: 1.25rem 1.75rem; border-radius: 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; border-left: 6px solid var(--accent-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: 0.3s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div>
+                    <h4 style="margin: 0; color: var(--text-color); font-size: 1.1rem;">{{ app.event.name }}</h4>
+                    <div style="display: flex; gap: 15px; margin-top: 5px;">
+                        <small style="color: var(--text-color); opacity: 0.6;">📍 {{ app.event.location }}</small>
+                        <small style="color: var(--text-color); opacity: 0.6;">📅 {{ app.event.date_time|date:"M d, Y" }}</small>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 25px;">
+                    <span style="padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
+                        {% if app.status == 'APPROVED' %} background: rgba(40, 167, 69, 0.15); color: #28a745;
+                        {% elif app.status == 'PENDING' %} background: rgba(255, 193, 7, 0.15); color: #f1c40f;
+                        {% else %} background: rgba(220, 53, 69, 0.15); color: #dc3545; {% endif %}">
+                        {{ app.get_status_display }}
+                    </span>
+                    <a href="{% url 'organizer:event_detail' app.event.id %}" style="color: var(--text-color); opacity: 0.8; text-decoration: none; font-size: 1.1rem;">➔</a>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 4rem 2rem; background: var(--nav-bg); border-radius: 20px; border: 2px dashed rgba(128,128,128,0.2);">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🏟️</div>
+                <h4 style="color: var(--text-color); margin-bottom: 0.5rem;">No Applications Found</h4>
+                <p style="color: var(--text-color); opacity: 0.6; margin-bottom: 1.5rem;">You haven't applied for any trials or events yet.</p>
+                <a href="{% url 'homepage:view_events' %}" style="background: var(--accent-color); color: white; padding: 10px 25px; border-radius: 8px; text-decoration: none; font-weight: 600;">Browse Events</a>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+{% endblock %}

@@ -10,7 +10,7 @@ urlpatterns = [
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
     # path('organizer-dashboard/', views.organizer_dashboard, name='organizer_dashboard'),
     path('google/custom-login/', views.custom_google_login, name='custom_google_login'),
-    path('apply/player/', views.player_application_view, name='player_application'),
+    # path('apply/player/', views.player_application_view, name='player_application'),
 # path('apply/<int:event_id>/', views.player_application_view, name='player_apply'),
 #     path('google/login/', views.custom_google_login, name='custom_google_login'),
 

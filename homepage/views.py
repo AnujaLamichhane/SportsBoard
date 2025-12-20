@@ -59,3 +59,11 @@ def logout_user(request):
 #     event = get_object_or_404(Event, id=id)
 #     return render(request, 'homepage/event_detail.html', {'event': event})
 
+def all_events(request):
+    # This extracts every event created by organizers
+    events = Event.objects.all().order_by('-created_at')
+
+    return render(request, 'homepage/all_events.html', {
+        'events': events,
+        'page_title': 'All Matches & Events'
+    })

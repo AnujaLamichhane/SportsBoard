@@ -1,0 +1,25 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="featured-section">
+    <h2 class="featured-title">🏆 All Scheduled Events</h2>
+    <div class="featured-grid">
+        {% for event in events %}
+            <a href="{% url 'organizer:event_detail' event.id %}" class="featured-card">
+                <div class="featured-img">
+                    {% if event.photo %}
+                        <img src="{{ event.photo.url }}" alt="{{ event.name }}">
+                    {% endif %}
+                </div>
+                <div class="featured-content">
+                    <h3>{{ event.name }}</h3>
+                    <p class="event-status">{{ event.get_status_display }}</p>
+                </div>
+            </a>
+        {% empty %}
+            <p>No events found.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

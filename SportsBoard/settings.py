@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'matches',
+
     'homepage',
     'organizer',
 
@@ -83,10 +83,14 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',  # For allauth methods (email, social)
 ]
 
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"  # <--- CHANGED: Allows login with either username or email
-ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_AUTHENTICATION_METHOD = "username_email"  # <--- CHANGED: Allows login with either username or email
+# ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+# ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = True  # User must still provide a username
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+# ACCOUNT_USERNAME_REQUIRED = True  # User must still provide a username
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Or "optional" if you don't want to force email verification
 # LOGIN_REDIRECT_URL ='/accounts/dashboard-redirect/' # Where to go after a successful login
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # Where to go after logout

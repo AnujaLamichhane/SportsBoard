@@ -728,3 +728,18 @@ display: block;
     display: block;      /* Ensures the whole card acts as the link */
 }
 
+
+/*added for user dashboard*/
+.dashboard-container {
+    background-color: var(--bg-main);
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
