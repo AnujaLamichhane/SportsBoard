@@ -9,8 +9,7 @@ from django.contrib.auth.models import Group
 from allauth.account.utils import complete_signup
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
-from organizer.models import Event, Application
-from accounts.models import Profile
+
 
 @csrf_protect
 def register_view(request):
@@ -21,7 +20,6 @@ def register_view(request):
             role_selected = form.cleaned_data.get('role')
             user.role = role_selected
             user.save()
-
 
             if role_selected == 'organizer':
                 group, created = Group.objects.get_or_create(name='Organizer')
@@ -41,11 +39,7 @@ def register_view(request):
             )
 
     else:
-
-            # messages.success(request, "Account created successfully! Please login.")
-            # return redirect('accounts:login')
-
-            form = CustomUserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
 
 
@@ -194,6 +188,8 @@ def custom_google_login(request):
         return redirect('login')
     request.session['login_role'] = role
     return oauth2_login(request)
+
+
 
 
 

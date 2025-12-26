@@ -1,10 +1,16 @@
 
+
 # from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 # from django.shortcuts import redirect
 
 #
 #
 #
+
+#
+#
+#
+
 # from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 # from django.contrib.auth.models import Group
 #
@@ -72,22 +78,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
 
             if role == 'organizer':
                 group_name = 'Organizer'
-
-
-
-            else:  # Defaults to 'user' or 'athlete'
-
-             role = request.session.pop('login_role', None) 
-        
-        # Only process if this is a new signup
-        if role and not sociallogin.is_existing:
-            user = sociallogin.user # The user object is available here before final save
-            
-            if role == 'organizer':
-                group_name = 'Organizer'
-            else: # Defaults to 'user' or 'athlete'
-
-
+            else:
                 group_name = 'Athlete'
 
             # Note: We can't use user.groups.add(group) before the user is saved.
