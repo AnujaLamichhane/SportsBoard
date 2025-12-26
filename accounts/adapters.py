@@ -1,6 +1,16 @@
+
+
+# from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+# from django.shortcuts import redirect
+
 #
 #
 #
+
+#
+#
+#
+
 # from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 # from django.contrib.auth.models import Group
 #

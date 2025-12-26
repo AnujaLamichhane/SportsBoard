@@ -3,9 +3,8 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit,Row, Column, Div
-from .models import Event # Import the Event model
 from django.forms import inlineformset_factory # Import this utility
-from .models import Event, TicketType # Ensure TicketType is imported
+from .models import Event,Match, TicketType # Ensure TicketType is imported
 
 
 class EventCreationForm(forms.ModelForm):
@@ -75,3 +74,14 @@ TicketTypeFormset = inlineformset_factory(
         can_delete=True
     )
 
+# Add this at the bottom of your forms.py
+MatchFormset = inlineformset_factory(
+    Event,
+    Match,
+    fields=('game_type', 'team_a', 'team_b', 'match_time', 'venue'),
+    extra=1,  # Show 1 empty row by default
+    can_delete=True,
+    widgets={
+        'match_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+    }
+)

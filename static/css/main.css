@@ -5,9 +5,12 @@
     --nav-text:#111111;
     --footer-bg: #ffffff;
     --footer-text: #111111;
+    --bg-main: #f5f5f5;
+--bg-card: #ffffff;
+
   }
 
-/* Light mode overrides */
+/* dark mode overrides */
 body.dark-mode {
     --bg-color: #111111;
     --text-color: #ffffff;
@@ -15,6 +18,9 @@ body.dark-mode {
     --nav-text: #ffffff;
     --footer-bg: #111111;
     --footer-text: #ffffff;
+    --bg-main: #0f0f0f;
+--bg-card: #1a1a1a;
+
   }
   
   
@@ -395,6 +401,7 @@ display: block;
   left: 6%;
   color: black;
   /* max-width: 250px; */
+
 }
 .hero-content h2 {
   font-size: 2.5em;
@@ -727,5 +734,194 @@ display: block;
     text-decoration: none; /* Removes the underline */
     color: inherit;      /* Ensures text color remains white/default */
     display: block;      /* Ensures the whole card acts as the link */
+}
+
+
+/*added for user dashboard*/
+.dashboard-container {
+    background-color: var(--bg-main);
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* updated */
+
+/* --- Fix: Images not being cut --- */
+.events-main-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+      /* Prevent overlap with right-side calendar */
+    margin-right: 0px; /* Calendar width + some spacing */
+}
+
+.event-glass-card {
+    background: var(--nav-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    text-decoration: none;
+    border: 1px solid rgba(128, 128, 128, 0.1);
+    transition: 0.3s;
+}
+
+.event-img-box {
+    width: 100%;
+    height: 180px; /* Fixed height for consistency */
+    position: relative;
+    background: #000;
+    overflow: hidden;
+
+}
+
+.event-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* THIS ENSURES IMAGES ARE NEVER CUT */
+}
+
+.event-status-tag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #ff7b00;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.event-text-box { padding: 15px; color: var(--text-color); }
+
+/* --- Fix: Small, Clean Right-Side Calendar --- */
+
+/* ===================== */
+/* PULSE ANIMATION */
+/* ===================== */
+
+@keyframes redPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 45, 45, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(255, 45, 45, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 45, 45, 0);
+    }
+}
+
+.calendar-widget-box {
+    background: var(--nav-bg);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.widget-header { color: #ff7b00; font-weight: 700; margin-bottom: 15px; }
+
+/* REMOVING JQUERY UGLY BORDERS & LIGHT BACKGROUNDS */
+#right-side-calendar .ui-datepicker,#right-side-calendar .ui-widget-content {
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+.ui-datepicker-header {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-color) !important;
+    border-bottom: 1px solid rgba(128,128,128,0.1) !important;
+     font-weight: 600;
+}
+
+.ui-datepicker-prev,
+.ui-datepicker-next {
+    cursor: pointer;
+}
+
+
+
+/* Month text */
+.ui-datepicker-title {
+    color: #ff7b00;
+}
+
+/* Week names */
+.ui-datepicker th {
+    color: rgba(128,128,128,0.7);
+    font-size: 0.75rem;
+}
+
+/* Date cells */
+.ui-datepicker td a {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-color) !important;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    margin: auto;
+    transition: 0.2s;
+}
+
+/* Hover */
+.ui-datepicker td a:hover {
+    background: rgba(255, 123, 0, 0.2) !important;
+}
+
+/* Today */
+.ui-datepicker-today a {
+    background: #ff7b00 !important;
+    color: #111 !important;
+    font-weight: 700;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ff7b00;
+}
+.ui-datepicker-today.highlight-event a {
+    background: #ff2d2d !important;
+    color: #fff !important;
+}
+
+
+/* Event Highlight  */
+.highlight-event a {
+  border: 2px solid #ff2d2d !important;
+    background:  #ff2d2d !important;
+    color: #fff !important;
+    font-weight: 700;
+    border-radius: 50%;
+    animation: redPulse 2s infinite;
+}
+
+.timeline-mini-card {
+    background: rgba(128, 128, 128, 0.05);
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border-left: 4px solid #ff7b00;
+    color: var(--text-color);
+}
+/* FORCE Bootstrap row behavior for Events page */
+.events-page .row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start;
+}
+
+/* FORCE calendar column to the RIGHT */
+.events-page .col-lg-3 {
+    margin-left: auto;
 }
 

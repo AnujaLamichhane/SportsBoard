@@ -1,0 +1,98 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container-fluid py-4 px-4 events-page">
+   <div class="row">
+     <div class="col-lg-9 col-md-8 order-lg-1 order-2">
+            <h2 class="mb-4 fw-bold" style="color: var(--text-color);">🏆 All Scheduled Events</h2>
+
+            <div class="events-main-layout">
+                {% for event in events %}
+<!--                    <a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card">-->
+                       <a href="{% url 'organizer:event_detail' event.id %}"
+   class="event-glass-card"
+   data-date="{{ event.date_time|date:'Y-m-d' }}">
+
+                        <div class="event-img-box">
+                            {% if event.photo %}
+                                <img src="{{ event.photo.url }}" alt="{{ event.name }}">
+                            {% endif %}
+                            <div class="event-status-tag">{{ event.get_status_display }}</div>
+                        </div>
+                        <div class="event-text-box">
+                            <h3>{{ event.name }}</h3>
+                            <p><i class="fas fa-calendar-alt me-2"></i>{{ event.date_time|date:"M d, Y" }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 order-lg-2 order-1">
+            <div class="sticky-top" style="top: 110px; z-index: 10;">
+                <div class="calendar-widget-box">
+                    <h5 class="widget-header">📅 Event Schedule</h5>
+
+                    <div id="right-side-calendar"></div>
+
+                    <div class="mini-timeline mt-4">
+                        <h6 class="timeline-label">Quick Timeline</h6>
+                        {% for event in events|slice:":2" %}
+                        <div class="timeline-mini-card">
+                            <span class="d-block fw-bold">{{ event.name }}</span>
+                            <span class="small text-warning">{{ event.date_time|date:"D, M d" }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+   <script>
+$(function() {
+    var eventDates = {{ event_dates_json|safe }};
+
+    $("#right-side-calendar").datepicker({
+        beforeShowDay: function(date) {
+            var dateString = $.datepicker.formatDate('yy-mm-dd', date);
+            if (eventDates.indexOf(dateString) > -1) {
+                return [true, "highlight-event", "Event Day"];
+            }
+            return [true, "", ""];
+        },
+
+        onSelect: function() {
+            var selectedDate = $.datepicker.formatDate(
+                'yy-mm-dd',
+                $(this).datepicker('getDate')
+            );
+
+            let found = false;
+
+            $(".event-glass-card").each(function() {
+                if ($(this).data("date") === selectedDate) {
+                    $(this).fadeIn(200);
+                    found = true;
+                } else {
+                    $(this).fadeOut(150);
+                }
+            });
+
+            if (found) {
+                $('html, body').animate({
+                    scrollTop: $(".events-main-layout").offset().top - 100
+                }, 500);
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}

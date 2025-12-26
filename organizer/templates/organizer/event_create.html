@@ -6,43 +6,76 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'organizer/css/dashboard.css' %}">
 
+<template id="empty-match-template">
+    <div class="mb-3 p-3 border border-secondary rounded match-form-item bg-dark">
+        {{ match_formset.empty_form|crispy }}
+    </div>
+</template>
+
 <template id="empty-ticket-tier-template">
-    <div class="mb-3 p-2 border border-secondary rounded formset-item">
-        {% include "organizer/ticket_type_form_snippet.html" with form=formset.empty_form %}
+    <div class="mb-3 p-2 border border-secondary rounded ticket-formset-item">
+        {{ formset.empty_form|crispy }}
     </div>
 </template>
 
 <body class="bg-dark">
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-10">
                 <div class="card bg-dark-card text-white p-4 shadow-lg">
                     <h2 class="text-white border-bottom pb-2 mb-4">{{ page_title }}</h2>
 
                     <form method="post" enctype="multipart/form-data" id="event-form">
                         {% csrf_token %}
 
-                        {{ form|crispy }}
-
-                        <h4 class="text-white border-bottom pb-2 mt-5 mb-3">Ticket Tiers & Pricing</h4>
-
-                        {{ formset.management_form }}
-                        <div id="ticket-formset-container">
-                            {% for form in formset %}
-                                <div class="mb-3 p-2 border border-secondary rounded formset-item">
-                                    {{ form|crispy }}
-                                </div>
-                            {% endfor %}
+                        <div class="section-box mb-5">
+                            <h4 class="text-warning mb-3"><i class="fas fa-info-circle"></i> General Information</h4>
+                            {{ form|crispy }}
                         </div>
 
-                        <button type="button" class="btn btn-outline-warning mt-2 mb-4" id="add-ticket-tier">
-                            <i class="fas fa-plus"></i> Add Another Ticket Tier
-                        </button>
+                        <div class="section-box mb-5">
+                            <h4 class="text-warning border-bottom pb-2 mb-3"><i class="fas fa-calendar-alt"></i> Match Schedule</h4>
+                            {{ match_formset.management_form }}
+                            <div id="match-formset-container">
+                                {% for m_form in match_formset %}
+                                    <div class="mb-3 p-3 border border-secondary rounded match-form-item bg-dark">
+                                        {{ m_form|crispy }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-info btn-sm" id="add-match">
+                                <i class="fas fa-plus"></i> Add Another Match
+                            </button>
+                        </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-4">
+                        <div class="section-box mb-4">
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                <h4 class="text-warning mb-0"><i class="fas fa-ticket-alt"></i> Tickets & Pricing</h4>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isFreeEvent">
+                                    <label class="form-check-label text-white-50" for="isFreeEvent">Free for All</label>
+                                </div>
+                            </div>
+
+                            <div id="ticket-logic-container">
+                                {{ formset.management_form }}
+                                <div id="ticket-formset-container">
+                                    {% for t_form in formset %}
+                                        <div class="mb-3 p-2 border border-secondary rounded ticket-formset-item">
+                                            {{ t_form|crispy }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <button type="button" class="btn btn-outline-warning btn-sm" id="add-ticket-tier">
+                                    <i class="fas fa-plus"></i> Add Ticket Tier
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-5 border-top pt-4">
                             <a href="{% url 'organizer:dashboard' %}" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-warning">
-                                Create Event
+                            <button type="submit" class="btn btn-warning px-5 fw-bold">
+                                Create Sports Week
                             </button>
                         </div>
                     </form>
@@ -51,58 +84,63 @@
         </div>
     </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // -----------------------------------------------------------------
-    // 1. Game Type Toggle Script (Existing and Correct)
-    // -----------------------------------------------------------------
+    const $ = jQuery;
+
+    // --- 1. Game Type Toggle ---
     const gameTypeSelect = document.getElementById('id_game_type');
     const otherFieldDiv = document.getElementById('div_id_game_type_other');
-
-    function toggleOtherField() {
-        if (gameTypeSelect.value === 'OTHER') {
-            otherFieldDiv.style.display = 'block';
-        } else {
-            otherFieldDiv.style.display = 'none';
-        }
+    if(gameTypeSelect && otherFieldDiv) {
+        const toggleOther = () => otherFieldDiv.style.display = gameTypeSelect.value === 'OTHER' ? 'block' : 'none';
+        toggleOther();
+        gameTypeSelect.addEventListener('change', toggleOther);
     }
 
-    toggleOtherField();
-    gameTypeSelect.addEventListener('change', toggleOtherField);
+    // --- 2. Free Event Toggle ---
+    const freeToggle = document.getElementById('isFreeEvent');
+    const ticketContainer = document.getElementById('ticket-logic-container');
 
-    // -----------------------------------------------------------------
-    // 2. Ticket Formset Management Script (CLEANED AND FIXED)
-    // -----------------------------------------------------------------
-    const $ = jQuery;
-    const addTicketBtn = $('#add-ticket-tier');
-    const formsetContainer = $('#ticket-formset-container');
-    const managementForm = $('#id_tickettype_set-TOTAL_FORMS');
-
-    // Get the HTML content from the template tag
-    const emptyTemplate = $('#empty-ticket-tier-template').html();
-
-    addTicketBtn.click(function() {
-        let total = parseInt(managementForm.val());
-
-        // 1. Replace the __prefix__ placeholder with the new index
-        let newFormHtml = emptyTemplate.replace(/__prefix__/g, total);
-
-        // 2. Wrap the new HTML and append to the container
-        let newForm = $(newFormHtml);
-        formsetContainer.append(newForm);
-
-        // Optional: Hide the delete checkbox on the new form
-        newForm.find('.form-check').hide();
-
-        // 3. Increment the total forms count
-        managementForm.val(total + 1);
-
-        // 4. Scroll to the new form (optional UX improvement)
-        newForm[0].scrollIntoView({ behavior: 'smooth', block: 'end' });
+    freeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            ticketContainer.style.opacity = '0.3';
+            ticketContainer.style.pointerEvents = 'none';
+            // Optional: Clear ticket inputs if "Free" is checked
+            $(ticketContainer).find('input').val('');
+        } else {
+            ticketContainer.style.opacity = '1';
+            ticketContainer.style.pointerEvents = 'all';
+        }
     });
+
+    // --- 3. Generic Formset Adder Function ---
+    function setupFormset(btnId, containerId, managementId, templateId) {
+        const btn = $(`#${btnId}`);
+        const container = $(`#${containerId}`);
+        const totalForms = $(`#${managementId}`);
+        const template = $(`#${templateId}`).html();
+
+        btn.click(function() {
+            let total = parseInt(totalForms.val());
+            let newHtml = template.replace(/__prefix__/g, total);
+            let $newForm = $(newHtml);
+
+            container.append($newForm);
+            totalForms.val(total + 1);
+
+            // Hide delete checkboxes on new forms
+            $newForm.find('.form-check').has('input[id$="-DELETE"]').hide();
+            $newForm[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
+
+    // Initialize Match Formset (Matches model uses matches_set by default or related_name)
+    // Check your console if the ID doesn't match; Django usually uses 'id_match_set-TOTAL_FORMS'
+    setupFormset('add-match', 'match-formset-container', 'id_match_set-TOTAL_FORMS', 'empty-match-template');
+
+    // Initialize Ticket Formset
+    setupFormset('add-ticket-tier', 'ticket-formset-container', 'id_tickettype_set-TOTAL_FORMS', 'empty-ticket-tier-template');
 });
 </script>
-
 </body>

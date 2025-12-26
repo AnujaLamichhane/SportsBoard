@@ -155,8 +155,26 @@ def role_based_redirect(request):
 
 @login_required
 def user_dashboard(request):
-    return render(request, 'accounts/user_dashboard.html')
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    # 1. Look for all Applications where the applicant_name matches the username
+    # We use username because that's the unique string we have for "menaka"
+    user_apps = Application.objects.filter(applicant_name=request.user.username)
 
+    # 2. Extract the event IDs from those applications
+    event_ids = user_apps.values_list('event_id', flat=True)
+
+    # 3. Get the actual Event objects to display on the dashboard
+    joined_events = Event.objects.filter(id__in=event_ids)
+
+    context = {
+        'user': request.user,
+        'profile': profile,
+        'joined_events': joined_events,
+        'total_joined': joined_events.count(),
+        'title': 'User Dashboard',
+        'user_apps': user_apps, # Passing apps to see statuses
+    }
+    return render(request, 'accounts/user_dashboard.html', context)
 
 @login_required
 def organizer_dashboard(request):
@@ -171,16 +189,8 @@ def custom_google_login(request):
     request.session['login_role'] = role
     return oauth2_login(request)
 
-@login_required
-def player_application_view(request):
-
-    context = {
-        # 'form': form,
-        'page_title': 'Player Application',
-    }
 
 
-    return render(request, 'accounts/player_application_form.html', context)
 
 
 
