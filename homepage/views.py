@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from organizer.models import Event
 from django.shortcuts import render, get_object_or_404
+import json
+from django.utils import timezone
+
 
 # Create your views here.
 def home(request):
@@ -63,7 +66,17 @@ def all_events(request):
     # This extracts every event created by organizers
     events = Event.objects.all().order_by('-created_at')
 
+    upcoming_events = Event.objects.filter(
+        date_time__gte=timezone.now()
+    ).order_by('date_time')
+
+    # 🚨 NEW: Create a list of date strings for the JavaScript calendar
+    # Format: ['2025-12-26', '2025-12-27']
+    event_dates = [e.date_time.strftime('%Y-%m-%d') for e in upcoming_events]
+
     return render(request, 'homepage/all_events.html', {
         'events': events,
+        'upcoming_events': upcoming_events,
+        'event_dates_json': json.dumps(event_dates),
         'page_title': 'All Matches & Events'
     })

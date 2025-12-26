@@ -2,10 +2,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Sum, Count, Q
 from django.shortcuts import render, redirect, get_object_or_404  # Ensure get_object_or_404 is imported
 from .models import Event, Application, TicketSale, TicketType  # Ensure all models are imported
-from .forms import EventCreationForm, TicketTypeFormset  # Ensure forms are imported
+from .forms import EventCreationForm, TicketTypeFormset, MatchFormset  # Ensure forms are imported
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.conf import settings
+import uuid
 
 
 def is_organizer_check(user):
@@ -51,7 +52,9 @@ def organizer_dashboard(request):
     ).count()
 
     # --- 2. Recent Events and Sales ---
-    recent_events = organizer_events.order_by('-date_time')[:5]
+    # recent_events = organizer_events.order_by('-date_time')[:5]
+
+    recent_events = organizer_events.prefetch_related('matches', 'ticket_tiers').order_by('-date_time')[:5]
 
     recent_sales = TicketSale.objects.filter(
         event__in=organizer_events
@@ -85,42 +88,47 @@ def organizer_dashboard(request):
 @login_required
 @user_passes_test(is_organizer_check, login_url='/')
 def create_event(request):
-    # Initialize forms for both POST failure and initial GET request
     form = EventCreationForm()
-    formset = TicketTypeFormset(instance=None)  # Initialize the formset with no instance
+    formset = TicketTypeFormset(instance=None)
+    match_formset = MatchFormset(instance=None)
 
     if request.method == 'POST':
         form = EventCreationForm(request.POST, request.FILES)
 
         if form.is_valid():
-            # Save the event temporarily to get an instance (event object)
             event = form.save(commit=False)
             event.organizer = request.user
             event.save()
 
-            # Now initialize formset with the new event instance
             formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
+            match_formset = MatchFormset(request.POST, request.FILES, instance=event)
 
-            if formset.is_valid():
-                formset.save()
-                # 🚨 SUCCESS PATH: Redirect and exit 🚨
+            # Check matches first
+            if match_formset.is_valid():
+                match_formset.save()
+
+                # Check tickets. If valid, save them.
+                # If they are empty/invalid but matches are fine, we still treat it as a success (Free Event)
+                if formset.is_valid():
+                    formset.save()
+
+                # messages.success(request, "Tournament Created Successfully!")
                 return redirect('organizer:dashboard')
-            else:
-                # Formset failed validation. We need to preserve the event instance
-                # for the formset errors, but delete the event if necessary
-                # (or just let the user fix the formset).
-                # The execution falls through to the final render statement.
-                pass
         else:
-            # Main form failed validation. Re-initialize formset from POST data
-            # to show errors, but without an instance (since event didn't save).
-            formset = TicketTypeFormset(request.POST, request.FILES, instance=None)
-            # The execution falls through to the final render statement.
-            pass
+            # Re-bind formsets to show errors if main form is invalid
+            formset = TicketTypeFormset(request.POST, request.FILES)
+            match_formset = MatchFormset(request.POST, request.FILES)
 
-    # 🚨 GUARANTEED RETURN PATH: Renders the form for GET, invalid main form, or invalid formset 🚨
-    context = {'form': form, 'formset': formset, 'page_title': 'Create New Event'}
+    context = {
+        'form': form,
+        'formset': formset,
+        'match_formset': match_formset,
+        'page_title': 'Create New Event'
+    }
     return render(request, 'organizer/event_create.html', context)
+
+
+
 
 def selection_form_create(request):
     # This page will contain logic to select an event and configure player fields
@@ -129,36 +137,39 @@ def selection_form_create(request):
     return render(request, 'organizer/selection_form_create.html', context)
 
 
-# --- NEW: Edit Event Function ---
+
 @login_required
 @user_passes_test(is_organizer_check, login_url='/')
 def event_edit(request, event_id):
-    # Ensure the event exists and belongs to the current organizer
     event = get_object_or_404(Event, pk=event_id, organizer=request.user)
 
     if request.method == 'POST':
         form = EventCreationForm(request.POST, request.FILES, instance=event)
         formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
+        match_formset = MatchFormset(request.POST, request.FILES, instance=event)
 
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid() and match_formset.is_valid():
             form.save()
-            formset.save()
+            match_formset.save()
+
+            if formset.is_valid():
+                formset.save()
+
             messages.success(request, f"Event '{event.name}' updated successfully!")
             return redirect('organizer:event_detail', event_id=event.pk)
-
     else:
-        # GET request: Load existing data
         form = EventCreationForm(instance=event)
-        # Pass the event instance to the formset to load existing ticket tiers
         formset = TicketTypeFormset(instance=event)
+        match_formset = MatchFormset(instance=event)
 
     context = {
         'form': form,
         'formset': formset,
+        'match_formset': match_formset,  # Don't forget this!
         'page_title': f'Edit Event: {event.name}',
-        'event': event  # Pass event for context/delete button
+        'event': event
     }
-    return render(request, 'organizer/event_create.html', context)  # Reusing event_create template
+    return render(request, 'organizer/event_create.html', context)
 
 
 # --- NEW: Delete Event Function ---
@@ -178,21 +189,6 @@ def event_delete(request, event_id):
     return render(request, 'organizer/event_confirm_delete.html', {'event': event})
 
 
-# def event_detail(request, event_id):
-#     # Find the event, ensuring it belongs to the current organizer
-#     event = get_object_or_404(Event, pk=event_id, organizer=request.user)
-
-#     # You can fetch related data here (e.g., applications, sales)
-#     # 🚨 Fetch related ticket tiers 🚨
-#     ticket_tiers = event.ticket_tiers.all()
-
-#     context = {
-#         'event': event,
-#         'page_title': event.name,
-#         # ... fetch related stats if needed
-#     }
-#     return render(request, 'organizer/event_detail.html', context)
-
 def event_detail(request, event_id):
     """
     Handles both public viewing and secured organizer management access for an event.
@@ -200,9 +196,11 @@ def event_detail(request, event_id):
     
     # 1. PUBLIC ACCESS: Fetch the event details (no organizer check needed here)
     event = get_object_or_404(
-        Event.objects.prefetch_related('ticket_tiers'), 
+        Event.objects.prefetch_related('ticket_tiers','matches'),
         pk=event_id
     )
+
+    matches = event.matches.all().order_by('match_time')
 
     context = {
         'event': event,
@@ -210,6 +208,7 @@ def event_detail(request, event_id):
         'is_organizer': False, # Default flag for template logic
         'ticket_tiers': event.ticket_tiers.all(),
         # Other necessary public context
+        'matches': matches,
     }
 
     # 2. ORGANIZER DASHBOARD LOGIC (Secured)
@@ -243,24 +242,46 @@ def event_detail(request, event_id):
 
 @login_required(login_url=settings.LOGIN_URL)
 def start_booking_process(request, event_id):
-    """
-    Handles the booking process start. Access is restricted to logged-in users.
-    If not logged in, redirects to the LOGIN_URL (usually /accounts/login/).
-    """
-    # 1. Check Login Status (Handled automatically by @login_required)
-    
-    # 2. Fetch Event (Now safe to proceed as the user is authenticated)
     event = get_object_or_404(Event, pk=event_id)
-    
-    # 3. Check for available tickets, etc. (Placeholder logic)
+
+    # Check if there are even tickets to book
     if not event.ticket_tiers.exists():
-        return redirect('homepage') # Redirect somewhere safe if no tickets
-        
-    # 4. Proceed to Checkout/Booking Form
-    context = {
-        'event': event,
-        'page_title': f"Booking: {event.name}"
-    }
-    
-    # Assuming you have a template for the actual booking form
-    return render(request, 'organizer/booking_form.html', context)
+        messages.info(request, "This is a free event. No booking required!")
+        return redirect('organizer:event_detail', event_id=event.id)
+
+    if request.method == 'POST':
+        tier_id = request.POST.get('ticket_tier')
+        full_name = request.POST.get('full_name')
+
+        # Get the specific ticket tier
+        tier = get_object_or_404(TicketType, id=tier_id, event=event)
+
+        # 1. Check Availability
+        if tier.available_quantity > 0:
+            # 2. Create the Sale
+            sale = TicketSale.objects.create(
+                event=event,
+                buyer=request.user,
+                ticket_type=tier,
+                ticket_code=str(uuid.uuid4())[:8].upper(),
+                price=tier.price,
+                payment_status='PENDING'
+            )
+
+            # 3. Reduce Quantity
+            tier.available_quantity -= 1
+            tier.save()
+
+            messages.success(request, "Booking initiated! Please present your ticket code at the venue.")
+            return redirect('organizer:booking_success', sale_id=sale.id)
+        else:
+            messages.error(request, "Sorry, this ticket tier just sold out!")
+
+    return render(request, 'organizer/booking_form.html', {'event': event})
+
+
+@login_required
+def booking_success(request, sale_id):
+    # Ensure the user can only see their own ticket
+    sale = get_object_or_404(TicketSale, id=sale_id, buyer=request.user)
+    return render(request, 'organizer/booking_success.html', {'sale': sale})
