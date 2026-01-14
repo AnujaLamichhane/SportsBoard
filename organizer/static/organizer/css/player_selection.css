@@ -1,0 +1,209 @@
+/* organizer/static/organizer/css/player_selection.css */
+
+/* 1. Reset the container to a clean, light 'Fillout' look */
+.selection-card {
+    color: white!important;
+    background: black!important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0!important;
+    padding: 0!important; /* Header will handle padding */
+    overflow: hidden;
+    /* margin-top: 20px;
+    margin-bottom: 20px; */
+    margin: 0 auto 40px auto;
+    width: 100%;
+    max-width: 1200px;
+}
+.row{
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 0 !important;
+}
+/* reduce vertical gaps between fields */
+.mb-2, .mb3{
+    margin-bottom: 0.5rem;
+}
+
+/* 2. Professional Header */
+.card-header-custom {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+    color: #ffffff !important;
+    padding: 10px 5px !important;
+    text-align: center;
+}
+
+/* 3. Fieldset Styling (The 'Sections') */
+fieldset {
+    border: none !important;
+    border-top: 1px solid #cbd5e1 !important;
+    margin-top: 20px !important;
+    padding-top: 15px !important;
+}
+
+legend {
+    width: auto !important;
+    float: none !important;
+    padding: 5px 20px !important;
+    font-size: 1.3rem !important;
+    font-weight: bold!important;
+    color: #2d3748 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: white !important;
+    border: 1px solid #edf2f7 !important;
+    border-radius: 20px !important;
+}
+
+/* 4. Labels and Inputs */
+label {
+    color: white !important;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+    font-size: 1.2rem !important;
+}
+
+.form-control, .form-select {
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    background-color: whitesmoke !important;
+    color: black!important;
+    transition: all 0.3s ease;
+    margin: 0 0 10px 0;
+}
+
+.form-control:focus {
+    border-color: black !important;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+}
+
+/* Style for disabled/locked fields (Organizer details) */
+.form-control:disabled, .form-select:disabled {
+    background-color: #f7fafc !important;
+    color: #a0aec0 !important;
+    cursor: not-allowed !important;
+}
+
+/* 5. Same Address Checkbox Box */
+.form-check {
+    /* background: #ebf8ff; */
+    padding: 15px 15px 15px 35px !important;
+    border-radius: 8px;
+    /* border: 1px solid #bee3f8; */
+    margin:5px !important;
+}
+.form-check-inline {
+    margin-right: 20px;
+    display: inline-block;
+    padding: 8px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s;
+    background: #fff;
+    cursor: pointer;
+    color: #000;
+}
+
+.form-check-inline:hover {
+    border-color: #3182ce;
+    background: #f7fafc;
+}
+.form-check-input{
+  color: black;
+}
+/* Hide the default circle if you want a 'button' look, 
+   or keep it and just style the label */
+.form-check-input:checked + .form-check-label {
+    color:black!important;
+    font-weight: bold;
+}
+
+.form-check-input {
+    cursor: pointer;
+}
+
+/* .custom-checkbox-container {
+    background: #f1f5f9;
+    color: black;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #0d6efd;
+    margin: 15px 0;
+} */
+.custom-gender-row .form-check {
+    display: inline-flex !important;
+    padding: 10px 12px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    margin-right: 5px !important;
+    margin-left: 5px;
+    background: #f8f9fa;
+    color: #000;
+    min-width: 100px;
+    justify-content: center;
+}
+/* Position the dot correctly */
+.custom-gender-row .form-check-input {
+    margin: 0 8px 0 0 !important; /* Space between dot and label */
+    cursor: pointer;
+}
+.custom-gender-row .form-check-label,
+.form-check-inline .form-check-label {
+    color: #1a202c !important; /* Deep charcoal/black */
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-weight: 600 !important;
+    padding-left: 5px !important;
+}
+
+.input-group-text {
+    /* background-color: white!important; */
+    color: black !important;
+    /* border: 1px solid #ced4da !important; */
+    font-size: 0.9rem !important;
+}
+
+.selection-card .row {
+    align-items: flex; /* Align inputs and checkbox at the bottom */
+}
+
+/* File Upload Buttons */
+
+input[type="file"] {
+
+    background: #f8fafc;
+
+    padding: 8px;
+
+}
+
+
+
+
+/* Mandatory Field Indicators */
+
+label.requiredField span.asteriskField {
+
+    color: #e53e3e;
+
+    font-weight: bold;
+
+}
+
+/* 6. The Submit Button */
+.btn-submit {
+    background-color: #3182ce !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 16px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    transition: background 0.3s ease !important;
+}
+
+.btn-submit:hover {
+    background-color: #2b6cb0 !important;
+    cursor: pointer;
+}

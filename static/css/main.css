@@ -1,4 +1,4 @@
-  :root {
+:root {
     --bg-color: #ffffff;
     --text-color: #111111;
     --nav-bg: #ffffff;
@@ -70,7 +70,6 @@ body.dark-mode {
     padding-left: 1% ;
     /*padding-right: 5%;*/
     box-sizing: border-box;
- }
 
     flex: 1 0 auto;
 
@@ -441,12 +440,12 @@ display: block;
   background-color: rgb(47, 46, 46);
  }
 
-.featured-section h1{
+/* .featured-section h1{
   margin-left: 5%;
   background-color: var(--bg-color);
   color: var(--text-color);
 
-}
+} */
 /* .featured-section {
       padding: 2rem;
       background-color: #1e1e2f;
@@ -604,7 +603,7 @@ display: block;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 18px;
       margin-top: 10px;
-      margin-left: 105px;
+      margin-left: 105px; 
       margin-right: 105px;
     }
     .photos .ph{
@@ -775,7 +774,7 @@ display: block;
 
 .event-img-box {
     width: 100%;
-    height: 180px; /* Fixed height for consistency */
+    height: 180px;  
     position: relative;
     background: #000;
     overflow: hidden;
@@ -785,7 +784,7 @@ display: block;
 .event-img-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* THIS ENSURES IMAGES ARE NEVER CUT */
+    object-fit: cover; 
 }
 
 .event-status-tag {
@@ -924,4 +923,3 @@ display: block;
 .events-page .col-lg-3 {
     margin-left: auto;
 }
-

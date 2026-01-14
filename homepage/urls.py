@@ -14,6 +14,10 @@ urlpatterns = [
     path('basketball/', views.basketball, name='basketball'),
     path('badminton/', views.badminton, name='badminton'),
     path('logout/', views.logout_user, name='logout'),
+    path('viewmatch/', views.viewmatch, name='view_match'),
+    path('privacy/', views.privacy_policy, name='privacy'),
+    path('contact/', views.contact_view, name='contact'),
+    path('terms/', views.terms_view, name='terms'),
     # path('event/<int:id>/', views.event_detail, name='event_detail'),
 
    ]

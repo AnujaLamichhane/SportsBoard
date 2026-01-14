@@ -1,0 +1,65 @@
+{% extends "homepage/base.html" %}
+
+{% block title %}Privacy Policy | [SportsBoard]{% endblock %}
+
+{% block content %}
+<style>
+    .privacy-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        line-height: 1.6;
+        color: var(--text-color);
+    }
+    .privacy-container h1, .privacy-container h2 {
+        color: var(--text-color);
+        font-size: 30px;
+    }
+     .privacy-container p{
+        font-size: 20px;
+     }
+    .academic-notice {
+        background-color: var(--bg-color);
+        border-left: 4px solid #007bff;
+        padding: 15px;
+        margin-bottom: 30px;
+        border-radius: 4px;
+    }
+    .update-date {
+        font-style: italic;
+        color: var(--text-color);
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="privacy-container">
+    <h1>Privacy Policy</h1>
+    <p class="update-date">Last Updated: 2025/12/26</p>
+
+    <div class="academic-notice">
+        <strong>Academic Project Notice:</strong> This website is a final year academic project. Data collected is used solely for demonstrating project functionality and will be deleted upon completion of the academic term.
+    </div>
+
+    <p>This Privacy Policy describes how <strong>SportsBoard</strong> collects, uses, and shares your personal information when you use our services.</p>
+
+    <h2>1. Information We Collect</h2>
+    <ul>
+        <li><strong>Information You Provide:</strong> Name and email address provided via contact forms.</li>
+        <li><strong>Automated Information:</strong> Device information, IP addresses, and browser types.</li>
+        <li><strong>Cookies:</strong> Used to improve experience and analyze traffic.</li>
+    </ul>
+
+    <h2>2. How We Use Your Information</h2>
+    <ul>
+        <li>To operate and maintain this project.</li>
+        <li>To improve and personalize user experience.</li>
+        <li>To communicate regarding support or updates.</li>
+    </ul>
+
+    <h2>3. Data Sharing & Security</h2>
+    <p>We do not sell your personal data. We implement standard security measures, though no internet transmission is 100% secure.</p>
+
+    <h2>4. Contact Us</h2>
+    <p>For questions regarding this policy, contact: <strong> admin@sportsboard.local</strong></p>
+</div>
+{% endblock %}
