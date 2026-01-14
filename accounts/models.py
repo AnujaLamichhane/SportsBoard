@@ -1,4 +1,5 @@
 # accounts/models.py
+import hashlib
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -12,6 +13,15 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} Profile'
+    @property
+    def profile_url(self):
+        # If the user has uploaded a custom image (not the default), use that
+        if self.image and self.image.name != 'default.jpg':
+            return self.image.url
+        
+        # Otherwise, fetch from Gravatar using their email
+        email_hash = hashlib.md5(self.user.email.strip().lower().encode('utf-8')).hexdigest()
+        return f"https://www.gravatar.com/avatar/{email_hash}?d=identicon"
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):

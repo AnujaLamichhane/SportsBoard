@@ -2,10 +2,14 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Sum, Count, Q
 from django.shortcuts import render, redirect, get_object_or_404  # Ensure get_object_or_404 is imported
 from .models import Event, Application, TicketSale, TicketType  # Ensure all models are imported
+from .forms import EventCreationForm, TicketTypeFormset  # Ensure forms are imported
 from .forms import EventCreationForm, TicketTypeFormset, MatchFormset  # Ensure forms are imported
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.conf import settings
+from .models import PlayerSelectionForm
+from .forms import PlayerSelectionCrispyForm
+from django.core.mail import send_mail
 import uuid
 
 
@@ -130,11 +134,11 @@ def create_event(request):
 
 
 
-def selection_form_create(request):
+# def selection_form_create(request):
     # This page will contain logic to select an event and configure player fields
     # For now, it's a simple placeholder
-    context = {'page_title': 'Configure Player Selection Form'}
-    return render(request, 'organizer/selection_form_create.html', context)
+    # context = {'page_title': 'Configure Player Selection Form'}
+    # return render(request, 'organizer/selection_form_create.html', context)
 
 
 
@@ -278,6 +282,75 @@ def start_booking_process(request, event_id):
             messages.error(request, "Sorry, this ticket tier just sold out!")
 
     return render(request, 'organizer/booking_form.html', {'event': event})
+
+@login_required(login_url=settings.LOGIN_URL)
+def selection_form_create(request,pk=None):
+    form_instance = get_object_or_404(PlayerSelectionForm, pk=pk) if pk else None
+    is_player = request.user != form_instance.organizer if form_instance else False
+    if request.method == 'POST':
+        form = PlayerSelectionCrispyForm(
+            request.POST, 
+            request.FILES, 
+            instance=form_instance, 
+            is_player=is_player
+        )
+        if form.is_valid():
+            application = form.save(commit=False)
+            
+            if not is_player:
+                # Organizer path: Save configuration and publish
+                application.organizer = request.user
+                application.is_published = True
+                application.save()
+                messages.success(request, "Selection form configured and published!")
+                return redirect('organizer:dashboard')
+            else:
+                # Player path: Submit the mandatory fields
+                application.pk = None 
+                application.is_published = False
+                application.status = 'pending'
+                application.save()
+                # Trigger Notification Logic Here
+                messages.success(request, "Application submitted successfully!")
+                return redirect('home')
+    else:
+        form = PlayerSelectionCrispyForm(instance=form_instance, is_player=is_player)
+    context = {
+        'form': form,
+        'is_player': is_player,
+        # 'page_title': 'Configure Player Selection Form'
+        'page_title': 'Apply for Trial' if is_player else 'Configure Form',
+    }
+
+    return render(request,'organizer/selection_form_create.html' ,context)
+
+# def send_status_email(application, status_type):
+#     """Helper function to send emails based on status change."""
+#     subject = f"Update on your Player Selection: {application.sports}"
+    
+#     messages_dict = {
+#         "received": "We have received your application and it is currently pending review.",
+#         "selected": "Congratulations! You have been SELECTED for the next round.",
+#         "denied": "We regret to inform you that your application was not selected at this time."
+#     }
+    
+#     message = f"Hello {application.full_name},\n\n{messages_dict.get(status_type)}\n\nBest regards,\nSportsBoard Team"
+    
+#     send_mail(
+#         subject,
+#         message,
+#         settings.DEFAULT_FROM_EMAIL,
+#         [application.email],
+#         fail_silently=True,
+#     )
+# # def publish_event(request, event_id):
+# #     event = get_object_or_404(PlayerSelectionForm, id=event_id, created_by=request.user)
+# #     event.is_published = True
+# #     event.save()
+# #     messages.success(request, "Event is now live for users!")
+# #     return redirect('organizer_dashboard')
+
+
 
 
 @login_required

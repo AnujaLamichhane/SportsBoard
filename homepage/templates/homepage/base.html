@@ -7,7 +7,7 @@
     <title>{% block title %}SportsBoard{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link rel="stylesheet" href="{% static 'css/featured.css' %}">
     {% block extra_head %}{% endblock %} 
 </head>
 <body>
@@ -63,24 +63,24 @@
 
 
 
-<main>
-        {% block content %}
-        {% endblock %}
+    <main>
+            {% block content %}
+            {% endblock %}
     </main>
 
     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-logo">
                 <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo" onerror="this.style.display='none'">
-                <h3>SportsHub Nepal</h3>
+                <h3>SportsBoard Nepal</h3>
                 <p>Powered by Robust Technology</p>
             </div>
 
             <div class="footer-links">
                 <h4>Company</h4>
                 <a href="/about">About Us</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
             </div>
 
             <div class="footer-social">
@@ -109,8 +109,8 @@
         window.loginUrl = "{% url 'account_login' %}";
     </script>
     <script src="{% static 'js/buttons.js' %}"></script>
-
-
-
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -9,6 +9,8 @@ from django.contrib.auth.models import Group
 from allauth.account.utils import complete_signup
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
+from organizer.models import Event, Application,PlayerSelectionForm
+from accounts.models import Profile
 
 
 @csrf_protect
@@ -20,6 +22,8 @@ def register_view(request):
             role_selected = form.cleaned_data.get('role')
             user.role = role_selected
             user.save()
+
+            
 
             if role_selected == 'organizer':
                 group, created = Group.objects.get_or_create(name='Organizer')
@@ -40,6 +44,7 @@ def register_view(request):
 
     else:
         form = CustomUserCreationForm()
+        
     return render(request, 'accounts/signup.html', {'form': form})
 
 
@@ -165,14 +170,21 @@ def user_dashboard(request):
 
     # 3. Get the actual Event objects to display on the dashboard
     joined_events = Event.objects.filter(id__in=event_ids)
-
+    available_forms = PlayerSelectionForm.objects.filter(is_published=True) #
+    my_submissions = PlayerSelectionForm.objects.filter( #
+        email=request.user.email, 
+        is_published=False
+    )
+    # user_apps = PlayerSelectionForm.objects.filter(email=request.user.email)#
     context = {
         'user': request.user,
         'profile': profile,
         'joined_events': joined_events,
         'total_joined': joined_events.count(),
         'title': 'User Dashboard',
-        'user_apps': user_apps, # Passing apps to see statuses
+        'user_apps': user_apps, # Passing apps to see statuses 
+        'available_forms': available_forms,#
+        'my_submissions': my_submissions,
     }
     return render(request, 'accounts/user_dashboard.html', context)
 

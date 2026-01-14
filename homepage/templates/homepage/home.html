@@ -1,4 +1,3 @@
-
 {% extends 'homepage/base.html' %}
 {% load static %}
         {% block title %}Home - SportsBoard{% endblock %}
@@ -51,7 +50,7 @@
         <h2 class="value-title">Why Choose SportsBoard?</h2>
         <div class="value-cards">
 <!--            <a href="{% url 'homepage:go_athlete' %}" class="value-card">-->
-<a href="{% url 'accounts:dashboard_redirect' %}?role_type=athlete" class="value-card">
+                <a href="{% url 'accounts:dashboard_redirect' %}?role_type=athlete" class="value-card">
                 <div class="icon icon-athlete">
                     <i class="fas fa-running"></i>
                 </div>
@@ -132,5 +131,3 @@
     <!-- time- free ho ki nai in book now / ticket available or not -->
 
 {% endblock %}
-
-

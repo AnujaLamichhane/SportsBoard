@@ -1,0 +1,70 @@
+{% extends "homepage/base.html" %}
+
+{% block title %}Terms of Service | SportsBoard{% endblock %}
+
+{% block content %}
+<style>
+    .terms-container {
+        max-width: 850px;
+        margin: 40px auto;
+        padding: 30px;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        border-radius: 12px;
+        line-height: 1.7;
+    }
+    .terms-container h1, .terms-container h2 {
+        color: #ff9f43; /* Matching your SportsBoard brand color */
+    }
+    .update-date {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 25px;
+    }
+    .section-block {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #333;
+        padding-bottom: 20px;
+    }
+</style>
+
+<div class="terms-container">
+    <h1>Terms of Service</h1>
+    <p class="update-date">Last Updated: December 26, 2025</p>
+
+    <div class="section-block">
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using SportsBoard, you agree to comply with and be bound by these Terms of Service. As an academic project, these terms are for demonstration purposes only.</p>
+    </div>
+
+    <div class="section-block">
+        <h2>2. User Conduct</h2>
+        <p>Users agree not to use the platform to:</p>
+        <ul>
+            <li>Post false information regarding sports scores or event schedules.</li>
+            <li>Harass, abuse, or harm other athletes or organizers.</li>
+            <li>Upload malicious code or attempt to bypass security features (CSRF/XSS protections).</li>
+        </ul>
+    </div>
+
+    <div class="section-block">
+        <h2>3. Intellectual Property</h2>
+        <p>The SportsBoard name, logo, and original code are the property of the project developers. Users retain rights to the data they input but grant us a license to display it within the app.</p>
+    </div>
+
+    <div class="section-block">
+        <h2>4. Disclaimer of Liability</h2>
+        <p><strong>SportsBoard is not responsible for any physical injuries</strong> that may occur during events organized through this platform. Users participate in sporting activities at their own risk.</p>
+    </div>
+
+    <div class="section-block">
+        <h2>5. Academic Nature</h2>
+        <p>This is a final year project. We reserve the right to modify or delete data at any time without notice as the academic term concludes.</p>
+    </div>
+
+    <div class="section-block">
+        <h2>6. Contact</h2>
+        <p>Questions about these terms should be sent to: <strong>admin@sportsboard.local</strong></p>
+    </div>
+</div>
+{% endblock %}

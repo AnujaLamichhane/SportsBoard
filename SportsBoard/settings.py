@@ -171,6 +171,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # For any project-level static files
     BASE_DIR / "accounts" / "static",  # Explicitly include your accounts app's static files
+    BASE_DIR / "organizer" / "static",
     # Add other app's static directories if they have them:
     # BASE_DIR / "homepage" / "static",
     # BASE_DIR / "matches" / "static",
@@ -240,3 +241,4 @@ SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
 # Session settings for Remember Me
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

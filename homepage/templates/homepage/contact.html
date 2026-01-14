@@ -1,0 +1,64 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+<style>
+    .contact-section {
+        max-width: 900px;
+        margin: 80px auto;
+        padding: 20px;
+        color: var(--text-color); /* White text for your dark theme */
+    }
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+    }
+    .contact-card {
+        background: var(--bg-color); /* Darker card color */
+        padding: 25px;
+        border-radius: 10px;
+        border-left: 4px solid #ff9f43; /* Your brand orange */
+        transition: transform 0.3s ease;
+    }
+    .contact-card:hover {
+        transform: translateY(-5px);
+    }
+    .contact-card h3 {
+        margin-top: 0;
+        color: #ff9f43;
+    }
+    .contact-card p {
+        color:var(--text-color);
+    }
+    .contact-link {
+        color: #0984e3;
+        text-decoration: none;
+    }
+</style>
+
+<div class="contact-section">
+    <h1>Get in Touch</h1>
+    <p>Have questions about SportsBoard? We're here to help you manage your events better.</p>
+
+    <div class="contact-grid">
+        <div class="contact-card">
+            <h3>Email Support</h3>
+            <p>For general inquiries and technical support:</p>
+            <strong>support@sportsboard.com</strong>
+        </div>
+
+        <div class="contact-card">
+            <h3>Our Office</h3>
+            <p>123 Sports Avenue, Athletic City<br>
+            AC 45678, Nepal</p>
+        </div>
+
+        <div class="contact-card">
+            <h3>Call Us</h3>
+            <p>Available Mon-Fri, 9am - 5pm:</p>
+            <strong>+977 1-2345678</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -15,3 +15,13 @@ from django.db import models
 
 #     def __str__(self):
 #         return self.title
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    description = models.TextField()
+    sport = models.CharField(max_length=100)
+    is_published = models.BooleanField(default=True)
+
+    def __clist__(self):
+        return self.title

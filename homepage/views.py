@@ -4,7 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import logout
 from organizer.models import Event
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm
 import json
 from django.utils import timezone
 
@@ -55,6 +57,8 @@ def basketball(request):
     return HttpResponse("Welcome to basketball page.")
 def badminton(request):
     return HttpResponse("Welcome to badminton page.")
+def viewmatch(request):
+    return HttpResponse("Welcome to view matches section.")
 def logout_user(request):
     logout(request)     # <-- THIS clears login
     return redirect("/")
@@ -80,3 +84,12 @@ def all_events(request):
         'event_dates_json': json.dumps(event_dates),
         'page_title': 'All Matches & Events'
     })
+
+from django.shortcuts import render
+
+def privacy_policy(request):
+    return render(request, 'homepage/privacy.html')
+def contact_view(request):
+    return render(request, 'homepage/contact.html')
+def terms_view(request):
+    return render(request, 'homepage/terms.html')

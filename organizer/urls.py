@@ -25,7 +25,7 @@ urlpatterns = [
     # Dashboard & Creation
     path('', views.organizer_dashboard, name='dashboard'),
     path('events/create/', views.create_event, name='event_create'),
-    path('selection/create/', views.selection_form_create, name='selection_form_create'),
+    # path('selection/create/', views.selection_form_create, name='selection_form_create'),
 
     # Event Management
     path('events/<int:event_id>/', views.event_detail, name='event_detail'),
@@ -34,5 +34,7 @@ urlpatterns = [
 
     # Booking & Tickets
     path('book/<int:event_id>/', views.start_booking_process, name='start_booking'),
+    path('selection/create/', views.selection_form_create, name='selection_form_create'),
+    path('selection/create/<int:pk>/', views.selection_form_create, name='selection_form_create'),
     path('booking/success/<int:sale_id>/', views.booking_success, name='booking_success'), # ADDED THIS
 ]

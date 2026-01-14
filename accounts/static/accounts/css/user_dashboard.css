@@ -1,0 +1,12 @@
+
+.status-badge {
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.status-approved { background: rgba(40, 167, 69, 0.15); color: #28a745; }
+.status-pending  { background: rgba(255, 193, 7, 0.15); color: #f1c40f; }
+.status-rejected { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
