@@ -89,39 +89,87 @@ def organizer_dashboard(request):
 
 
 
+# @login_required
+# @user_passes_test(is_organizer_check, login_url='/')
+# def create_event(request):
+#     form = EventCreationForm()
+#     formset = TicketTypeFormset(instance=None)
+#     match_formset = MatchFormset(instance=None)
+#
+#     if request.method == 'POST':
+#         form = EventCreationForm(request.POST, request.FILES)
+#
+#         if form.is_valid():
+#             event = form.save(commit=False)
+#             event.organizer = request.user
+#             event.save()
+#
+#             formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
+#             match_formset = MatchFormset(request.POST, request.FILES, instance=event)
+#
+#             # Check matches first
+#             if match_formset.is_valid():
+#                 match_formset.save()
+#
+#                 # Check tickets. If valid, save them.
+#                 # If they are empty/invalid but matches are fine, we still treat it as a success (Free Event)
+#                 if formset.is_valid():
+#                     formset.save()
+#
+#                 # messages.success(request, "Tournament Created Successfully!")
+#                 return redirect('organizer:dashboard')
+#         else:
+#             # Re-bind formsets to show errors if main form is invalid
+#             formset = TicketTypeFormset(request.POST, request.FILES)
+#             match_formset = MatchFormset(request.POST, request.FILES)
+#
+#     context = {
+#         'form': form,
+#         'formset': formset,
+#         'match_formset': match_formset,
+#         'page_title': 'Create New Event'
+#     }
+#     return render(request, 'organizer/event_create.html', context)
+
+# def selection_form_create(request):
+    # This page will contain logic to select an event and configure player fields
+    # For now, it's a simple placeholder
+    # context = {'page_title': 'Configure Player Selection Form'}
+    # return render(request, 'organizer/selection_form_create.html', context)
+
+
 @login_required
 @user_passes_test(is_organizer_check, login_url='/')
 def create_event(request):
-    form = EventCreationForm()
-    formset = TicketTypeFormset(instance=None)
-    match_formset = MatchFormset(instance=None)
-
     if request.method == 'POST':
         form = EventCreationForm(request.POST, request.FILES)
+        # STEP A: Add prefix='tickets' and prefix='matches'
+        formset = TicketTypeFormset(request.POST, request.FILES, prefix='tickets')
+        match_formset = MatchFormset(request.POST, request.FILES, prefix='matches')
 
         if form.is_valid():
             event = form.save(commit=False)
             event.organizer = request.user
             event.save()
 
-            formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
-            match_formset = MatchFormset(request.POST, request.FILES, instance=event)
+            # STEP B: Re-bind with instance and the SAME prefix
+            match_formset = MatchFormset(request.POST, request.FILES, instance=event, prefix='matches')
+            formset = TicketTypeFormset(request.POST, request.FILES, instance=event, prefix='tickets')
 
-            # Check matches first
+            # Validate matches now that they are linked to the event ID
             if match_formset.is_valid():
                 match_formset.save()
 
-                # Check tickets. If valid, save them.
-                # If they are empty/invalid but matches are fine, we still treat it as a success (Free Event)
                 if formset.is_valid():
                     formset.save()
 
-                # messages.success(request, "Tournament Created Successfully!")
+                messages.success(request, "Event created successfully!")
                 return redirect('organizer:dashboard')
-        else:
-            # Re-bind formsets to show errors if main form is invalid
-            formset = TicketTypeFormset(request.POST, request.FILES)
-            match_formset = MatchFormset(request.POST, request.FILES)
+    else:
+        form = EventCreationForm()
+        # STEP C: Set prefixes for the empty forms on page load
+        formset = TicketTypeFormset(prefix='tickets')
+        match_formset = MatchFormset(prefix='matches')
 
     context = {
         'form': form,
@@ -132,13 +180,6 @@ def create_event(request):
     return render(request, 'organizer/event_create.html', context)
 
 
-
-
-# def selection_form_create(request):
-    # This page will contain logic to select an event and configure player fields
-    # For now, it's a simple placeholder
-    # context = {'page_title': 'Configure Player Selection Form'}
-    # return render(request, 'organizer/selection_form_create.html', context)
 
 
 

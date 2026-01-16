@@ -137,10 +137,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize Match Formset (Matches model uses matches_set by default or related_name)
     // Check your console if the ID doesn't match; Django usually uses 'id_match_set-TOTAL_FORMS'
-    setupFormset('add-match', 'match-formset-container', 'id_match_set-TOTAL_FORMS', 'empty-match-template');
+    //setupFormset('add-match', 'match-formset-container', 'id_match_set-TOTAL_FORMS', 'empty-match-template');
 
     // Initialize Ticket Formset
-    setupFormset('add-ticket-tier', 'ticket-formset-container', 'id_tickettype_set-TOTAL_FORMS', 'empty-ticket-tier-template');
+    //setupFormset('add-ticket-tier', 'ticket-formset-container', 'id_tickettype_set-TOTAL_FORMS', 'empty-ticket-tier-template');
+
+// This MUST match the prefix='matches' we just added in views.py
+setupFormset('add-match', 'match-formset-container', 'id_matches-TOTAL_FORMS', 'empty-match-template');
+
+// This MUST match the prefix='tickets' we just added in views.py
+setupFormset('add-ticket-tier', 'ticket-formset-container', 'id_tickets-TOTAL_FORMS', 'empty-ticket-tier-template');
 });
+
+
 </script>
 </body>
