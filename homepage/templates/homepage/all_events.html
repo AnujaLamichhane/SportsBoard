@@ -9,9 +9,14 @@
      <div class="col-lg-7 col-md-8 order-lg-1 order-2">
             <h2 class="mb-4 fw-bold">🏆 All Scheduled Events</h2>
 
+         
+
             <div class="events-main-layout">
                 {% for event in events %}
-                <a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card" data-date="{{ event.date_time|date:'Y-m-d' }}">
+
+
+
+<a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card" data-date="{{ event.date_time|date:'Y-m-d' }}">
 
                     <div class="event-img-box" style="position: relative; height: 300px;">
                         {% if event.photo %}
@@ -50,11 +55,11 @@
         <div class="col-lg-4 col-md-4 order-lg-2 order-1">
             <div class="sticky-top" style="top: 110px;">
                 <div class="calendar-widget-box">
-                    <h5 class="widget-header">📅 Event Schedule</h5>
+                    <h3 class="widget-header">📅 Event Schedule</h3>
                     <div id="right-side-calendar"></div>
 
                     <div class="mini-timeline mt-4">
-                        <h6 class="timeline-label">Quick Timeline</h6>
+                        <h5 class="timeline-label">Quick Timeline</h5>
                         {% for event in events|slice:":2" %}
                         <div class="timeline-mini-card">
                             <span class="d-block fw-bold">{{ event.name }}</span>
@@ -70,74 +75,6 @@
 
 
 
-<!--<div class="container-fluid py-4 px-4 events-page">-->
-<!--   <div class="row">-->
-<!--     <div class="col-lg-9 col-md-8 order-lg-1 order-2">-->
-<!--            <h2 class="mb-4 fw-bold" style="color: var(&#45;&#45;text-color);">🏆 All Scheduled Events</h2>-->
-
-<!--            <div class="events-main-layout">-->
-<!--                {% for event in events %}-->
-<!--&lt;!&ndash;                    <a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card">&ndash;&gt;-->
-<!--                       <a href="{% url 'organizer:event_detail' event.id %}"-->
-<!--   class="event-glass-card"-->
-<!--   data-date="{{ event.date_time|date:'Y-m-d' }}">-->
-
-<!--                        <div class="event-img-box">-->
-<!--                            {% if event.photo %}-->
-<!--                                <img src="{{ event.photo.url }}" alt="{{ event.name }}">-->
-<!--                            {% endif %}-->
-<!--                            <div class="event-status-tag">{{ event.get_status_display }}</div>-->
-<!--                        </div>-->
-
-<!--                        <div class="event-text-box">-->
-<!--                            <h3>{{ event.name }}</h3>-->
-<!--                            <p><i class="fas fa-calendar-alt me-2"></i>{{ event.date_time|date:"M d, Y" }}</p>-->
-
-
-
-<!--                          <div class="matches-list mt-3">-->
-<!--            {% for match in event.matches.all %}-->
-<!--                {# This only shows the match if it matches the sport clicked in the navbar #}-->
-<!--                {% if not selected_sport or match.game_type|lower == selected_sport|lower %}-->
-<!--                    <div class="match-badge" style="background: rgba(255,255,255,0.05); border-left: 3px solid #ffc107; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.85rem;position: relative;">-->
-<!--                        <span class="text-warning fw-bold">{{ match.get_game_type_display }}</span>:-->
-<!--                        {{ match.team_a }} vs {{ match.team_b }}-->
-<!--                        <div class="text-muted small" style="font-size: 0.75rem;">-->
-<!--                            <i class="fas fa-clock me-1"></i>{{ match.match_time|date:"H:i" }} |-->
-<!--                            <i class="fas fa-map-marker-alt me-1"></i>{{ match.venue }}-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                {% endif %}-->
-<!--            {% endfor %}-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--                    </a>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <div class="col-lg-3 col-md-4 order-lg-2 order-1">-->
-<!--            <div class="sticky-top" style="top: 110px; z-index: 10;">-->
-<!--                <div class="calendar-widget-box">-->
-<!--                    <h5 class="widget-header">📅 Event Schedule</h5>-->
-
-<!--                    <div id="right-side-calendar"></div>-->
-
-<!--                    <div class="mini-timeline mt-4">-->
-<!--                        <h6 class="timeline-label">Quick Timeline</h6>-->
-<!--                        {% for event in events|slice:":2" %}-->
-<!--                        <div class="timeline-mini-card">-->
-<!--                            <span class="d-block fw-bold">{{ event.name }}</span>-->
-<!--                            <span class="small text-warning">{{ event.date_time|date:"D, M d" }}</span>-->
-<!--                        </div>-->
-<!--                        {% endfor %}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
