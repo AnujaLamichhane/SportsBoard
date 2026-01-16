@@ -21,11 +21,21 @@
                 <li class="dropdown">
                     <a href="#" id="sportsDropdown">Sports</a>
                     <div class="dropdown-content" id="sportsMenu">
-                        <a href="/cricket">🏏 Cricket</a>
-                        <a href="/football">⚽ Football</a>
-                        <a href="/volleyball">🏐 Volleyball</a>
-                        <a href="/basketball">🏀 Basketball</a>
-                        <a href="/badminton">🏸 Badminton</a>
+<!--                        <a href="/cricket">🏏 Cricket</a>-->
+<!--                        <a href="/football">⚽ Football</a>-->
+<!--                        <a href="/volleyball">🏐 Volleyball</a>-->
+<!--                        <a href="/basketball">🏀 Basketball</a>-->
+<!--                        <a href="/badminton">🏸 Badminton</a>-->
+
+                   {% for sport in nav_sports %}
+                    <a href="{% url 'homepage:view_events' %}?sport={{ sport.code|urlencode }}">
+                {{ sport.name }}
+            </a>
+        {% empty %}
+            <a href="#">No Active Events</a>
+        {% endfor %}
+
+
                     </div>
                 </li>
                 <li><a href="/viewevents">View Events</a></li>

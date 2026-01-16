@@ -22,10 +22,30 @@
                             {% endif %}
                             <div class="event-status-tag">{{ event.get_status_display }}</div>
                         </div>
+
                         <div class="event-text-box">
                             <h3>{{ event.name }}</h3>
                             <p><i class="fas fa-calendar-alt me-2"></i>{{ event.date_time|date:"M d, Y" }}</p>
+
+
+
+                          <div class="matches-list mt-3">
+            {% for match in event.matches.all %}
+                {# This only shows the match if it matches the sport clicked in the navbar #}
+                {% if not selected_sport or match.game_type|lower == selected_sport|lower %}
+                    <div class="match-badge" style="background: rgba(255,255,255,0.05); border-left: 3px solid #ffc107; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.85rem;position: relative;">
+                        <span class="text-warning fw-bold">{{ match.get_game_type_display }}</span>:
+                        {{ match.team_a }} vs {{ match.team_b }}
+                        <div class="text-muted small" style="font-size: 0.75rem;">
+                            <i class="fas fa-clock me-1"></i>{{ match.match_time|date:"H:i" }} |
+                            <i class="fas fa-map-marker-alt me-1"></i>{{ match.venue }}
                         </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
                     </a>
                 {% endfor %}
             </div>
