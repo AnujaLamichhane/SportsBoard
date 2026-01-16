@@ -923,3 +923,60 @@ display: block;
 .events-page .col-lg-3 {
     margin-left: auto;
 }
+
+/* --- 1. Clean & Professional Match Badges (Left Side) --- */
+.match-badge {
+    background: rgba(255, 255, 255, 0.05); /* Soft glass look */
+    border-radius: 12px;
+    border: 1px solid rgba(255, 193, 7, 0.2); /* Subtle yellow border */
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.match-badge:hover {
+    background: rgba(255, 193, 7, 0.08); /* Glow effect on hover */
+    transform: translateX(5px);
+    border-color: #ffc107;
+}
+
+/* --- 2. Making the Calendar Bigger & Better --- */
+.calendar-widget-box {
+    padding: 25px !important; /* Extra breathing room */
+    width: 100%;
+}
+
+/* Force jQuery UI to fill the sidebar width */
+#right-side-calendar .ui-datepicker {
+    width: 100% !important;
+    font-size: 1rem; /* Makes numbers larger */
+}
+
+#right-side-calendar .ui-datepicker td {
+    padding: 5px; /* Spacing between dates */
+}
+
+#right-side-calendar .ui-datepicker td a {
+    width: 40px !important; /* Larger touch/click area */
+    height: 40px !important;
+    line-height: 40px !important;
+    font-size: 1.1rem;
+}
+
+/* --- 3. The Red Event Marker (Glowing Effect) --- */
+.highlight-event a {
+    background: #ff2d2d !important; /* Solid Red */
+    color: #fff !important;
+    border-radius: 50% !important;
+    font-weight: 700 !important;
+    border: none !important;
+    box-shadow: 0 0 15px rgba(255, 45, 45, 0.6); /* Red Glow */
+    animation: redPulse 2s infinite; /* Uses your existing redPulse animation */
+}
+
+/* Fix for today's date if it's also an event day */
+.ui-datepicker-today.highlight-event a {
+    background: #ff2d2d !important;
+    box-shadow: 0 0 20px rgba(255, 45, 45, 0.8);
+}
