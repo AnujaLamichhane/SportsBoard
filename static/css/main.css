@@ -74,17 +74,29 @@ body.dark-mode {
     flex: 1 0 auto;
 
 }
-    .logo {
-      display: flex;              
+    .logo a {
+      display: block;              
       align-items: center;        
-      gap: 8px;                   
+      gap: 8px; 
+      z-index: 100;                  
     }
-    .logo span {
+    .navbar-logo {
+    height: 160px; /* Adjust this value to fit your navbar height */
+    width: auto;  /* Maintains aspect ratio */
+    display: block;
+    transform: scale(1.6); 
+    transform-origin: left center;
+    margin-top: -50px; 
+    margin-bottom: -50px;
+    object-fit: contain;
+    max-height: 100%;
+    position: relative;
+    z-index: 10;
+}
+    /* .logo span {
       font-size: 1.45em;
       font-weight: 700;
-            /* display: flex; */
-            /* flex-direction: column; */
-            /* align-items: center; */
+           
       letter-spacing: 3px;
       background: linear-gradient(270deg, #00d4ff, #007bff, #ff6600, #00d4ff);
       background-size: 400% 400%;
@@ -96,7 +108,7 @@ body.dark-mode {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
-            }
+            } */
     .nav-links {
       list-style: none;
       display: flex;
@@ -657,8 +669,18 @@ display: block;
   }
 
   .footer-logo img {
-    width: 50px;
-    margin-bottom: 10px;
+    height: 160px; 
+    width: auto;  
+    display: block;
+    transform: scale(1.6); 
+    transform-origin: left center;
+    margin-top: -50px; 
+    margin-bottom: -50px;
+    margin-left: -40px;
+    object-fit: contain;
+    max-height: 100%;
+    position: relative;
+    z-index: 10;
   }
 
   .footer-logo h3 {
@@ -1078,8 +1100,7 @@ opacity: 1 !important;
 /* Events column - MUCH wider and more dominant */
 .events-page .col-lg-8 {
     flex: 1 1 auto; /* Takes up remaining space */
-    max-width: none
-    min-width: 0; /* Prevents overflow issues */
+    max-width: none;
 }
 
 /* Calendar column - fixed width, pushed to right */
