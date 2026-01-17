@@ -508,7 +508,7 @@ display: block;
       background-color: var(--bg-color);
       color: var(--text-color);
       text-align: center;
-      padding: 60px 10px;
+      padding: 60px 30px;
       border-radius: 12px;
       margin-top: 40px;
     }
@@ -518,7 +518,9 @@ display: block;
       font-weight: 700;
       margin-bottom: 30px;
       color: var(--text-color);
-      margin-right: 65%;
+      /*margin-right: 65%;*/
+      text-align: left; /* Aligns with the Featured Matches title */
+  padding-left: 10px; /* Matches the .featured-title padding */
     }
 
     .value-cards {
@@ -532,7 +534,7 @@ display: block;
     .value-card {
       /* background-color: #232f3e; */
       /* border-radius: 14px; */
-      padding: 30px 50px;
+      padding: 30px 150px;
       width: 300px;
       /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); */
       /* transition: transform 0.3s ease, box-shadow 0.3s ease; */
@@ -550,7 +552,7 @@ display: block;
     }
 
     .value-card p {
-      color: #cfd6e1;
+      color: var(--text-color);
       font-size: 18px;
     }
 
@@ -1278,7 +1280,7 @@ border: none; /* Pic 2 has a very clean look, often without heavy borders */
 }
 
 .admin-lock-link {
-    color: white;
+    color: var(--text-color);
     font-size: 1.1rem;
     text-decoration: none;
     transition: color 0.3s ease, transform 0.2s ease;
