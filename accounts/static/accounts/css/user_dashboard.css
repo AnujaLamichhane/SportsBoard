@@ -10,3 +10,25 @@
 .status-approved { background: rgba(40, 167, 69, 0.15); color: #28a745; }
 .status-pending  { background: rgba(255, 193, 7, 0.15); color: #f1c40f; }
 .status-rejected { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+
+/* Base transition for smooth animation */
+.hover-lift {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.3s ease, 
+                border-color 0.3s ease !important;
+    cursor: pointer;
+}
+
+/* Hover State */
+.hover-lift:hover {
+    transform: translateY(-8px) scale(1.02); /* Lifts up and grows slightly */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3) !important;
+    border-color: var(--accent-color) !important;
+    z-index: 10;
+}
+
+/* Optional: Make the button inside trial cards change color on hover */
+.trial-card:hover a {
+    background: var(--accent-color) !important;
+    /* color: white !important; */
+}
