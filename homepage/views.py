@@ -3,19 +3,20 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import logout
-from organizer.models import Event
+from organizer.models import Event, Match
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 import json
 from django.utils import timezone
+from django.db.models import Q
 
 
 # Create your views here.
 def home(request):
     featured_events = Event.objects.filter(
         status__in=['LIVE', 'UPCOMING']
-    ).order_by('-created_at') 
+    ).order_by('-created_at') [:3]
 
     return render(request, 'homepage/home.html',{
         'featured_events': featured_events
@@ -47,18 +48,18 @@ def about(request):
     return render(request, 'homepage/about.html')
 def news(request):
     return render(request, 'news/index.html')
-def cricket(request):
-    return HttpResponse("Welcome to cricket page.")
-def football(request):
-    return HttpResponse("Welcome to football page.")
-def volleyball(request):
-    return HttpResponse("Welcome to volleyball page.")
-def basketball(request):
-    return HttpResponse("Welcome to basketball page.")
-def badminton(request):
-    return HttpResponse("Welcome to badminton page.")
-def viewmatch(request):
-    return HttpResponse("Welcome to view matches section.")
+# def cricket(request):
+#     return HttpResponse("Welcome to cricket page.")
+# def football(request):
+#     return HttpResponse("Welcome to football page.")
+# def volleyball(request):
+#     return HttpResponse("Welcome to volleyball page.")
+# def basketball(request):
+#     return HttpResponse("Welcome to basketball page.")
+# def badminton(request):
+#     return HttpResponse("Welcome to badminton page.")
+# def viewmatch(request):
+#     return HttpResponse("Welcome to view matches section.")
 def logout_user(request):
     logout(request)     # <-- THIS clears login
     return redirect("/")
@@ -66,26 +67,52 @@ def logout_user(request):
 #     event = get_object_or_404(Event, id=id)
 #     return render(request, 'homepage/event_detail.html', {'event': event})
 
+# def all_events(request):
+#     # This extracts every event created by organizers
+#     events = Event.objects.all().order_by('-created_at')
+#
+#     upcoming_events = Event.objects.filter(
+#         date_time__gte=timezone.now()
+#     ).order_by('date_time')
+#
+#     # 🚨 NEW: Create a list of date strings for the JavaScript calendar
+#     # Format: ['2025-12-26', '2025-12-27']
+#     event_dates = [e.date_time.strftime('%Y-%m-%d') for e in upcoming_events]
+#
+#     return render(request, 'homepage/all_events.html', {
+#         'events': events,
+#         'upcoming_events': upcoming_events,
+#         'event_dates_json': json.dumps(event_dates),
+#         'page_title': 'All Matches & Events'
+#     })
+
+
 def all_events(request):
-    # This extracts every event created by organizers
+    sport_query = request.GET.get('sport')  # Captured from navbar link
+
+    # Start with all published events
     events = Event.objects.all().order_by('-created_at')
+
+    if sport_query:
+        # 1. Finds events where the MAIN game_type is the selected sport
+        # 2. OR finds events like "PEC Sports Week" that have matches of that sport
+        events = events.filter(
+            Q(game_type__iexact=sport_query) |
+            Q(matches__game_type__iexact=sport_query)
+        ).distinct()
 
     upcoming_events = Event.objects.filter(
         date_time__gte=timezone.now()
     ).order_by('date_time')
-
-    # 🚨 NEW: Create a list of date strings for the JavaScript calendar
-    # Format: ['2025-12-26', '2025-12-27']
     event_dates = [e.date_time.strftime('%Y-%m-%d') for e in upcoming_events]
 
     return render(request, 'homepage/all_events.html', {
         'events': events,
-        'upcoming_events': upcoming_events,
+        'selected_sport': sport_query,
         'event_dates_json': json.dumps(event_dates),
-        'page_title': 'All Matches & Events'
+        'page_title': f"{sport_query.capitalize() if sport_query else 'All'} Matches"
     })
 
-from django.shortcuts import render
 
 def privacy_policy(request):
     return render(request, 'homepage/privacy.html')
