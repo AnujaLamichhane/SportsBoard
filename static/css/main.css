@@ -1270,3 +1270,28 @@ border: none; /* Pic 2 has a very clean look, often without heavy borders */
     border-radius: 15px;
     padding: 10px;
 }
+
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Adjusts spacing between all elements in the user box */
+}
+
+.admin-lock-link {
+    color: white;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.admin-lock-link:hover {
+    color: #0d6efd; /* Changes to blue on hover */
+    transform: scale(1.1);
+}
+
+/* Ensure the login/signup buttons don't feel too crowded */
+.login-btn, .signup-btn {
+    margin-left: 5px;
+}
