@@ -16,7 +16,7 @@ from django.db.models import Q
 def home(request):
     featured_events = Event.objects.filter(
         status__in=['LIVE', 'UPCOMING']
-    ).order_by('-created_at') 
+    ).order_by('-created_at') [:3]
 
     return render(request, 'homepage/home.html',{
         'featured_events': featured_events

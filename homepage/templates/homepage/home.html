@@ -11,17 +11,14 @@
 
                 <!-- <button class="join-btn">Join This</button> -->
 
-                <div class="auth-links">
-                    <a href="{% url 'accounts:login' %}" class="login">🔒LOGIN/SIGN UP</a>
 
-                </div>
 
             </div>
         </div> 
         
 
     <section class="featured-section">
-     <h2 class="featured-title">🔥 Today's Featured Matches</h2>
+     <h2 class="featured-title"> Today's Featured Matches</h2>
 
         <div class="featured-grid">
             {% for event in featured_events %}
@@ -106,28 +103,6 @@
 
         </div>
     </section>
-    <!-- <section class="value-section">
-        <h2>Value Proposition</h2>
-        <div class="value-buttons">
-            <img src="{% static 'images/ath2rr.png' %}" alt="Sports" />
-            <div class="value-btn">
-                <h3>🏃‍♂️ For Athletes</h3>
-                <p>Find trials, build your profile, and get scouted!</p>
-            </div>
-            <div class="value-btn">
-                <h3>🎯 For Organizers</h3>
-                <p>Manage tournaments, handle applications easily.</p>
-            </div>
-            <div class="value-btn">
-                <h3>🎟️ For Fans</h3>
-                <p>Buy tickets securely and never miss a match.</p>
-            </div>
-        </div>
-    </section> -->
-    <!-- <div class="content">
-        <h1>Welcome to SportsBoard!</h1>
-        <p>Your one-stop destination for all sports updates, selections, and tickets.</p>
-    </div> -->
-    <!-- time- free ho ki nai in book now / ticket available or not -->
+
 
 {% endblock %}

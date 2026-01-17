@@ -1,0 +1,57 @@
+{% extends 'organizer/organizer_dashboard.html' %} {# Make sure this points to your sidebar layout file #}
+
+{% block content %}
+<div class="ms-4 overview-header">
+    <h2 class="text-white">All Events</h2>
+    <div class="search-container">
+        <form method="GET" id="searchForm" class="mb-3 search-form">
+            <div class="input-group position-relative" style="width: 300px;">
+                <span class="input-group-text bg-dark-card border-secondary text-secondary border-end-0">
+                    <i class="fas fa-search"></i>
+                </span>
+            
+                <input type="text" name="search" id="searchInput" 
+                    class="form-control bg-dark-card border-secondary text-white border-start-0 pe-5"  
+                    placeholder="Search events..." value="{{ search_query|default:'' }}">
+            
+                {% if search_query %}
+                <a href="{% url 'organizer:all_events' %}" class="position-absolute end-0 top-50 translate-middle-y me-3 text-secondary clear-search">
+                    <i class="fas fa-times-circle"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="ms-4 events-container">
+    <div class="recent-events-card" style="background: #1a1a1a; padding: 20px; border-radius: 15px;">
+        {% for event in events %}
+            <div class="event-item d-flex align-items-center justify-content-between mb-3" style="background: #252525; padding: 15px; border-radius: 10px;">
+                <div class="d-flex align-items-center">
+                    {% if event.photo %}
+                        <img src="{{ event.photo.url }}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;" class="me-3">
+                    {% else %}
+                        <div style="width: 60px; height: 60px; background: #333; border-radius: 8px;" class="me-3"></div>
+                    {% endif %}
+                    <div>
+                        <h5 class="text-white mb-0">{{ event.name }}</h5>
+                        <small class="text-muted">{{ event.date_time|date:"M d, Y" }} • {{ event.location }}</small>
+                    </div>
+                </div>
+                <div class="event-actions">
+                    <a href="{% url 'organizer:event_edit' event.pk %}" class="btn btn-sm btn-outline-light"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'organizer:event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Event"><i class="fas fa-trash-alt"></i></a>
+                    <a href="{% url 'organizer:event_detail' event.id %}" class="btn btn-sm btn-info">View</a>
+                    
+                </div>
+            </div>
+        {% empty %}
+            <!-- <p class="text-muted">No events found.</p> -->
+            <div class="text-center p-4 g-4">
+                <p class="text-light fs-5">No events found matching "{{ search_query }}"</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,269 +1,136 @@
-{% load static %}
-{% load crispy_forms_tags %}
+{% extends "organizer/sidebar.html" %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizer Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- Google Font for Clear UI -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'organizer/css/dashboard.css' %}">
-</head>
-<body class="bg-dark">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark-card shadow-sm">
-<!--        </nav>-->
-
-    <div class="container-fluid dashboard-container">
-
-        <a class="navbar-brand text-white fw-bold" href="/">
-                SportsHub Nepal
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                </ul>
-
-                <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-
-                        {% if user.is_staff %}
-                            <li class="nav-item">
-                                <a class="nav-link text-warning fw-bold" href="{% url 'organizer:dashboard' %}">
-                                    <i class="fas fa-chart-line"></i> Dashboard
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        <li class="nav-item d-flex align-items-center me-3">
-                            <span class="text-white me-2">Hello, {{ user.username }}</span>
-                            <a href="#" class="profile-icon">
-                                <i class="fas fa-user-circle fa-2x text-light"></i>
-                            </a>
-                        </li>
-
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="btn btn-outline-warning me-2" href="{% url 'accounts:login' %}">Login / Signup</a>
-                        </li>
-                    {% endif %}
-                </ul>
+        {% block content %}
+        
+        <div class="flex-grow-1 dashboard-container p-4" style="overflow-y: auto; height: 100vh;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-white mb-0">Overview</h2>
+                <!-- <div class="d-flex align-items-center text-white">
+                    <span class="me-3">Hello, {{ user.username }}</span>
+                    <i class="fas fa-user-circle fa-2x text-light"></i>
+                </div> -->
             </div>
-        </div>
-    </nav>
-    <div class="container-fluid dashboard-container">
 
-
-
-<!--        <div class="row g-4 mb-5">-->
-
-<!--            {% include 'organizer/includes/stat_card.html' with title="Total Revenue (NPR)" value=total_revenue|floatformat:2 description="Revenue from all paid tickets" icon="fa-money-bill-wave" color="text-warning" %}-->
-<!--             {% include 'organizer/includes/stat_card.html' with title="Total Events" value=total_events description="Total events created by you" icon="fa-trophy" color="text-secondary" %}-->
-<!--            {% include 'organizer/includes/stat_card.html' with title="Upcoming" value=upcoming_count description="Pending applications soon" icon="fa-calendar-alt" color="text-info" %}-->
-<!--            {% include 'organizer/includes/stat_card.html' with title="Pending Applications" value=pending_applications description="Requiring moderator attention" icon="fa-user-check" color="text-danger" %}-->
-<!--            {% include 'organizer/includes/stat_card.html' with title="Tickets Sold" value=tickets_sold description="Total confirmed sales" icon="fa-ticket-alt" color="text-success" %}-->
-<!--        </div>-->
-
-
-
-
-<!-- Stat Cards Row -->
-<div class="row g-4 mb-5">
-<div class="col-md-4 col-lg-2">
-<div class="stat-card">
-<div class="d-flex justify-content-between align-items-center">
-<h6>Total Revenue (NPR)</h6>
-<i class="fa-solid fa-money-bill-wave text-warning stat-icon"></i>
-</div>
-<h4>{{ total_revenue|floatformat:2 }}</h4>
-<p class="text-small">Revenue from all paid tickets</p>
-</div>
-</div>
-
-
-<div class="col-md-4 col-lg-2">
-<div class="stat-card">
-<div class="d-flex justify-content-between align-items-center">
-<h6>Total Events</h6>
-<i class="fa-solid fa-trophy text-secondary stat-icon"></i>
-</div>
-<h4>{{ total_events }}</h4>
-<p class="text-small">Total events created by you</p>
-</div>
-</div>
-
-
-<div class="col-md-4 col-lg-2">
-<div class="stat-card">
-<div class="d-flex justify-content-between align-items-center">
-<h6>Upcoming</h6>
-<i class="fa-solid fa-calendar-days text-info stat-icon"></i>
-</div>
-<h4>{{ upcoming_count }}</h4>
-<p class="text-small">Pending applications soon</p>
-</div>
-</div>
-
-
-<div class="col-md-4 col-lg-2">
-<div class="stat-card">
-<div class="d-flex justify-content-between align-items-center">
-<h6>Pending Applications</h6>
-<i class="fa-solid fa-user-check text-danger stat-icon"></i>
-</div>
-<h4>{{ pending_applications }}</h4>
-<p class="text-small">Requiring moderator attention</p>
-</div>
-</div>
-
-
-<div class="col-md-4 col-lg-2">
-<div class="stat-card">
-<div class="d-flex justify-content-between align-items-center">
-<h6>Tickets Sold</h6>
-<i class="fa-solid fa-ticket text-success stat-icon"></i>
-</div>
-<h4>{{ tickets_sold }}</h4>
-<p class="text-small">Total confirmed sales</p>
-</div>
-</div>
-</div>
-
-        <div class="row">
-
-            <div class="col-lg-7">
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="text-white mb-0">My Recent Events</h2>
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'organizer:selection_form_create' %}" class="btn btn-info create-form-btn">
-                            <i class="fas fa-users"></i> Create Player Form
-                        </a>
-                        <a href="{% url 'organizer:event_create' %}" class="btn btn-warning create-event-btn">
-                            <i class="fas fa-plus"></i> Create New Event
-                        </a>
+            <div class="row g-4 mb-5">
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6>Total Revenue</h6>
+                            <i class="fa-solid fa-money-bill-wave text-warning"></i>
+                        </div>
+                        <h4>{{ total_revenue|floatformat:2 }}</h4>
                     </div>
                 </div>
 
-                <div class="card bg-dark-card p-3 mb-4">
-                    <ul class="list-group list-group-flush">
-                        {% for event in recent_events %}
-                        <li class="list-group-item d-flex align-items-center bg-dark-card text-white border-secondary mb-2 rounded p-3">
-<!--                            <div class="event-image me-3">-->
-<!--                                <span class="status-tag status-{{ event.status|lower }}">{{ event.status }}</span>-->
-<!--                            </div>-->
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6>Total Events</h6>
+                            <i class="fa-solid fa-trophy text-secondary"></i>
+                        </div>
+                        <h4>{{ total_events }}</h4>
+                    </div>
+                </div>
 
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6>Upcoming</h6>
+                            <i class="fa-solid fa-calendar-days text-info"></i>
+                        </div>
+                        <h4>{{ upcoming_count }}</h4>
+                    </div>
+                </div>
 
-                            <div class="event-image me-3 position-relative" style="width: 80px; height: 60px;">
-    {% if event.photo %}
-        <img src="{{ event.photo.url }}" alt="{{ event.name }}"
-             class="rounded shadow-sm"
-             style="width: 100%; height: 100%; object-fit: cover;">
-    {% else %}
-        <div class="bg-secondary rounded d-flex align-items-center justify-content-center h-100 w-100">
-            <i class="fas fa-image text-white-50"></i>
-        </div>
-    {% endif %}
-    <span class="status-tag status-{{ event.status|lower }} position-absolute top-0 start-0 m-1"
-          style="font-size: 0.5rem; padding: 2px 5px;">
-        {{ event.status }}
-    </span>
-</div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6>Pending App.</h6>
+                            <i class="fa-solid fa-user-check text-danger"></i>
+                        </div>
+                        <h4>{{ pending_applications }}</h4>
+                    </div>
+                </div>
 
-
-<!--                            <div class="flex-grow-1">-->
-<!--                                <h5 class="mb-1">{{ event.name }}</h5>-->
-<!--                                <p class="mb-0 text-small">{{ event.date_time|date:"F d, Y P" }}</p>-->
-<!--                            </div>-->
-
-
-                            <div class="flex-grow-1">
-                <h5 class="mb-1">{{ event.name }}</h5>
-                <div class="d-flex gap-3 align-items-center">
-                    <p class="mb-0 text-small text-small">
-                        <i class="fas fa-calendar-day me-1"></i> {{ event.date_time|date:"M d, Y" }}
-                    </p>
-                    <span class="badge rounded-pill bg-info text-dark" style="font-size: 0.7rem;">
-                        <i class="fas fa-running me-1"></i> {{ event.matches.count }} Matches
-                    </span>
-                    {% if not event.ticket_tiers.exists %}
-                        <span class="badge rounded-pill bg-success" style="font-size: 0.7rem;">Free Entry</span>
-                    {% endif %}
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6>Tickets Sold</h6>
+                            <i class="fa-solid fa-ticket text-success"></i>
+                        </div>
+                        <h4>{{ tickets_sold }}</h4>
+                    </div>
                 </div>
             </div>
 
-
-                            <div class="btn-group" role="group">
-                                <a href="{% url 'organizer:event_edit' event.pk %}" class="btn btn-sm btn-outline-light me-2" title="Edit Event">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-
-                                <a href="{% url 'organizer:event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Event">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
-
-
-                            <a href="{% url 'organizer:event_detail' event.pk %}" class="btn btn-sm btn-outline-info">
-                                View Details
-                            </a>
-                            </div>
-
-                        </li>
-                        {% empty %}
-                        <li class="list-group-item bg-dark-card text-white">No recent events found.</li>
-                        {% endfor %}
-                    </ul>
+            <div class="row" id="recent-events">
+                <div class="col-lg-7">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="text-white">Recent Events</h3>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'organizer:selection_form_create' %}" class="btn btn-info btn-sm">Create Form</a>
+                            <a href="{% url 'organizer:event_create' %}" class="btn btn-warning btn-sm">New Event</a>
+                        </div>
+                    </div>
+                    <div class="card bg-dark-card p-3 mb-4">
+                        <ul class="list-group list-group-flush">
+                            {% for event in recent_events %}
+                            <li class="list-group-item d-flex align-items-center bg-dark-card text-white border-secondary mb-2 rounded p-3">
+                                <div class="event-image me-3 position-relative" style="width: 80px; height: 60px;">
+                                    {% if event.photo %}
+                                        <img src="{{ event.photo.url }}" class="rounded shadow-sm w-100 h-100" style="object-fit: cover;">
+                                    {% endif %}
+                                    <span class="status-tag status-{{ event.status|lower }} position-absolute top-0 start-0 m-1" style="font-size: 0.5rem; padding: 2px 5px;">
+                                        {{ event.status }}
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1">{{ event.name }}</h5>
+                                    <small class="text-muted"><i class="fas fa-calendar-day"></i> {{ event.date_time|date:"M d, Y" }}</small>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="{% url 'organizer:event_edit' event.pk %}" class="btn btn-sm btn-outline-light"><i class="fas fa-edit"></i></a>
+                                    <a href="{% url 'organizer:event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Event"><i class="fas fa-trash-alt"></i></a>
+                                    <a href="{% url 'organizer:event_detail' event.pk %}" class="btn btn-sm btn-outline-info">View</a>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-            </div>
 
-
-            <div class="col-lg-5">
-                <div class="card bg-dark-card p-3 mb-4">
-                    <h3 class="text-white border-bottom pb-2 mb-3">Recent Ticket Sales</h3>
-                    <ul class="list-group list-group-flush">
-                        {% for sale in recent_sales %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">
-                            <div>
-                                <small class="text-small">Code: #{{ sale.ticket_code }}</small>
-                                <p class="mb-0 fw-bold">{{ sale.event.name }}</p>
-                                <small class="text-info">{{ sale.ticket_type.name }}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="badge bg-{{ sale.payment_status|lower }} mb-1 d-block">{{ sale.payment_status }}</span>
-                                <small class="text-success">NPR {{ sale.price }}</small>
-                            </div>
-                        </li>
-                        {% empty %}
-                        <li class="list-group-item bg-dark-card text-white text-center py-4 border-0">
-                            <i class="fas fa-ticket-alt fa-3x text-secondary mb-3"></i>
-                            <p class="mb-1">No ticket sales recorded.</p>
-                            <small class="text-small">For "Free for All" events, sales won't appear here.</small>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                <div class="col-lg-5">
+                    <h3 class="text-white mb-3">Recent Sales</h3>
+                    <div class="card bg-dark-card p-3 mb-4">
+                        <ul class="list-group list-group-flush">
+                            {% for sale in recent_sales %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">
+                                <div>
+                                    <p class="mb-0 fw-bold">{{ sale.event.name }}</p>
+                                    <small class="text-info">{{ sale.ticket_type.name }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-{{ sale.payment_status|lower }} d-block mb-1">{{ sale.payment_status }}</span>
+                                    <small class="text-success">NPR {{ sale.price }}</small>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+{% block extra_js %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
     <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('geminiSidebar');
+            sidebar.classList.toggle('sidebar-collapsed');
+        }
         const chartData = JSON.parse('{{ sales_data_json|safe }}');
     </script>
-
-    <script src="{% static 'organizer/js/charts.js' %}"></script>
-
-</body>
-</html>
+    
+{% endblock %}

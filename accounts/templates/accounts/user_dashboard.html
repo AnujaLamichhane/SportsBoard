@@ -2,11 +2,32 @@
 {% load static %}
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
+<style>
+    /* Force the entire page background to dark */
+    body {
+        background-color: var(--bg-color) !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Remove the white gap between navbar and dashboard */
+    .dashboard-container {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        background-color: var(--bg-color)!important;
+    }
+
+    /* Ensure the form container doesn't have internal padding showing white */
+    .container, .container-fluid {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+</style>
 {% endblock %} 
 {% block content %}
-<div class="dashboard-container" style="display: flex; min-height: 90vh; background: var(--bg-color); transition: 0.3s;">
+<div class="dashboard-container" style="display: flex; min-height: 90vh; background: var(--bg-color);color: var(--text-color);">
 
-    <aside style="width: 280px; background: var(--nav-bg); padding: 2.5rem 1.5rem; border-right: 1px solid rgba(128,128,128,0.1); display: flex; flex-direction: column;">
+    <aside style="width: 280px; background: var(--nav-bg); padding: 2.5rem 1.5rem; border-right: 1px solid rgba(128,128,128,0.9); display: flex; flex-direction: column;min-height: 100vh;">
         <div style="text-align: center; margin-bottom: 2.5rem;">
             <div style="position: relative; display: inline-block;">
                 <img src="{{ user.profile.profile_url }}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-color); padding: 3px; background: var(--bg-color);">
@@ -17,13 +38,14 @@
         </div>
 
         <nav style="display: flex; flex-direction: column; gap: 8px;">
-            <a href="#" style="padding: 12px 18px; border-radius: 10px; background: var(--accent-color); color: white; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 10px;">🏠 Overview</a>
-            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; transition: 0.2s; display: flex; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">🏅 My Trials</a>
-            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; transition: 0.2s; display: flex; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">⚙️ Settings</a>
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; background: var(--accent-color); color:var(--text-color); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 10px;">🏠 Overview</a>
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none;  display: flex;font-weight: 600; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">🏅 My Trials</a>
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; display: flex;font-weight: 600; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">⚙️ Settings</a>
         </nav>
     </aside>
 
-    <main style="flex: 1; padding: 2.5rem; max-width: 1100px; margin: 0 auto; width: 100%;">
+    <main style="flex: 1; padding: 0; max-width: 1100px; margin: 0 auto; width: 100%;background-color:var(--bg-color);">
+        {% block athlete_dashboard_content %}
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
             <div>
                 <h1 style="color: var(--text-color); margin: 0; font-size: 1.8rem;">Performance Dashboard</h1>
@@ -61,9 +83,7 @@
                     </p>
                     
                     <a href="{% url 'organizer:selection_form_create' pk=form.pk %}" 
-                    style="display: block; text-align: center; background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 8px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: 0.3s;"
-                    onmouseover="this.style.background='var(--accent-color)'; this.style.color='white'"
-                    onmouseout="this.style.background='transparent'; this.style.color='var(--accent-color)'">
+                    style="display: block; text-align: center; background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 8px; border-radius: 8px; text-decoration: none; font-weight: 600; ">
                         Apply for Trial
                     </a>
                 </div>
@@ -113,6 +133,8 @@
             </div>
             {% endfor %}
         </div>
+        {% endblock athlete_dashboard_content %}
     </main>
 </div>
 {% endblock %}
+

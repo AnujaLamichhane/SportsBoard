@@ -11,6 +11,7 @@ from .models import PlayerSelectionForm
 from .forms import PlayerSelectionCrispyForm
 from django.core.mail import send_mail
 import uuid
+from django.db.models import Q  #
 
 
 def is_organizer_check(user):
@@ -89,39 +90,87 @@ def organizer_dashboard(request):
 
 
 
+# @login_required
+# @user_passes_test(is_organizer_check, login_url='/')
+# def create_event(request):
+#     form = EventCreationForm()
+#     formset = TicketTypeFormset(instance=None)
+#     match_formset = MatchFormset(instance=None)
+#
+#     if request.method == 'POST':
+#         form = EventCreationForm(request.POST, request.FILES)
+#
+#         if form.is_valid():
+#             event = form.save(commit=False)
+#             event.organizer = request.user
+#             event.save()
+#
+#             formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
+#             match_formset = MatchFormset(request.POST, request.FILES, instance=event)
+#
+#             # Check matches first
+#             if match_formset.is_valid():
+#                 match_formset.save()
+#
+#                 # Check tickets. If valid, save them.
+#                 # If they are empty/invalid but matches are fine, we still treat it as a success (Free Event)
+#                 if formset.is_valid():
+#                     formset.save()
+#
+#                 # messages.success(request, "Tournament Created Successfully!")
+#                 return redirect('organizer:dashboard')
+#         else:
+#             # Re-bind formsets to show errors if main form is invalid
+#             formset = TicketTypeFormset(request.POST, request.FILES)
+#             match_formset = MatchFormset(request.POST, request.FILES)
+#
+#     context = {
+#         'form': form,
+#         'formset': formset,
+#         'match_formset': match_formset,
+#         'page_title': 'Create New Event'
+#     }
+#     return render(request, 'organizer/event_create.html', context)
+
+# def selection_form_create(request):
+    # This page will contain logic to select an event and configure player fields
+    # For now, it's a simple placeholder
+    # context = {'page_title': 'Configure Player Selection Form'}
+    # return render(request, 'organizer/selection_form_create.html', context)
+
+
 @login_required
 @user_passes_test(is_organizer_check, login_url='/')
 def create_event(request):
-    form = EventCreationForm()
-    formset = TicketTypeFormset(instance=None)
-    match_formset = MatchFormset(instance=None)
-
     if request.method == 'POST':
         form = EventCreationForm(request.POST, request.FILES)
+        # STEP A: Add prefix='tickets' and prefix='matches'
+        formset = TicketTypeFormset(request.POST, request.FILES, prefix='tickets')
+        match_formset = MatchFormset(request.POST, request.FILES, prefix='matches')
 
         if form.is_valid():
             event = form.save(commit=False)
             event.organizer = request.user
             event.save()
 
-            formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
-            match_formset = MatchFormset(request.POST, request.FILES, instance=event)
+            # STEP B: Re-bind with instance and the SAME prefix
+            match_formset = MatchFormset(request.POST, request.FILES, instance=event, prefix='matches')
+            formset = TicketTypeFormset(request.POST, request.FILES, instance=event, prefix='tickets')
 
-            # Check matches first
+            # Validate matches now that they are linked to the event ID
             if match_formset.is_valid():
                 match_formset.save()
 
-                # Check tickets. If valid, save them.
-                # If they are empty/invalid but matches are fine, we still treat it as a success (Free Event)
                 if formset.is_valid():
                     formset.save()
 
-                # messages.success(request, "Tournament Created Successfully!")
+                messages.success(request, "Event created successfully!")
                 return redirect('organizer:dashboard')
-        else:
-            # Re-bind formsets to show errors if main form is invalid
-            formset = TicketTypeFormset(request.POST, request.FILES)
-            match_formset = MatchFormset(request.POST, request.FILES)
+    else:
+        form = EventCreationForm()
+        # STEP C: Set prefixes for the empty forms on page load
+        formset = TicketTypeFormset(prefix='tickets')
+        match_formset = MatchFormset(prefix='matches')
 
     context = {
         'form': form,
@@ -132,13 +181,6 @@ def create_event(request):
     return render(request, 'organizer/event_create.html', context)
 
 
-
-
-# def selection_form_create(request):
-    # This page will contain logic to select an event and configure player fields
-    # For now, it's a simple placeholder
-    # context = {'page_title': 'Configure Player Selection Form'}
-    # return render(request, 'organizer/selection_form_create.html', context)
 
 
 
@@ -191,8 +233,26 @@ def event_delete(request, event_id):
 
     # For a GET request, we render a confirmation page (recommended for safety)
     return render(request, 'organizer/event_confirm_delete.html', {'event': event})
-
-
+#
+def all_events(request):
+    # Get the search term from the URL (e.g., ?search=Rara)
+    search_query = request.GET.get('search', '')
+    
+    if search_query:
+        # Filter events where name OR location contains the search term
+        events = Event.objects.filter(
+            Q(name__icontains=search_query) | 
+            Q(location__icontains=search_query)
+        ).order_by('-date_time')
+    else:
+        # If no search, show everything
+        events = Event.objects.all().order_by('-date_time')
+        
+    return render(request, 'organizer/all_events.html', {
+        'events': events,
+        'search_query': search_query # Pass it back to keep it in the input box
+    })
+#
 def event_detail(request, event_id):
     """
     Handles both public viewing and secured organizer management access for an event.
@@ -283,46 +343,128 @@ def start_booking_process(request, event_id):
 
     return render(request, 'organizer/booking_form.html', {'event': event})
 
-@login_required(login_url=settings.LOGIN_URL)
-def selection_form_create(request,pk=None):
+# @login_required(login_url=settings.LOGIN_URL)
+# def selection_form_create(request,pk=None):
+#     form_instance = get_object_or_404(PlayerSelectionForm, pk=pk) if pk else None
+#     is_player = request.user != form_instance.organizer if form_instance else False
+#     if request.method == 'POST':
+#         form = PlayerSelectionCrispyForm(
+#             request.POST, 
+#             request.FILES, 
+#             instance=form_instance, 
+#             is_player=is_player
+#         )
+#         if form.is_valid():
+#             application = form.save(commit=False)
+            
+#             if not is_player:
+#                 # Organizer path: Save configuration and publish
+#                 application.organizer = request.user
+#                 application.is_published = True
+#                 application.save()
+#                 messages.success(request, "Selection form configured and published!")
+#                 return redirect('organizer:dashboard')
+#             else:
+#                 # Player path: Submit the mandatory fields
+#                 application.pk = None 
+#                 application.is_published = False
+#                 application.status = 'pending'
+#                 application.save()
+#                 # Trigger Notification Logic Here
+#                 messages.success(request, "Application submitted successfully!")
+#                 return redirect('home')
+#     else:
+#         form = PlayerSelectionCrispyForm(instance=form_instance, is_player=is_player)
+#     context = {
+#         'form': form,
+#         'is_player': is_player,
+#         # 'page_title': 'Configure Player Selection Form'
+#         'page_title': 'Apply for Trial' if is_player else 'Configure Form',
+#     }
+
+#     return render(request,'organizer/selection_form_create.html' ,context)
+
+
+
+@login_required
+def selection_form_create(request, pk=None):
+    # 1. Fetch the template if pk exists
     form_instance = get_object_or_404(PlayerSelectionForm, pk=pk) if pk else None
-    is_player = request.user != form_instance.organizer if form_instance else False
+    
+    # 2. Logic: Is the current user an Organizer?
+    is_org = is_organizer_check(request.user)
+    is_player = not is_org # If not an organizer, they are a player/applicant
+
+    if is_player and not pk:
+        messages.error(request, "Please select a trial to apply.")
+        return redirect('accounts:user_dashboard')
+
+    # 3. Get the template (the form created by the organizer)
+    # We use applicant__isnull=True to ensure we are grabbing a TEMPLATE, not someone's submission
+    if pk:
+        form_instance = get_object_or_404(PlayerSelectionForm, pk=pk)
+    else:
+        form_instance = None
     if request.method == 'POST':
         form = PlayerSelectionCrispyForm(
             request.POST, 
             request.FILES, 
-            instance=form_instance, 
+            # instance=form_instance if is_org else None, # Players shouldn't overwrite the instance
+            instance=None if is_player else form_instance,
             is_player=is_player
         )
+        
         if form.is_valid():
             application = form.save(commit=False)
             
-            if not is_player:
-                # Organizer path: Save configuration and publish
+            if is_org:
+                # Path: Organizer creating/editing the template
                 application.organizer = request.user
                 application.is_published = True
                 application.save()
                 messages.success(request, "Selection form configured and published!")
                 return redirect('organizer:dashboard')
             else:
-                # Player path: Submit the mandatory fields
-                application.pk = None 
-                application.is_published = False
+                # Path: Player submitting an application
+                # We link this submission to the template (form_instance)
+                application.pk = None # Force creation of a NEW record
+                application.applicant = request.user
+                application.parent_form = form_instance
+                application.organizer = form_instance.organizer # The org who created it
+
+                application.event_name = form_instance.event_name
+                application.sports = form_instance.sports
+                application.level = form_instance.level
+                application.address = form_instance.address
+
+                application.is_published = False # Responses stay private
                 application.status = 'pending'
                 application.save()
-                # Trigger Notification Logic Here
+                
                 messages.success(request, "Application submitted successfully!")
-                return redirect('home')
+                return redirect('accounts:user_dashboard')
+        else:
+            print(form.errors)
     else:
+        # GET Request: Pre-fill the form with template data for the player to see
         form = PlayerSelectionCrispyForm(instance=form_instance, is_player=is_player)
+
     context = {
         'form': form,
         'is_player': is_player,
-        # 'page_title': 'Configure Player Selection Form'
         'page_title': 'Apply for Trial' if is_player else 'Configure Form',
     }
+    
+    return render(request, 
+        'organizer/athlete_apply_form.html' if is_player else 'organizer/selection_form_create.html', 
+        context
+    )
+    # Use the logic we built earlier to decide which layout to show
+    # if is_player:
+    #     return render(request, 'organizer/athlete_apply_form.html', context)
+    # return render(request, 'organizer/selection_form_create.html', context)
 
-    return render(request,'organizer/selection_form_create.html' ,context)
+
 
 # def send_status_email(application, status_type):
 #     """Helper function to send emails based on status change."""
@@ -358,3 +500,23 @@ def booking_success(request, sale_id):
     # Ensure the user can only see their own ticket
     sale = get_object_or_404(TicketSale, id=sale_id, buyer=request.user)
     return render(request, 'organizer/booking_success.html', {'sale': sale})
+
+#
+@login_required
+def published_forms(request):
+    # Fetch forms that are published, ordered by newest first
+    # Adjust 'is_published' to match your actual boolean field name
+    forms = PlayerSelectionForm.objects.filter(is_published=True).order_by('-created_at')
+    
+    return render(request, 'organizer/published_form.html', {'forms': forms})
+#
+@login_required
+def published_form_detail(request, pk):
+    # Fetch the PlayerSelectionForm model
+    form_data = get_object_or_404(PlayerSelectionForm, pk=pk, organizer=request.user)
+    
+    context = {
+        'form_data': form_data,
+        'page_title': 'Published Form Details'
+    }
+    return render(request, 'organizer/published_form_detail.html', context)

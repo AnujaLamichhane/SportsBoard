@@ -508,16 +508,16 @@ display: block;
       background-color: var(--bg-color);
       color: var(--text-color);
       text-align: center;
-      padding: 60px 40px;
+      padding: 60px 10px;
       border-radius: 12px;
       margin-top: 40px;
     }
 
     .value-title {
-      font-size: 28px;
+      font-size: 2.2em;
       font-weight: 700;
       margin-bottom: 30px;
-      color: #ff7b00;
+      color: var(--text-color);
       margin-right: 65%;
     }
 
@@ -532,7 +532,7 @@ display: block;
     .value-card {
       /* background-color: #232f3e; */
       /* border-radius: 14px; */
-      padding: 30px 25px;
+      padding: 30px 50px;
       width: 300px;
       /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); */
       /* transition: transform 0.3s ease, box-shadow 0.3s ease; */
@@ -540,7 +540,7 @@ display: block;
 
     .value-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
 
     .value-card h3 {
@@ -613,7 +613,7 @@ display: block;
     }
     .photos .ph img{
       width: 100%;
-      height: 180px;
+      height: 100%;
       object-fit: cover;
       border-radius: 12px;
       transition: transform 0.4s ease;
@@ -799,7 +799,10 @@ display: block;
     font-weight: bold;
 }
 
-.event-text-box { padding: 15px; color: var(--text-color); }
+.event-text-box {
+padding: 25px;
+color: var(--text-color);
+ }
 
 /* --- Fix: Small, Clean Right-Side Calendar --- */
 
@@ -825,6 +828,9 @@ display: block;
     padding: 20px;
     border: 1px solid rgba(128, 128, 128, 0.2);
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+width: 100% !important;
+
+    margin: 0 auto; /* Centers the widget in its column */
 }
 
 .widget-header { color: #ff7b00; font-weight: 700; margin-bottom: 15px; }
@@ -842,18 +848,39 @@ display: block;
     color: var(--text-color) !important;
     border-bottom: 1px solid rgba(128,128,128,0.1) !important;
      font-weight: 600;
+
+
+
+
+
 }
 
-.ui-datepicker-prev,
-.ui-datepicker-next {
+
+.ui-datepicker-prev {
+    float:left;
+    padding: 2px 8px;
     cursor: pointer;
-}
+    }
+
+.ui-datepicker-next {
+    float:left;
+    padding: 2px 8px;
+    cursor: pointer;
+    }
+
 
 
 
 /* Month text */
 .ui-datepicker-title {
+
+    margin: 0 !important;
     color: #ff7b00;
+    order: 2; /* Forces Month/Year to center */
+    text-align: center;
+
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
 /* Week names */
@@ -902,37 +929,58 @@ display: block;
     font-weight: 700;
     border-radius: 50%;
     animation: redPulse 2s infinite;
+
 }
 
-.timeline-mini-card {
-    background: rgba(128, 128, 128, 0.05);
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border-left: 4px solid #ff7b00;
-    color: var(--text-color);
+.timeline-mini-card:hover {
+    background: rgba(255, 123, 0, 0.2);
 }
 /* FORCE Bootstrap row behavior for Events page */
 .events-page .row {
     display: flex !important;
-    flex-direction: row !important;
+
     align-items: flex-start;
+    justify-content: center;
+    gap: 50px; /* Adds a fixed gap between events and calendar */
+}
+
+/* Make events column dominant */
+.events-page .col-lg-8 {
+    flex: 0 0 auto;
 }
 
 /* FORCE calendar column to the RIGHT */
 .events-page .col-lg-3 {
-    margin-left: auto;
+flex: 0 0 350px; /* Fixed width to keep it consistent */
+    max-width: 350px;
+    padding-left: 30px;
+    border-left: 1px solid rgba(128,128,128,0.15);
+
 }
 
 /* --- 1. Clean & Professional Match Badges (Left Side) --- */
 .match-badge {
-    background: rgba(255, 255, 255, 0.05); /* Soft glass look */
+    /*background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
-    border: 1px solid rgba(255, 193, 7, 0.2); /* Subtle yellow border */
-    padding: 12px 16px;
+    border: 1px solid rgba(255, 193, 7, 0.2);  Subtle yellow border
+    padding: 15px;
     margin-bottom: 12px;
     transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
+    line-height: 1.6; /* Better text spacing */
+    background: rgba(0, 0, 0, 0.4) !important; /* Darker overlay for better text contrast */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-left: 5px solid #ffc107;
+    border-radius: 12px;
+    padding: 20px !important; /* Increased padding to remove congestion */
+    /*margin: 15px; /* Pulls it inside the event-img-box */
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    transition: 0.3s ease;
+    z-index: 2;
 }
 
 .match-badge:hover {
@@ -941,11 +989,31 @@ display: block;
     border-color: #ffc107;
 }
 
-/* --- 2. Making the Calendar Bigger & Better --- */
-.calendar-widget-box {
-    padding: 25px !important; /* Extra breathing room */
-    width: 100%;
+.match-badge .teams-display {
+    font-size: 1.3rem; /* Larger team names */
+    display: block;
+    margin: 5px 0;
+    color: #ffffff !important;
+    font-weight: 700;
+    text-transform: capitalize;
+
+
 }
+
+/* Icons and Match Info - Theme Orange (No more purple) */
+.match-badge i,
+.match-badge .match-meta,.match-badge span,
+.match-badge .text-white-50 {
+    color: #ff7b00 !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+opacity: 1 !important;
+
+
+}
+
+/* Highlight the VS text */
+
 
 /* Force jQuery UI to fill the sidebar width */
 #right-side-calendar .ui-datepicker {
@@ -979,4 +1047,226 @@ display: block;
 .ui-datepicker-today.highlight-event a {
     background: #ff2d2d !important;
     box-shadow: 0 0 20px rgba(255, 45, 45, 0.8);
+}
+
+
+
+/* ========================================
+   OPTIMIZED LAYOUT FOR VIEW EVENTS PAGE
+   ======================================== */
+
+/* Main container for the entire events page */
+.events-page .container {
+    max-width: 1250px; /* Prevents excessive stretching on ultra-wide screens */
+    margin: 0 auto;
+    padding: 40 20px; /* MORE space on left and right edges */
+}
+
+/* Row flex adjustments - gives more space to events */
+.events-page .row {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 60px; /* More breathing room between events and calendar */
+    --bs-gutter-x: 0;
+    justify-content: space-between; /* Pushes calendar to the right */
+    padding: 0, 40px; /* Additional inner spacing */
+}
+
+
+/* Events column - MUCH wider and more dominant */
+.events-page .col-lg-8 {
+    flex: 1 1 auto; /* Takes up remaining space */
+    max-width: none
+    min-width: 0; /* Prevents overflow issues */
+}
+
+/* Calendar column - fixed width, pushed to right */
+.events-page .col-lg-3 {
+flex: 0 0 380px; /* Fixed width to ensure it fits perfectly */
+    max-width: 380px;
+    position: sticky;
+    top: 120px; /* Keeps it in view while scrolling */
+    flex: 0 0 320px; /* Slightly smaller calendar for more event space */
+    margin-left: 0; /* Remove auto margin */
+}
+
+/* Events grid - optimized card sizing */
+.events-main-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Even wider cards */
+    gap: 28px; /* More generous spacing between cards */
+    width: 100%;
+
+}
+
+/* Event cards - improved proportions */
+.event-glass-card {
+    background: var(--nav-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    text-decoration: none;
+    border: 1px solid rgba(128, 128, 128, 0.6);
+    transition: 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Softer shadow */
+    height: 100%; /* Ensures consistent card heights */
+}
+
+.event-glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(255, 123, 0, 0.2);
+}
+
+.event-img-box {
+    width: 100%;
+    height: 200px; /* Taller images for better visual impact */
+    position: relative;
+    background: #000;
+    overflow: hidden;
+}
+
+.event-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Calendar widget - stays compact and clean */
+.calendar-widget-box {
+border: none; /* Pic 2 has a very clean look, often without heavy borders */
+    background: var(--bg-card);
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08); /* Deep soft shadow */
+
+
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+
+    width: 100%; /* Fill the column width */
+    max-width: none; /* Remove the max-width constraint */
+    margin: 0; /* Remove centering */
+    position: sticky; /* Keeps calendar visible while scrolling */
+    top: 115px; /* Accounts for navbar height */
+}
+
+/* Timeline cards beneath calendar */
+.timeline-mini-card {
+    /*background: rgba(128, 128, 128, 0.05);
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 10px;
+    border-left: 4px solid #ff7b00;
+    color: var(--text-color);
+    font-size: 0.9rem;*/
+    background: rgba(255, 123, 0, 0.1); /* Very light orange tint */
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border-left: 4px solid #ff7b00;
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+/* Large screens (1400px+) - optimal layout */
+@media (min-width: 1400px) {
+    .events-page .container {
+        max-width: 1800px;
+    }
+
+    .events-main-layout {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+/* Medium screens (1200px - 1399px) */
+@media (max-width: 1399px) {
+    .events-page .col-lg-8 {
+        max-width: calc(100% - 360px);
+    }
+
+    .events-main-layout {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* Tablets (992px - 1199px) */
+@media (max-width: 1199px) {
+    .events-page .row {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .events-page .col-lg-8,
+    .events-page .col-lg-3 {
+        flex: 1 1 auto;
+        max-width: 100%;
+    }
+
+    .calendar-widget-box {
+        position: relative;
+        top: 0;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .events-main-layout {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* Mobile (below 768px) */
+@media (max-width: 768px) {
+    .events-page .container {
+        padding: 0 20px; /* Keep spacing on mobile too */
+    }
+
+    .events-page .row {
+        padding: 0 10px;
+    }
+
+    .events-main-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .event-img-box {
+        height: 180px;
+    }
+
+    .calendar-widget-box {
+        max-width: 100%;
+        padding: 20px;
+    }
+}
+
+/* Left side (Events) */
+.events-column {
+    flex: 1;
+}
+
+/* Right side (Calendar Sidebar) */
+.calendar-sidebar {
+    width: 350px; /* Fixes the width to the red box size */
+    flex-shrink: 0;
+    position: sticky;
+    top: 110px; /* Keeps it visible while scrolling */
+}
+
+/* Force the jQuery Calendar to fill the sidebar */
+.calendar-widget-box,
+#right-side-calendar {
+    width: 100% !important;
+}
+
+.ui-datepicker {
+    width: 100% !important;
+    background: var(--nav-bg) !important;
+    border: 1px solid rgba(128, 128, 128, 0.2) !important;
+    border-radius: 15px;
+    padding: 10px;
 }
