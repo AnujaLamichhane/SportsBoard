@@ -420,3 +420,19 @@ label {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+
+.login-box .control-label,
+    .login-box .form-label,
+    .login-box legend {
+        color: white !important;
+    }
+
+    /* This ensures the radio button text (Athlete/User, Organizer) is also crisp white */
+    .login-box .form-check-label {
+        color: white;
+    }
+
+   .login-box .form-text,
+    .login-box .help-block {
+        color: rgba(255, 255, 255, 0.7) !important; /* Slightly faded white for help text */
+    }

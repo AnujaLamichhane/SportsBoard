@@ -41,7 +41,7 @@ def handle_organizer_redirect(request):
         return redirect('organizer:dashboard')
     else:
 
-        messages.error(request, "You do not have organizer privileges.")
+        # messages.error(request, "You do not have organizer privileges.")
         return redirect('accounts:user_dashboard')
 
 def about(request):

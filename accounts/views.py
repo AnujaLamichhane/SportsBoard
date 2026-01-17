@@ -141,17 +141,17 @@ def role_based_redirect(request):
 
     # 1. Handle Organizer Group
     if user.groups.filter(name__iexact='Organizer').exists():
-        if clicked_role == 'athlete':
-            messages.info(request, "Note: You are logged in as an Organizer, so you've been sent to your management dashboard.")
+        # if clicked_role == 'athlete':
+        #     messages.info(request, "Note: You are logged in as an Organizer, so you've been sent to your management dashboard.")
         return redirect('organizer:dashboard')
 
     # 2. Handle Athlete Group
     if user.groups.filter(name__iexact='Athlete').exists():
-        if clicked_role == 'organizer':
-            # They are an athlete trying to enter the organizer dashboard
-            messages.warning(request, "Access denied. You must have an Organizer account.")
+        # if clicked_role == 'organizer':
+        #     # They are an athlete trying to enter the organizer dashboard
+        #     messages.warning(request, "Access denied. You must have an Organizer account.")
             return redirect('accounts:user_dashboard')
-        return redirect('accounts:user_dashboard')
+    return redirect('accounts:user_dashboard')
 
     # 3. Fallback: If logged in but no group assigned yet
     messages.warning(request, "Please contact support to assign a role to your account.")

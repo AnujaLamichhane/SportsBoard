@@ -36,7 +36,7 @@
 <div class="divider mt-4"><span>OR</span></div>
 
 <div class="role-selection mt-3">
-    <p>Sign in with Google as:</p>
+    <p class="text-white">Sign in with Google as:</p>
     <div class="d-flex gap-2 justify-content-center">
         <a href="{% url 'accounts:custom_google_login' %}?role=user" class="btn btn-google d-flex align-items-center gap-2">
             <img src="{% static 'accounts/images/googlelogo.png' %}" alt="Google logo" class="google-logo">
@@ -62,7 +62,7 @@
 
 
 
-<p class="text-center mt-3 text-muted">
+<p class="text-center mt-3 text-white">
     Don’t have an account? <a href="{% url 'accounts:signup' %}" class="text-primary">Sign up</a>
 </p>
 </div>

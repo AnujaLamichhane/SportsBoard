@@ -62,6 +62,9 @@
                     <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
 
                 {% else %}
+                <a href="/admin" class="admin-lock-link" title="Admin Login">
+            <i class="fa-solid fa-lock"></i>
+        </a>
                     <a href="{% url 'account_login' %}" class="login-btn">Login</a>
                     <a href="{% url 'account_signup' %}" class="signup-btn">Sign Up</a>
                 {% endif %}
