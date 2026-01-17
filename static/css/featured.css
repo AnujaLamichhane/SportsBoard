@@ -24,7 +24,7 @@ body.dark-mode {
     color:var(--text-color);
     width: 100%;
     /*height: 50%;*/
-    max-width: 1200px;
+    max-width: 1600px;
     overflow: hidden;
     position: relative;
     /*margin-left: 5%;*/
@@ -48,7 +48,8 @@ body.dark-mode {
 .featured-grid {
     /* Responsive grid: 3 columns on desktop, adapts down to 1 */
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /*grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));*/
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
     padding: 0 10px;
     width: 100%;
@@ -148,4 +149,11 @@ body.dark-mode {
 /* Ensure the empty message is visible */
 .featured-section p {
     padding-left: 10px;
+}
+
+/* Add a Media Query for Mobile/Small tablets so they stack */
+@media (max-width: 992px) {
+    .featured-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
 }
