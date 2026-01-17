@@ -31,10 +31,16 @@ urlpatterns = [
     path('events/<int:event_id>/', views.event_detail, name='event_detail'),
     path('events/<int:event_id>/edit/', views.event_edit, name='event_edit'),
     path('events/<int:event_id>/delete/', views.event_delete, name='event_delete'),
+    path('all-events/', views.all_events, name='all_events'),#
 
     # Booking & Tickets
     path('book/<int:event_id>/', views.start_booking_process, name='start_booking'),
     path('selection/create/', views.selection_form_create, name='selection_form_create'),
     path('selection/create/<int:pk>/', views.selection_form_create, name='selection_form_create'),
     path('booking/success/<int:sale_id>/', views.booking_success, name='booking_success'), # ADDED THIS
+
+    # publised
+    path('published_forms/', views.published_forms, name='published_forms'),
+    # path('published-form/<int:pk>/', views.published_forms, name='published_form_detail'),
+    path('published_form/<int:pk>/', views.published_form_detail, name='published_form_detail'),
 ]

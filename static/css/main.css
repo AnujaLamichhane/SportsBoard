@@ -508,16 +508,16 @@ display: block;
       background-color: var(--bg-color);
       color: var(--text-color);
       text-align: center;
-      padding: 60px 40px;
+      padding: 60px 10px;
       border-radius: 12px;
       margin-top: 40px;
     }
 
     .value-title {
-      font-size: 28px;
+      font-size: 2.2em;
       font-weight: 700;
       margin-bottom: 30px;
-      color: #ff7b00;
+      color: var(--text-color);
       margin-right: 65%;
     }
 
@@ -532,7 +532,7 @@ display: block;
     .value-card {
       /* background-color: #232f3e; */
       /* border-radius: 14px; */
-      padding: 30px 25px;
+      padding: 30px 50px;
       width: 300px;
       /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); */
       /* transition: transform 0.3s ease, box-shadow 0.3s ease; */
@@ -540,7 +540,7 @@ display: block;
 
     .value-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
 
     .value-card h3 {
@@ -613,7 +613,7 @@ display: block;
     }
     .photos .ph img{
       width: 100%;
-      height: 180px;
+      height: 100%;
       object-fit: cover;
       border-radius: 12px;
       transition: transform 0.4s ease;

@@ -281,39 +281,113 @@ GENDER_CHOICES = [
     ]
 
 
+# class PlayerSelectionForm(models.Model):
+#     # Organizer-controlled (LOCKED)
+#     organizer = models.ForeignKey(User, on_delete=models.CASCADE)
+
+#     # New fields for publishing logic
+#     is_published = models.BooleanField(default=True)
+#     # created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organized_events')
+#     # created_at = models.DateTimeField(auto_now_add=True)
+
+#     # Selection Details (Filled by Organizer)
+#     event_name = models.CharField(max_length=50)
+#     sports = models.CharField(max_length=30)
+#     level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
+#     address = models.CharField(max_length=150)
+
+#     # Player info
+#     full_name = models.CharField(max_length=100,blank=True, null=True)
+#     dob = models.DateField(blank=True, null=True)
+#     age = models.CharField(max_length=2,blank=True, null=True)
+#     gender = models.CharField(max_length=10,choices=GENDER_CHOICES,blank=True, null=True)
+
+#     phone = models.CharField(max_length=10,blank=True, null=True)  # Nepal only
+#     email = models.EmailField(blank=True, null=True)
+
+#     temporary_address = models.CharField(max_length=150,blank=True, null=True)
+#     permanent_address = models.CharField(max_length=150,blank=True, null=True)
+
+#     guardian_name = models.CharField(max_length=150)
+#     guardian_relation = models.CharField(max_length=100)
+#     guardian_phone = models.CharField(max_length=15)
+
+#     citizenship = models.FileField(upload_to='documents/citizenship/',blank=True, null=True)
+#     certificates = models.FileField(upload_to='documents/certificates/', blank=True,null=True)
+
+#     @property
+#     def calculate_age(self):
+#         if self.dob:
+#             today = date.today()
+#             return today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
+#         return 0
+    
+#     status = models.CharField(
+#         max_length=20,
+#         choices=[('pending','Pending'),('selected','Selected'),('rejected','Rejected')],
+#         default='pending'
+#     )
+
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         # return self.full_name
+#         return f"{self.event_name} - {self.full_name or 'Template'}"
+
+
+
+
+
 class PlayerSelectionForm(models.Model):
-    # Organizer-controlled (LOCKED)
-    organizer = models.ForeignKey(User, on_delete=models.CASCADE)
+    # --- AUTHENTICATION & RELATIONSHIPS ---
+    # The Organizer who created the form template
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_selection_forms')
+    
+    # The Athlete who filled it out (NULL if it's just the Organizer's Template)
+    applicant = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='my_submissions')
+    
+    # Links a player's submission back to the organizer's original announcement
+    parent_form = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='responses')
 
-    # New fields for publishing logic
-    is_published = models.BooleanField(default=True)
-    # created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organized_events')
-    # created_at = models.DateTimeField(auto_now_add=True)
+    # --- LOGIC & STATUS ---
+    is_published = models.BooleanField(default=True) 
+    status = models.CharField(
+        max_length=20,
+        choices=[('pending','Pending'),('selected','Selected'),('rejected','Rejected')],
+        default='pending'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    # Selection Details (Filled by Organizer)
+    # --- FORM FIELDS (Organizer Fills These Once) ---
     event_name = models.CharField(max_length=50)
-    sports = models.CharField(max_length=30)
+    sports = models.CharField(max_length=30, choices=SPORT_CHOICES)
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
     address = models.CharField(max_length=150)
 
-    # Player info
-    full_name = models.CharField(max_length=100,blank=True, null=True)
+    # --- PLAYER INFO (Athlete Fills These) ---
+    full_name = models.CharField(max_length=100, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
-    age = models.CharField(max_length=2,blank=True, null=True)
-    gender = models.CharField(max_length=10,choices=GENDER_CHOICES,blank=True, null=True)
-
-    phone = models.CharField(max_length=10,blank=True, null=True)  # Nepal only
+    age = models.CharField(max_length=10, blank=True, null=True) # Increased length for "18 Years"
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
 
-    temporary_address = models.CharField(max_length=150,blank=True, null=True)
-    permanent_address = models.CharField(max_length=150,blank=True, null=True)
+    temporary_address = models.CharField(max_length=150, blank=True, null=True)
+    permanent_address = models.CharField(max_length=150, blank=True, null=True)
 
-    guardian_name = models.CharField(max_length=150)
-    guardian_relation = models.CharField(max_length=100)
-    guardian_phone = models.CharField(max_length=15)
+    # Guardian Info
+    guardian_name = models.CharField(max_length=150, blank=True, null=True)
+    guardian_relation = models.CharField(max_length=100, blank=True, null=True)
+    guardian_phone = models.CharField(max_length=15, blank=True, null=True)
 
-    citizenship = models.FileField(upload_to='documents/citizenship/',blank=True, null=True)
-    certificates = models.FileField(upload_to='documents/certificates/', blank=True,null=True)
+    # Documents
+    citizenship = models.FileField(upload_to='documents/citizenship/', blank=True, null=True)
+    certificates = models.FileField(upload_to='documents/certificates/', blank=True, null=True)
+
+    def __str__(self):
+        if self.applicant:
+            return f"Submission: {self.event_name} by {self.applicant.username}"
+        return f"Template: {self.event_name} (by {self.organizer.username})"
 
     @property
     def calculate_age(self):
@@ -321,20 +395,17 @@ class PlayerSelectionForm(models.Model):
             today = date.today()
             return today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
         return 0
-    
-    status = models.CharField(
-        max_length=20,
-        choices=[('pending','Pending'),('selected','Selected'),('rejected','Rejected')],
-        default='pending'
-    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        # return self.full_name
-        return f"{self.event_name} - {self.full_name or 'Template'}"
+
+
+
+
+
+
 
 # Add this below your Event model
+
 class Match(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='matches')
     game_type = models.CharField(max_length=20, choices=GAME_TYPE_CHOICES)

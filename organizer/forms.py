@@ -161,8 +161,9 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
                     
                 ),
                 Row(
-                    Column(PrependedText('phone', '🇳🇵 +977'), css_class='col-md-6 mb-2'),
+                    Column(PrependedText('phone', '🇳🇵 +977'), css_class='col-md-6 mb-2' ),
                     Column('email', css_class='col-md-6 mb-2'),
+                    
                 ),
                 Row(
                     Column(InlineRadios('gender'), css_class='col-md-12 custom-gender-row'),
@@ -183,8 +184,8 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
             Fieldset(
                 "Gurdian Details",
                 Row(
-                    Column('guardian_name', css_class='col-md-5 mb-2'),
-                    Column('guardian_relation', css_class='col-md-3 mb-2'),
+                    Column('guardian_name', css_class='col-md-4 mb-2'),
+                    Column('guardian_relation', css_class='col-md-4 mb-2'),
                     Column('guardian_phone', css_class='col-md-4 mb-2'),
                    
                 ),
