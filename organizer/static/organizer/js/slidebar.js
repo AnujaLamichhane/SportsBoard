@@ -10,6 +10,7 @@ document.querySelectorAll('.menu-item').forEach(item => {
 });
 
 
+
 function toggleSidebar() {
             const sidebar = document.getElementById('geminiSidebar');
             const mainContent = document.querySelector('.main-content');

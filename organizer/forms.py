@@ -74,7 +74,7 @@ TicketTypeFormset = inlineformset_factory(
         Event,
         TicketType,
         fields=('name', 'price', 'available_quantity'),
-        extra=2,  # Start with one empty form
+        extra=1,  # Start with one empty form
         can_delete=True
     )
 
@@ -90,8 +90,8 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
     )
     class Meta:
         model = PlayerSelectionForm
-        exclude = ['organizer', 'is_published', 'status']
-        fields='__all__'
+        exclude = ['organizer', 'is_published', 'status','applicant','event']
+        # fields='__all__'
         widgets = {
             # 'gender': forms.RadioSelect(choices=[('male', 'Male'), ('female', 'Female'), ('others', 'Others')]),
             'dob': forms.DateInput(attrs={'type': 'date','id': 'id_dob'}),
@@ -235,5 +235,9 @@ MatchFormset = inlineformset_factory(
     can_delete=True,
     widgets={
         'match_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        'game_type': forms.Select(attrs={'class': 'form-select'}),
+        'team_a': forms.TextInput(attrs={'placeholder': 'Team A', 'class': 'form-control'}),
+        'team_b': forms.TextInput(attrs={'placeholder': 'Team B', 'class': 'form-control'}),
+        'venue': forms.TextInput(attrs={'placeholder': 'Stadium Name', 'class': 'form-control'}),
     }
 )

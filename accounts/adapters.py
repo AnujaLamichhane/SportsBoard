@@ -64,8 +64,11 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
         # This forces the link to use your ngrok DOMAIN from settings
         path = reverse("account_confirm_email", args=[emailconfirmation.key])
-        return f"https://{settings.DOMAIN}{path}"
+        # return f"https://{settings.DOMAIN}{path}"
+        host = request.get_host()
+        protocol = 'https' if 'ngrok' in host else 'http'
 
+        return f"{protocol}://{host}{path}"
 
 # --- HANDLES GOOGLE ROLE SELECTION (Your current logic) ---
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):

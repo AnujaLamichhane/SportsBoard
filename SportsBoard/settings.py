@@ -15,6 +15,8 @@ load_dotenv()
 # DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev')
 DEBUG = True
+KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY')
+
 
 
 # ALLOWED_HOSTS is not strictly required when DEBUG is True,
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
 
     'homepage',
     'organizer',
+    'payments',
 
     # 'accounts',
     'accounts.apps.AccountsConfig',
@@ -69,7 +72,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SITE_ID = 2 # Required for django.contrib.sites (for allauth)
+SITE_ID = 4 # Required for django.contrib.sites (for allauth)
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
@@ -234,6 +237,8 @@ ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login/?verify_email=true'
 
 # Skip the intermediate confirmation page
 SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # 1. The Adapter for standard Email (Fixes the 127.0.0.1 link)
 ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
 

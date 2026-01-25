@@ -18,6 +18,8 @@ urlpatterns = [
     path('organizer/', include('organizer.urls', namespace='organizer')),
     path('news/', include('news.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('payments/', include('payments.urls')),
+
 ]
 
 if settings.DEBUG:

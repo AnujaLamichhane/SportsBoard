@@ -53,12 +53,18 @@
                 </div>
 
                 <div class="col-md-4 col-lg-2">
-                    <div class="stat-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6>Tickets Sold</h6>
-                            <i class="fa-solid fa-ticket text-success"></i>
-                        </div>
-                        <h4>{{ tickets_sold }}</h4>
+<!--                    <div class="stat-card">-->
+<!--                        <div class="d-flex justify-content-between align-items-center">-->
+<!--                            <h6>Tickets Sold</h6>-->
+<!--                            <i class="fa-solid fa-ticket text-success"></i>-->
+<!--                        </div>-->
+<!--                        <h4>{{ tickets_sold }}</h4>-->
+<!--                    </div>-->
+
+                    <div class="stat-card" onclick="location.href='{% url 'organizer:verify_ticket_gate' %}'" style="cursor: pointer;">
+                        <p>Tickets Sold</p>
+                        <h2>{{ tickets_sold }}</h2>
+                        <small class="text-info">Tap to start scanning ➔</small>
                     </div>
                 </div>
             </div>
@@ -103,18 +109,37 @@
                     <h3 class="text-white mb-3">Recent Sales</h3>
                     <div class="card bg-dark-card p-3 mb-4">
                         <ul class="list-group list-group-flush">
-                            {% for sale in recent_sales %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">
-                                <div>
-                                    <p class="mb-0 fw-bold">{{ sale.event.name }}</p>
-                                    <small class="text-info">{{ sale.ticket_type.name }}</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="badge bg-{{ sale.payment_status|lower }} d-block mb-1">{{ sale.payment_status }}</span>
-                                    <small class="text-success">NPR {{ sale.price }}</small>
-                                </div>
-                            </li>
-                            {% endfor %}
+                           {% for sale in recent_sales %}
+<!--<li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">-->
+<!--    <div>-->
+<!--        <p class="mb-0 fw-bold">{{ sale.transaction.ticket_type.event.name }}</p>-->
+<!--        <small class="text-info">{{ sale.transaction.ticket_type.name }} ({{ sale.transaction.ticket_type.match.team_a }} vs {{ sale.transaction.ticket_type.match.team_b }})</small>-->
+<!--    </div>-->
+<!--    <div class="text-end">-->
+<!--        <span class="badge bg-{% if sale.transaction.status == 'PAID' %}success{% else %}warning{% endif %} d-block mb-1">-->
+<!--            {{ sale.transaction.status }}-->
+<!--        </span>-->
+<!--        <small class="text-success">NPR {{ sale.transaction.amount }}</small>-->
+<!--    </div>-->
+<!--</li>-->
+
+
+<li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">
+    <div>
+        <p class="mb-0 fw-bold">{{ sale.transaction.ticket_type.event.name }}</p>
+        <small class="text-info">{{ sale.transaction.ticket_type.name }} Tier</small>
+        <br>
+        <small class="text-muted" style="font-size: 0.75rem;">Code: {{ sale.ticket_code }}</small>
+    </div>
+    <div class="text-end">
+        <span class="badge bg-success d-block mb-1">
+            {{ sale.transaction.status }}
+        </span>
+        <small class="text-success">NPR {{ sale.transaction.amount }}</small>
+    </div>
+</li>
+
+{% endfor %}
                         </ul>
                     </div>
                 </div>

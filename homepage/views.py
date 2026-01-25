@@ -48,43 +48,12 @@ def about(request):
     return render(request, 'homepage/about.html')
 def news(request):
     return render(request, 'news/index.html')
-# def cricket(request):
-#     return HttpResponse("Welcome to cricket page.")
-# def football(request):
-#     return HttpResponse("Welcome to football page.")
-# def volleyball(request):
-#     return HttpResponse("Welcome to volleyball page.")
-# def basketball(request):
-#     return HttpResponse("Welcome to basketball page.")
-# def badminton(request):
-#     return HttpResponse("Welcome to badminton page.")
-# def viewmatch(request):
-#     return HttpResponse("Welcome to view matches section.")
+
+
 def logout_user(request):
     logout(request)     # <-- THIS clears login
     return redirect("/")
-# def event_detail(request, id):
-#     event = get_object_or_404(Event, id=id)
-#     return render(request, 'homepage/event_detail.html', {'event': event})
 
-# def all_events(request):
-#     # This extracts every event created by organizers
-#     events = Event.objects.all().order_by('-created_at')
-#
-#     upcoming_events = Event.objects.filter(
-#         date_time__gte=timezone.now()
-#     ).order_by('date_time')
-#
-#     # 🚨 NEW: Create a list of date strings for the JavaScript calendar
-#     # Format: ['2025-12-26', '2025-12-27']
-#     event_dates = [e.date_time.strftime('%Y-%m-%d') for e in upcoming_events]
-#
-#     return render(request, 'homepage/all_events.html', {
-#         'events': events,
-#         'upcoming_events': upcoming_events,
-#         'event_dates_json': json.dumps(event_dates),
-#         'page_title': 'All Matches & Events'
-#     })
 
 
 def all_events(request):

@@ -1,17 +1,28 @@
+
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Sum, Count, Q
-from django.shortcuts import render, redirect, get_object_or_404  # Ensure get_object_or_404 is imported
-from .models import Event, Application, TicketSale, TicketType  # Ensure all models are imported
-from .forms import EventCreationForm, TicketTypeFormset  # Ensure forms are imported
-from .forms import EventCreationForm, TicketTypeFormset, MatchFormset  # Ensure forms are imported
-from django.shortcuts import get_object_or_404
+from django.db.models import Sum,  Q
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
-from .models import PlayerSelectionForm
-from .forms import PlayerSelectionCrispyForm
-from django.core.mail import send_mail
+from django.urls import reverse
+from django.db import transaction,IntegrityError
+# from django.core.mail import send_mail
 import uuid
-from django.db.models import Q  #
+import requests
+import json
+from decimal import Decimal
+from django.utils import timezone
+
+# Consolidated Model Imports (Removed 'Application')
+from .models import Event, TicketSale, TicketType, PlayerSelectionForm,KhaltiTransaction,Match
+
+# Consolidated Form Imports
+from .forms import (
+    EventCreationForm,
+    TicketTypeFormset,
+    MatchFormset,
+    PlayerSelectionCrispyForm
+)
 
 
 def is_organizer_check(user):
@@ -19,124 +30,45 @@ def is_organizer_check(user):
     return user.is_authenticated and user.groups.filter(name='Organizer').exists()
 
 
-# --- Existing organizer_dashboard view (omitted for brevity, but it's fine) ---
 @login_required(login_url='/accounts/login/')
 @user_passes_test(is_organizer_check, login_url='/')
 def organizer_dashboard(request):
-
     organizer_events = Event.objects.filter(organizer=request.user)
-    # --- 1. Top Card Statistics (Aggregations) ---
+
+    # paid_sales = TicketSale.objects.filter(
+    #     transaction__ticket_type__match__event__in=organizer_events,
+    #     transaction__status='PAID'
+    # ).select_related('transaction__ticket_type__match__event')  # Optimized
+
     paid_sales = TicketSale.objects.filter(
+        transaction__ticket_type__event__in=organizer_events,  # Changed 'match__event' to 'event'
+        transaction__status='PAID'
+    ).select_related('transaction__ticket_type__event')
+
+    total_revenue = paid_sales.aggregate(Sum('transaction__amount'))['transaction__amount__sum'] or 0
+
+    pending_applications = PlayerSelectionForm.objects.filter(
         event__in=organizer_events,
-        payment_status='PAID'
-    )
-
-    total_revenue = paid_sales.aggregate(Sum('price'))['price__sum'] or 0
-
-    # NEW STATISTIC: Total Events
-    total_events = organizer_events.count()
-
-    # upcoming_count = organizer_events.filter(status='UPCOMING').count()
-
-    upcoming_count = organizer_events.filter(status='UPCOMING').count()
-
-    # Note: Ensure you have the 'Application' model imported
-    # pending_applications = Application.objects.filter(
-    #     event__in=organizer_events,
-    #     status='PENDING'
-    # ).count()
-
-    # CORRECTED LOGIC: Pending Applications = Total Forms Filled (with PENDING status)
-    pending_applications = Application.objects.filter(
-        event__in=organizer_events,
-        status='PENDING'  # Assuming 'PENDING' is the status for a newly filled form
+        status='PENDING'
     ).count()
 
-    tickets_sold = TicketSale.objects.filter(
-        event__in=organizer_events
-    ).count()
+    sales_data = []  # Fetch your real data here
+    sales_data_json = json.dumps(sales_data)
+    upcoming_count = organizer_events.filter(date_time__gt=timezone.now()).count()
 
-    # --- 2. Recent Events and Sales ---
-    # recent_events = organizer_events.order_by('-date_time')[:5]
-
-    recent_events = organizer_events.prefetch_related('matches', 'ticket_tiers').order_by('-date_time')[:5]
-
-    recent_sales = TicketSale.objects.filter(
-        event__in=organizer_events
-    ).order_by('-sale_date')[:5]
-
-    recent_applications = Application.objects.filter(
-        event__in=organizer_events
-    ).order_by('-submitted_at')[:5]
-
-    # --- 3. Chart Data (Tickets Sold by Event) ---
-    sales_data_for_chart = paid_sales.values('event__name').annotate(
-        sales_count=Count('id')
-    )
-
-    # 🚨 CONTEXT MUST BE DEFINED BEFORE BEING RETURNED 🚨
     context = {
         'total_revenue': total_revenue,
-        'total_events': total_events,
-        'upcoming_count': upcoming_count,
+        'total_events': organizer_events.count(),
+        'tickets_sold': paid_sales.count(),
+        'recent_sales': paid_sales.order_by('-bought_at')[:5],  # Consolidated
+        'recent_events': organizer_events.order_by('-date_time')[:5],
         'pending_applications': pending_applications,
-        'tickets_sold': tickets_sold,
-        'recent_events': recent_events,
-        'recent_sales': recent_sales,
-        'recent_applications': recent_applications,
-        'sales_data_json': list(sales_data_for_chart),
+        'sales_data_json': sales_data_json,
+        'upcoming_count': upcoming_count
     }
     return render(request, 'organizer/organizer_dashboard.html', context)
 
 
-
-# @login_required
-# @user_passes_test(is_organizer_check, login_url='/')
-# def create_event(request):
-#     form = EventCreationForm()
-#     formset = TicketTypeFormset(instance=None)
-#     match_formset = MatchFormset(instance=None)
-#
-#     if request.method == 'POST':
-#         form = EventCreationForm(request.POST, request.FILES)
-#
-#         if form.is_valid():
-#             event = form.save(commit=False)
-#             event.organizer = request.user
-#             event.save()
-#
-#             formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
-#             match_formset = MatchFormset(request.POST, request.FILES, instance=event)
-#
-#             # Check matches first
-#             if match_formset.is_valid():
-#                 match_formset.save()
-#
-#                 # Check tickets. If valid, save them.
-#                 # If they are empty/invalid but matches are fine, we still treat it as a success (Free Event)
-#                 if formset.is_valid():
-#                     formset.save()
-#
-#                 # messages.success(request, "Tournament Created Successfully!")
-#                 return redirect('organizer:dashboard')
-#         else:
-#             # Re-bind formsets to show errors if main form is invalid
-#             formset = TicketTypeFormset(request.POST, request.FILES)
-#             match_formset = MatchFormset(request.POST, request.FILES)
-#
-#     context = {
-#         'form': form,
-#         'formset': formset,
-#         'match_formset': match_formset,
-#         'page_title': 'Create New Event'
-#     }
-#     return render(request, 'organizer/event_create.html', context)
-
-# def selection_form_create(request):
-    # This page will contain logic to select an event and configure player fields
-    # For now, it's a simple placeholder
-    # context = {'page_title': 'Configure Player Selection Form'}
-    # return render(request, 'organizer/selection_form_create.html', context)
 
 
 @login_required
@@ -144,76 +76,126 @@ def organizer_dashboard(request):
 def create_event(request):
     if request.method == 'POST':
         form = EventCreationForm(request.POST, request.FILES)
-        # STEP A: Add prefix='tickets' and prefix='matches'
-        formset = TicketTypeFormset(request.POST, request.FILES, prefix='tickets')
         match_formset = MatchFormset(request.POST, request.FILES, prefix='matches')
+        ticket_formset = TicketTypeFormset(request.POST, request.FILES, prefix='tickets')
 
-        if form.is_valid():
+        if form.is_valid() and match_formset.is_valid():
+            # 1. Save Event
             event = form.save(commit=False)
             event.organizer = request.user
             event.save()
 
-            # STEP B: Re-bind with instance and the SAME prefix
-            match_formset = MatchFormset(request.POST, request.FILES, instance=event, prefix='matches')
-            formset = TicketTypeFormset(request.POST, request.FILES, instance=event, prefix='tickets')
+            # 2. Save Matches
+            matches = match_formset.save(commit=False)
+            for match in matches:
+                match.event = event
+                match.save()
 
-            # Validate matches now that they are linked to the event ID
-            if match_formset.is_valid():
-                match_formset.save()
+            # 3. Save Tickets (Directly linked to Event)
+            # Only process if 'isFreeEvent' checkbox is NOT checked
+            is_free = request.POST.get('isFreeEvent') == 'on'
 
-                if formset.is_valid():
-                    formset.save()
+            if not is_free and ticket_formset.is_valid():
+                tickets = ticket_formset.save(commit=False)
+                for ticket in tickets:
+                    ticket.event = event  # Direct link to Event
+                    ticket.save()
 
-                messages.success(request, "Event created successfully!")
-                return redirect('organizer:dashboard')
+            messages.success(request, "Tournament Created Successfully!")
+            return redirect('organizer:dashboard')
     else:
         form = EventCreationForm()
-        # STEP C: Set prefixes for the empty forms on page load
-        formset = TicketTypeFormset(prefix='tickets')
         match_formset = MatchFormset(prefix='matches')
+        ticket_formset = TicketTypeFormset(prefix='tickets')
 
-    context = {
+    return render(request, 'organizer/event_create.html', {
         'form': form,
-        'formset': formset,
         'match_formset': match_formset,
+        'formset': ticket_formset,
         'page_title': 'Create New Event'
-    }
-    return render(request, 'organizer/event_create.html', context)
+    })
 
-
-
-
+# @login_required
+# @user_passes_test(is_organizer_check, login_url='/')
+# def event_edit(request, event_id):
+#     event = get_object_or_404(Event, pk=event_id, organizer=request.user)
+#
+#     if request.method == 'POST':
+#         form = EventCreationForm(request.POST, request.FILES, instance=event)
+#         # formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
+#         # match_formset = MatchFormset(request.POST, request.FILES, instance=event)
+#         match_formset = MatchFormset(request.POST, request.FILES, instance=event, prefix='matches')
+#         ticket_formset = TicketTypeFormset(request.POST, request.FILES, instance=event, prefix='tickets')
+#
+#         # Only save tickets if the event is not marked as free
+#         is_free = request.POST.get('isFreeEvent') == 'on'
+#         if not is_free:
+#             if ticket_formset.is_valid():
+#                 ticket_formset.save()
+#         else:
+#             # If changed to free, optionally delete existing tiers
+#             event.ticket_tiers.all().delete()
+#
+#         # if form.is_valid() and match_formset.is_valid():
+#         #     form.save()
+#         #     match_formset.save()
+#         #
+#         #     if formset.is_valid():
+#         #         formset.save()
+#
+#             messages.success(request, f"Event '{event.name}' updated successfully!")
+#             return redirect('organizer:event_detail', event_id=event.pk)
+#     else:
+#         form = EventCreationForm(instance=event)
+#         match_formset = MatchFormset(instance=event, prefix='matches')
+#         ticket_formset = TicketTypeFormset(instance=event, prefix='tickets')
+#
+#         # formset = TicketTypeFormset(instance=event)
+#         # match_formset = MatchFormset(instance=event)
+#
+#     context = {
+#         'form': form,
+#         # 'formset': formset,
+#         'match_formset': match_formset,  # Don't forget this!
+#         'ticket_formset': ticket_formset,
+#         'page_title': f'Edit Event: {event.name}',
+#         'event': event
+#     }
+#     return render(request, 'organizer/event_create.html', context)
 
 @login_required
 @user_passes_test(is_organizer_check, login_url='/')
 def event_edit(request, event_id):
+    # 1. Fetch the existing event
     event = get_object_or_404(Event, pk=event_id, organizer=request.user)
 
     if request.method == 'POST':
+        # 2. Bind data to the instance
         form = EventCreationForm(request.POST, request.FILES, instance=event)
-        formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
-        match_formset = MatchFormset(request.POST, request.FILES, instance=event)
 
-        if form.is_valid() and match_formset.is_valid():
+        # IMPORTANT: Pass instance=event to these formsets
+        match_formset = MatchFormset(request.POST, request.FILES, instance=event, prefix='matches')
+        ticket_formset = TicketTypeFormset(request.POST, request.FILES, instance=event, prefix='tickets')
+
+        if form.is_valid() and match_formset.is_valid() and ticket_formset.is_valid():
             form.save()
             match_formset.save()
-
-            if formset.is_valid():
-                formset.save()
+            ticket_formset.save()
 
             messages.success(request, f"Event '{event.name}' updated successfully!")
             return redirect('organizer:event_detail', event_id=event.pk)
     else:
+        # 3. For GET requests, load the existing data using instance=event
         form = EventCreationForm(instance=event)
-        formset = TicketTypeFormset(instance=event)
-        match_formset = MatchFormset(instance=event)
+        match_formset = MatchFormset(instance=event, prefix='matches')
+        ticket_formset = TicketTypeFormset(instance=event, prefix='tickets')
 
     context = {
         'form': form,
-        'formset': formset,
-        'match_formset': match_formset,  # Don't forget this!
-        'page_title': f'Edit Event: {event.name}',
-        'event': event
+        'match_formset': match_formset,
+        'formset': ticket_formset,  # This is your ticket tier formset
+        'event': event,
+        'page_title': f'Edit Event: {event.name}'
     }
     return render(request, 'organizer/event_create.html', context)
 
@@ -252,247 +234,178 @@ def all_events(request):
         'events': events,
         'search_query': search_query # Pass it back to keep it in the input box
     })
-#
-def event_detail(request, event_id):
-    """
-    Handles both public viewing and secured organizer management access for an event.
-    """
-    
-    # 1. PUBLIC ACCESS: Fetch the event details (no organizer check needed here)
-    event = get_object_or_404(
-        Event.objects.prefetch_related('ticket_tiers','matches'),
-        pk=event_id
-    )
+# #
 
+
+def event_detail(request, event_id):
+    event = get_object_or_404(Event.objects.prefetch_related('matches','ticket_tiers'), pk=event_id)
     matches = event.matches.all().order_by('match_time')
 
-    context = {
-        'event': event,
-        'page_title': event.name,
-        'is_organizer': False, # Default flag for template logic
-        'ticket_tiers': event.ticket_tiers.all(),
-        # Other necessary public context
-        'matches': matches,
-    }
+    context = {'event': event, 'matches': matches, 'is_organizer': False}
 
-    # 2. ORGANIZER DASHBOARD LOGIC (Secured)
-    # Check if the user is authenticated AND the current user is the event's organizer
     if request.user.is_authenticated and event.organizer == request.user:
-        
-        # Set flag to true to display management sections in the template
-        context['is_organizer'] = True 
-        
-        # --- Calculate and add SECURE STATS to context ---
-        
-        applications = event.application_set.all()
-        paid_sales = event.ticketsale_set.filter(payment_status='PAID') 
+        context['is_organizer'] = True
 
-        # Financial & Sales Stats
-        total_revenue_result = paid_sales.aggregate(total=Sum('price'))
-        context['total_revenue'] = total_revenue_result['total'] if total_revenue_result['total'] else 0
+        # Correct path for sales in the new schema
+        # paid_sales = TicketSale.objects.filter(
+        #     transaction__ticket_type__match__event=event,
+        #     transaction__status='PAID'
+        # )
+
+        paid_sales = TicketSale.objects.filter(
+            transaction__ticket_type__event=event,  # Remove 'match__'
+            transaction__status='PAID'
+        )
+
+        total_revenue_result = paid_sales.aggregate(total=Sum('transaction__amount'))
+        context['total_revenue'] = total_revenue_result['total'] or 0
         context['total_tickets_sold'] = paid_sales.count()
-        
-        total_capacity_result = event.ticket_tiers.aggregate(total_qty=Sum('available_quantity'))
-        context['total_capacity'] = total_capacity_result['total_qty'] if total_capacity_result['total_qty'] else 0
 
-        # Application Stats
-        context['pending_applications_count'] = applications.filter(status='PENDING').count()
+        # Use registration_forms related_name from your model
+        applications = event.registration_forms.all()
         context['total_applications_count'] = applications.count()
-        
-        context['recent_applications'] = applications.order_by('-submitted_at')[:5]
-        context['recent_sales'] = paid_sales.order_by('-sale_date')[:5]
 
     return render(request, 'organizer/event_detail.html', context)
+
+#
+# @login_required(login_url=settings.LOGIN_URL)
+# def start_booking_process(request, event_id):
+#     event = get_object_or_404(Event, pk=event_id)
+#
+#     # Check matches for tickets (since tiers are now match-based)
+#     if not TicketType.objects.filter(match__event=event).exists():
+#         messages.info(request, "This is a free event. No booking required!")
+#         return redirect('organizer:event_detail', event_id=event.id)
+#
+#     if request.method == 'POST':
+#         tier_id = request.POST.get('ticket_tier')
+#         tier = get_object_or_404(TicketType, id=tier_id, match__event=event)
+#
+#         if tier.available_quantity > 0:
+#             # IMPORTANT: You cannot create a TicketSale directly anymore without a Transaction
+#             # This logic usually moves to your 'init_payment' view.
+#             # If you need a placeholder, it MUST match the new fields:
+#             # sale = TicketSale.objects.create(
+#             #     buyer=request.user,
+#             #     transaction=some_transaction_instance, # Required!
+#             #     ticket_code=str(uuid.uuid4())[:8].upper()
+#             # )
+#
+#             # For now, redirect users to your payment initiation
+#             return redirect('init_payment', tier_id=tier.id)
+#
+#         else:
+#             messages.error(request, "Sorry, this ticket tier just sold out!")
+#
+#     return render(request, 'organizer/booking_form.html', {'event': event})
+
 
 @login_required(login_url=settings.LOGIN_URL)
 def start_booking_process(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
-    # Check if there are even tickets to book
+    # 1. Handle Free Event (No TicketTypes created by Organizer)
     if not event.ticket_tiers.exists():
-        messages.info(request, "This is a free event. No booking required!")
+        messages.info(request, "Registration for this free event is currently handled on-site.")
         return redirect('organizer:event_detail', event_id=event.id)
 
     if request.method == 'POST':
         tier_id = request.POST.get('ticket_tier')
-        full_name = request.POST.get('full_name')
-
-        # Get the specific ticket tier
         tier = get_object_or_404(TicketType, id=tier_id, event=event)
 
-        # 1. Check Availability
-        if tier.available_quantity > 0:
-            # 2. Create the Sale
-            sale = TicketSale.objects.create(
-                event=event,
-                buyer=request.user,
-                ticket_type=tier,
-                ticket_code=str(uuid.uuid4())[:8].upper(),
-                price=tier.price,
-                payment_status='PENDING'
-            )
+        if tier.price == 0:
+            # Atomic check for free ticket capacity
+            if tier.available_quantity > 0:
+                with transaction.atomic():
+                    # Create a placeholder transaction for the free ticket
+                    free_txn = KhaltiTransaction.objects.create(
+                        user=request.user,
+                        ticket_type=tier,
+                        pidx=f"FREE-{uuid.uuid4().hex[:10]}",
+                        amount=0,
+                        status='PAID'
+                    )
+                    sale = TicketSale.objects.create(
+                        buyer=request.user,
+                        transaction=free_txn,
+                        ticket_code=f"FREE-{uuid.uuid4().hex[:8].upper()}"
+                    )
+                    tier.available_quantity -= 1
+                    tier.save()
+                return redirect('organizer:booking_success', sale_id=sale.id)
+            else:
+                messages.error(request, "No more free spots available!")
+                return redirect('organizer:event_detail', event_id=event.id)
 
-            # 3. Reduce Quantity
-            tier.available_quantity -= 1
-            tier.save()
-
-            messages.success(request, "Booking initiated! Please present your ticket code at the venue.")
-            return redirect('organizer:booking_success', sale_id=sale.id)
-        else:
-            messages.error(request, "Sorry, this ticket tier just sold out!")
-
-    return render(request, 'organizer/booking_form.html', {'event': event})
-
-# @login_required(login_url=settings.LOGIN_URL)
-# def selection_form_create(request,pk=None):
-#     form_instance = get_object_or_404(PlayerSelectionForm, pk=pk) if pk else None
-#     is_player = request.user != form_instance.organizer if form_instance else False
-#     if request.method == 'POST':
-#         form = PlayerSelectionCrispyForm(
-#             request.POST, 
-#             request.FILES, 
-#             instance=form_instance, 
-#             is_player=is_player
-#         )
-#         if form.is_valid():
-#             application = form.save(commit=False)
-            
-#             if not is_player:
-#                 # Organizer path: Save configuration and publish
-#                 application.organizer = request.user
-#                 application.is_published = True
-#                 application.save()
-#                 messages.success(request, "Selection form configured and published!")
-#                 return redirect('organizer:dashboard')
-#             else:
-#                 # Player path: Submit the mandatory fields
-#                 application.pk = None 
-#                 application.is_published = False
-#                 application.status = 'pending'
-#                 application.save()
-#                 # Trigger Notification Logic Here
-#                 messages.success(request, "Application submitted successfully!")
-#                 return redirect('home')
-#     else:
-#         form = PlayerSelectionCrispyForm(instance=form_instance, is_player=is_player)
-#     context = {
-#         'form': form,
-#         'is_player': is_player,
-#         # 'page_title': 'Configure Player Selection Form'
-#         'page_title': 'Apply for Trial' if is_player else 'Configure Form',
-#     }
-
-#     return render(request,'organizer/selection_form_create.html' ,context)
-
+        # Proceed to paid logic
+        return redirect('organizer:init_payment', tier_id=tier.id)
 
 
 @login_required
 def selection_form_create(request, pk=None):
-    # 1. Fetch the template if pk exists
-    form_instance = get_object_or_404(PlayerSelectionForm, pk=pk) if pk else None
-    
-    # 2. Logic: Is the current user an Organizer?
-    is_org = is_organizer_check(request.user)
-    is_player = not is_org # If not an organizer, they are a player/applicant
+    # 1. Fetch the Template (The form created by the organizer)
+    template_form = get_object_or_404(PlayerSelectionForm, pk=pk) if pk else None
 
-    if is_player and not pk:
-        messages.error(request, "Please select a trial to apply.")
-        return redirect('accounts:user_dashboard')
+    is_org = request.user.groups.filter(name='Organizer').exists()
+    is_player = not is_org
 
-    # 3. Get the template (the form created by the organizer)
-    # We use applicant__isnull=True to ensure we are grabbing a TEMPLATE, not someone's submission
-    if pk:
-        form_instance = get_object_or_404(PlayerSelectionForm, pk=pk)
-    else:
-        form_instance = None
     if request.method == 'POST':
+        # If it's a player, we DON'T use 'instance=template_form'
+        # because we don't want them to overwrite the organizer's template.
         form = PlayerSelectionCrispyForm(
-            request.POST, 
-            request.FILES, 
-            # instance=form_instance if is_org else None, # Players shouldn't overwrite the instance
-            instance=None if is_player else form_instance,
+            request.POST,
+            request.FILES,
+            instance=None if is_player else template_form,
             is_player=is_player
         )
-        
+
         if form.is_valid():
             application = form.save(commit=False)
-            
+
             if is_org:
-                # Path: Organizer creating/editing the template
+                # Path: Organizer creating/editing the actual template
                 application.organizer = request.user
                 application.is_published = True
                 application.save()
-                messages.success(request, "Selection form configured and published!")
+                messages.success(request, "Trial form updated and published!")
                 return redirect('organizer:dashboard')
             else:
-                # Path: Player submitting an application
-                # We link this submission to the template (form_instance)
-                application.pk = None # Force creation of a NEW record
+
+                exists = PlayerSelectionForm.objects.filter(
+                    applicant=request.user,
+                    event_name=template_form.event_name,
+                    is_published=False
+                ).exists()
+
+                if exists:
+                    messages.warning(request, "You have already submitted an application for this trial.")
+                    return redirect('accounts:user_dashboard')
+
+                # Path: Player submitting their personal data
+                # We manually link the submission to the original template's data
                 application.applicant = request.user
-                application.parent_form = form_instance
-                application.organizer = form_instance.organizer # The org who created it
+                application.organizer = template_form.organizer  # The org who created it
 
-                application.event_name = form_instance.event_name
-                application.sports = form_instance.sports
-                application.level = form_instance.level
-                application.address = form_instance.address
+                # Copy event context from the template so the player doesn't have to type it
+                application.event_name = template_form.event_name
+                application.sports = template_form.sports
+                application.level = template_form.level
+                application.address = template_form.address
 
-                application.is_published = False # Responses stay private
-                application.status = 'pending'
+                application.is_published = False  # Keep private from other athletes
+                application.status = 'PENDING'
                 application.save()
-                
-                messages.success(request, "Application submitted successfully!")
+
+                messages.success(request, "Your application has been submitted!")
                 return redirect('accounts:user_dashboard')
-        else:
-            print(form.errors)
     else:
-        # GET Request: Pre-fill the form with template data for the player to see
-        form = PlayerSelectionCrispyForm(instance=form_instance, is_player=is_player)
+        # GET Request: For players, show the template data as 'initial' values
+        form = PlayerSelectionCrispyForm(instance=template_form, is_player=is_player)
 
-    context = {
-        'form': form,
-        'is_player': is_player,
-        'page_title': 'Apply for Trial' if is_player else 'Configure Form',
-    }
-    
-    return render(request, 
-        'organizer/athlete_apply_form.html' if is_player else 'organizer/selection_form_create.html', 
-        context
-    )
-    # Use the logic we built earlier to decide which layout to show
-    # if is_player:
-    #     return render(request, 'organizer/athlete_apply_form.html', context)
-    # return render(request, 'organizer/selection_form_create.html', context)
-
-
-
-# def send_status_email(application, status_type):
-#     """Helper function to send emails based on status change."""
-#     subject = f"Update on your Player Selection: {application.sports}"
-    
-#     messages_dict = {
-#         "received": "We have received your application and it is currently pending review.",
-#         "selected": "Congratulations! You have been SELECTED for the next round.",
-#         "denied": "We regret to inform you that your application was not selected at this time."
-#     }
-    
-#     message = f"Hello {application.full_name},\n\n{messages_dict.get(status_type)}\n\nBest regards,\nSportsBoard Team"
-    
-#     send_mail(
-#         subject,
-#         message,
-#         settings.DEFAULT_FROM_EMAIL,
-#         [application.email],
-#         fail_silently=True,
-#     )
-# # def publish_event(request, event_id):
-# #     event = get_object_or_404(PlayerSelectionForm, id=event_id, created_by=request.user)
-# #     event.is_published = True
-# #     event.save()
-# #     messages.success(request, "Event is now live for users!")
-# #     return redirect('organizer_dashboard')
-
-
+    return render(request,
+                  'organizer/athlete_apply_form.html' if is_player else 'organizer/selection_form_create.html',
+                  {'form': form, 'is_player': is_player}
+                  )
 
 
 @login_required
@@ -520,3 +433,204 @@ def published_form_detail(request, pk):
         'page_title': 'Published Form Details'
     }
     return render(request, 'organizer/published_form_detail.html', context)
+
+
+
+
+
+def init_payment(request, tier_id):
+    tier = get_object_or_404(TicketType, id=tier_id)
+    url = "https://a.khalti.com/api/v2/epayment/initiate/"
+
+    # DYNAMIC: This ensures ngrok works for the callback
+    return_url = request.build_absolute_uri(reverse('organizer:verify_payment'))
+    amount_in_paisa = int(tier.price * Decimal('100'))  # Precise multiplication
+    payload = json.dumps({
+        "return_url": return_url,
+        "website_url": request.build_absolute_uri('/'),
+        "amount": amount_in_paisa,
+        "purchase_order_id": str(uuid.uuid4())[:10],
+        "purchase_order_name": f"Ticket: {tier.name}",
+    })
+    request.session['pending_tier_id'] = tier.id
+
+
+
+    headers = {
+        'Authorization': f'Key {settings.KHALTI_SECRET_KEY}',
+        'Content-Type': 'application/json',
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    resp_dict = response.json()
+
+    if response.status_code == 200:
+        # Create a PENDING transaction record
+        from .models import KhaltiTransaction
+        KhaltiTransaction.objects.create(
+            user=request.user,
+            ticket_type=tier,
+            pidx=resp_dict['pidx'],
+            amount=tier.price,
+            status='INITIATED',
+            # purchase_order_id=resp_dict['purchase_order_id']
+        )
+        # Redirect to Khalti's payment page
+        return redirect(resp_dict['payment_url'])
+    else:
+        messages.error(request, "Failed to initiate payment with Khalti.")
+        return redirect('organizer:event_detail', event_id=tier.event.id)
+
+
+
+
+def verify_payment(request):
+    pidx = request.GET.get('pidx')
+
+    # 1. Server-to-Server Verification
+    url = "https://a.khalti.com/api/v2/epayment/lookup/"
+    headers = {
+        'Authorization': f'Key {settings.KHALTI_SECRET_KEY}',
+        'Content-Type': 'application/json',
+    }
+
+    try:
+        resp = requests.post(url, headers=headers, json={"pidx": pidx})
+        data = resp.json()
+    except Exception as e:
+        messages.error(request, "Connection to Khalti failed. Please contact support.")
+        return redirect('organizer:dashboard')
+
+    # 2. Process Successful Payment
+    if data.get('status') == 'Completed':
+        try:
+            with transaction.atomic():
+                # Lock the record to prevent race conditions (double-tap/refresh)
+                payment_record = get_object_or_404(
+                    KhaltiTransaction.objects.select_for_update(),
+                    pidx=pidx
+                )
+
+                # Check if this transaction was already processed
+                if payment_record.status == 'PAID':
+                    try:
+                        # Attempt to find the existing ticket associated with this txn
+                        sale = TicketSale.objects.get(transaction=payment_record)
+                        return redirect('organizer:booking_success', sale_id=sale.id)
+                    except TicketSale.DoesNotExist:
+                        # Logic error fallback: Payment is PAID but no ticket exists?
+                        # We proceed to create the ticket below.
+                        pass
+
+                # Update Payment Status
+                payment_record.status = 'PAID'
+                payment_record.save()
+
+                # Atomic Inventory Check
+                tier = payment_record.ticket_type
+                if tier.available_quantity > 0:
+                    tier.available_quantity -= 1
+                    tier.save()
+                else:
+                    # Rare edge case: Sold out during the payment window
+                    messages.error(
+                        request,
+                        "Payment successful, but tickets sold out. Please contact us for a refund."
+                    )
+                    return redirect('organizer:dashboard')
+
+                # 3. Issue Ticket with Collision Protection
+                # We use a loop to ensure that if a UUID hex collision occurs, we try again.
+                sale = None
+                max_retries = 5
+                attempts = 0
+
+                while not sale and attempts < max_retries:
+                    try:
+                        attempts += 1
+                        ticket_code = f"SH-{uuid.uuid4().hex[:10].upper()}"
+                        sale = TicketSale.objects.create(
+                            transaction=payment_record,
+                            buyer=payment_record.user,
+                            ticket_code=ticket_code
+                        )
+                    except IntegrityError:
+                        if attempts == max_retries:
+                            raise  # Crash safely if we fail 5 times (mathematically impossible)
+                        continue
+
+            messages.success(request, "Payment Verified! Your ticket is ready.")
+            return redirect('organizer:booking_success', sale_id=sale.id)
+
+        except Exception as e:
+            # General fallback for database or logic errors
+            messages.error(request, "A system error occurred during ticket issuance. Please contact support.")
+            return redirect('organizer:dashboard')
+
+    # 4. Handle Failed/Canceled Payments
+    messages.error(request, f"Payment failed or was canceled. (Status: {data.get('status')})")
+    return redirect('organizer:dashboard')
+
+@login_required
+@user_passes_test(is_organizer_check, login_url='/')
+def review_applications(request):
+    """Lists all trial submissions for events owned by this organizer."""
+    # We find forms where is_published=False (athlete submissions)
+    # and the organizer matches the logged-in user.
+    applications = PlayerSelectionForm.objects.filter(
+        organizer=request.user,
+        is_published=False
+    ).order_by('-created_at')
+
+    return render(request, 'organizer/review_applications.html', {
+        'applications': applications,
+        'page_title': 'Athlete Applications'
+    })
+
+
+@login_required
+@user_passes_test(is_organizer_check, login_url='/')
+def update_application_status(request, pk, status_choice):
+    """Updates the status of a specific trial application."""
+    # Ensure the application belongs to this organizer's events
+    application = get_object_or_404(PlayerSelectionForm, pk=pk, organizer=request.user)
+
+    valid_statuses = ['APPROVED', 'REJECTED', 'PENDING']
+    if status_choice.upper() in valid_statuses:
+        application.status = status_choice.upper()
+        application.save()
+        messages.success(request, f"Application for {application.full_name} is now {application.status}.")
+    else:
+        messages.error(request, "Invalid status update.")
+
+    return redirect('organizer:review_applications')
+
+
+@login_required
+@user_passes_test(is_organizer_check)
+def verify_ticket_gate(request):
+    ticket_code = request.GET.get('ticket_code')
+    ticket = None
+    error = None
+
+    if ticket_code:
+        try:
+            # Only allow organizers to verify tickets for THEIR events
+            ticket = TicketSale.objects.get(
+                ticket_code__iexact=ticket_code.strip(),
+                transaction__ticket_type__event__organizer=request.user
+            )
+
+            # Action: Check-in the user
+            if request.method == "POST" and not ticket.is_used:
+                ticket.is_used = True
+                ticket.save()
+                messages.success(request, f"Entry Granted for {ticket.buyer.username}!")
+        except TicketSale.DoesNotExist:
+            error = "Invalid Ticket Code. Access Denied."
+
+    return render(request, 'organizer/verify_ticket.html', {
+        'ticket': ticket,
+        'error': error,
+        'ticket_code': ticket_code
+    })
