@@ -16,6 +16,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev')
 DEBUG = True
 KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY')
+# GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 
 
 

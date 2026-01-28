@@ -112,7 +112,9 @@ def create_event(request):
         'form': form,
         'match_formset': match_formset,
         'formset': ticket_formset,
-        'page_title': 'Create New Event'
+        'page_title': 'Create New Event',
+        # 'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY,
+
     })
 
 # @login_required

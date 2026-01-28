@@ -21,4 +21,6 @@ function toggleSidebar() {
             
         }
         }
-        const chartData = JSON.parse('{{ sales_data_json|safe }}');
+        const chartData = JSON.parse('{{ sales_data_json|default:"[]"|escapejs }}');
+
+//        const chartData = JSON.parse('{{ sales_data_json|safe }}');
