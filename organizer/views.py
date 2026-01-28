@@ -217,7 +217,7 @@ def event_delete(request, event_id):
 
     # For a GET request, we render a confirmation page (recommended for safety)
     return render(request, 'organizer/event_confirm_delete.html', {'event': event})
-#
+
 def all_events(request):
     # Get the search term from the URL (e.g., ?search=Rara)
     search_query = request.GET.get('search', '')
@@ -268,38 +268,6 @@ def event_detail(request, event_id):
         context['total_applications_count'] = applications.count()
 
     return render(request, 'organizer/event_detail.html', context)
-
-#
-# @login_required(login_url=settings.LOGIN_URL)
-# def start_booking_process(request, event_id):
-#     event = get_object_or_404(Event, pk=event_id)
-#
-#     # Check matches for tickets (since tiers are now match-based)
-#     if not TicketType.objects.filter(match__event=event).exists():
-#         messages.info(request, "This is a free event. No booking required!")
-#         return redirect('organizer:event_detail', event_id=event.id)
-#
-#     if request.method == 'POST':
-#         tier_id = request.POST.get('ticket_tier')
-#         tier = get_object_or_404(TicketType, id=tier_id, match__event=event)
-#
-#         if tier.available_quantity > 0:
-#             # IMPORTANT: You cannot create a TicketSale directly anymore without a Transaction
-#             # This logic usually moves to your 'init_payment' view.
-#             # If you need a placeholder, it MUST match the new fields:
-#             # sale = TicketSale.objects.create(
-#             #     buyer=request.user,
-#             #     transaction=some_transaction_instance, # Required!
-#             #     ticket_code=str(uuid.uuid4())[:8].upper()
-#             # )
-#
-#             # For now, redirect users to your payment initiation
-#             return redirect('init_payment', tier_id=tier.id)
-#
-#         else:
-#             messages.error(request, "Sorry, this ticket tier just sold out!")
-#
-#     return render(request, 'organizer/booking_form.html', {'event': event})
 
 
 @login_required(login_url=settings.LOGIN_URL)
@@ -463,25 +431,48 @@ def init_payment(request, tier_id):
         'Content-Type': 'application/json',
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
-    resp_dict = response.json()
+    try:
+        response = requests.post(url, headers=headers, data=payload)
+        # Check if response is actually JSON before decoding
+        if response.status_code == 200:
+            resp_dict = response.json()
+            from .models import KhaltiTransaction
+            KhaltiTransaction.objects.create(
+                user=request.user,
+                ticket_type=tier,
+                pidx=resp_dict['pidx'],
+                amount=tier.price,
+                status='INITIATED',
+            )
+            return redirect(resp_dict['payment_url'])
+        else:
+            print(f"Khalti API Error: {response.text}")  # Log the real error
+            messages.error(request, f"Khalti Error: {response.status_code}. Check your API keys.")
+    except Exception as e:
+        print(f"Payment Request Exception: {e}")
+        messages.error(request, "Could not connect to Khalti Payment Gateway.")
 
-    if response.status_code == 200:
-        # Create a PENDING transaction record
-        from .models import KhaltiTransaction
-        KhaltiTransaction.objects.create(
-            user=request.user,
-            ticket_type=tier,
-            pidx=resp_dict['pidx'],
-            amount=tier.price,
-            status='INITIATED',
-            # purchase_order_id=resp_dict['purchase_order_id']
-        )
-        # Redirect to Khalti's payment page
-        return redirect(resp_dict['payment_url'])
-    else:
-        messages.error(request, "Failed to initiate payment with Khalti.")
-        return redirect('organizer:event_detail', event_id=tier.event.id)
+    return redirect('organizer:event_detail', event_id=tier.event.id)
+
+    # response = requests.request("POST", url, headers=headers, data=payload)
+    # resp_dict = response.json()
+    #
+    # if response.status_code == 200:
+    #     # Create a PENDING transaction record
+    #     from .models import KhaltiTransaction
+    #     KhaltiTransaction.objects.create(
+    #         user=request.user,
+    #         ticket_type=tier,
+    #         pidx=resp_dict['pidx'],
+    #         amount=tier.price,
+    #         status='INITIATED',
+    #         # purchase_order_id=resp_dict['purchase_order_id']
+    #     )
+    #     # Redirect to Khalti's payment page
+    #     return redirect(resp_dict['payment_url'])
+    # else:
+    #     messages.error(request, "Failed to initiate payment with Khalti.")
+    #     return redirect('organizer:event_detail', event_id=tier.event.id)
 
 
 

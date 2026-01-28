@@ -22,6 +22,7 @@ GENDER_CHOICES = [('male', 'Male'), ('female', 'Female'), ('other', 'Other')]
 # --- 1. CORE EVENT MODELS ---
 
 class Event(models.Model):
+
     name = models.CharField(max_length=255)
     organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organized_events')
     date_time = models.DateTimeField()
@@ -70,7 +71,7 @@ class TicketType(models.Model):
 class KhaltiTransaction(models.Model):
     """Tracks the payment lifecycle before a ticket is issued."""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    ticket_type = models.ForeignKey(TicketType, on_delete=models.PROTECT)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     pidx = models.CharField(max_length=255, unique=True, help_text="Khalti Payment ID")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='INITIATED')

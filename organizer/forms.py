@@ -2,6 +2,8 @@
 import re
 from django import forms
 from crispy_forms.helper import FormHelper
+from django.utils import timezone
+
 from .models import Event,Match, TicketType # Ensure TicketType is imported
 from crispy_forms.layout import Layout, Submit,Row, Column, Div,Fieldset,HTML
 from django.forms import inlineformset_factory # Import this utility
@@ -49,68 +51,12 @@ class EventCreationForm(forms.ModelForm):
             )
         )
 
+    def clean_date_time(self):
+        date_time = self.cleaned_data.get('date_time')
+        if date_time and date_time < timezone.now():
+            raise forms.ValidationError("You cannot select a date and time in the past.")
+        return date_time
 
-# class EventCreationForm(forms.ModelForm):
-#     class Meta:
-#         model = Event
-#         # Only include fields the organizer should edit directly
-#         fields = ['name',
-#                   'game_type',  # NEW
-#                   'game_type_other',
-#                   'date_time', 'location', 'description',
-#                   'status',
-#                   'photo',
-#                   ]
-#         widgets = {
-#             'date_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-#             'description': forms.Textarea(attrs={'rows': 4}),
-#         }
-#
-#
-#
-#
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.layout = Layout(
-#             # Arrange fields nicely using Crispy Forms layout
-#         #     'name',
-#         #     'date_time',
-#         #     'location',
-#         #     'description',
-#         #     'status',
-#         #     # Add the submit button at the end
-#         #     Submit('submit', 'Create Event', css_class='btn-warning mt-3')
-#         # )
-#             Row(
-#                 Column('name', css_class='form-group col-md-6 mb-0'),
-#                 Column('game_type', css_class='form-group col-md-6 mb-0'),
-#                 css_class='form-row'
-#             ),
-#             'game_type_other',  # Added separately
-#
-#             Row(
-#                 Column(Div('date_time', css_class='time-section'), css_class='form-group col-md-6 mb-0'),
-#                 Column('location', css_class='form-group col-md-6 mb-0'),
-#                 css_class='form-row'
-#             ),
-#
-#             'description',
-#
-#             Row(
-#                 Column('photo', css_class='form-group col-md-6 mb-0'),
-#                 Column('status', css_class='form-group col-md-6 mb-0'),
-#                 css_class='form-row'
-#             ),
-#             # The submit button is now explicitly styled and positioned
-#             Submit('submit', 'Create Event', css_class='btn btn-warning mt-4 float-end')
-#             # The 'float-end' class (Bootstrap 5) pushes the button to the right.
-#         )
-#
-#         # Optionally hide 'Specify Other Game' until 'Others' is selected via JS
-#         self.fields['game_type_other'].label = "Specify Other Game (if applicable)"
-#         self.fields['game_type_other'].widget.attrs['style'] = 'display: none;'  # Hide by default
 
 TicketTypeFormset = inlineformset_factory(
         Event,

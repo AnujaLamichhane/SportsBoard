@@ -31,21 +31,33 @@
 
     /* Free Location Search Dropdown Styling */
     #geo-results-list {
+    display: none; /* Hide by default */
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
         z-index: 9999 !important;
         background: #333;
-        border: 1px solid #ffc107;
+        border: 1px solid #444 ;
         max-height: 250px;
         overflow-y: auto;
     }
+
+    /* Show the box only if it has content inside */
+#geo-results-list:not(:empty){
+    display: block;
+}
+
+.form-control.is-invalid {
+    border: 2px solid #dc3545 !important; /* Red border for errors */
+    background-color: #3d1a1d !important; /* Subtle red tint for dark mode */
+}
     .geo-item {
         padding: 10px;
         cursor: pointer;
         border-bottom: 1px solid #444;
-        color: white;
+        color: #ffffff !important; /* Force text to be white */
+    background-color: transparent;
     }
     .geo-item:hover { background-color: #ffc107; color: #000; }
 </style>
@@ -64,7 +76,7 @@
                     <div class="stepper-item" id="step-i-4"><span class="step-counter">4</span><small>Tickets</small></div>
                 </div>
 
-                <form method="post" enctype="multipart/form-data" id="event-form">
+                <form method="post" enctype="multipart/form-data" id="event-form" novalidate>
                     {% csrf_token %}
 
                     <div class="form-step active" id="step-1">
@@ -87,7 +99,9 @@
                                 <div id="geo-results-list"></div>
                             </div>
                         </div>
+                        <div style="pointer-events: none; opacity: 0.9;">
                         {{ form.status|as_crispy_field }}
+                    </div>
                     </div>
 
                     <div class="form-step" id="step-3">
@@ -113,8 +127,9 @@
                                 <label class="form-check-label" for="isFreeEvent">This is a Free Event</label>
                             </div>
                         </div>
+                        {{ formset.management_form }}
                         <div id="ticket-logic-container">
-                            {{ formset.management_form }}
+<!--                            {{ formset.management_form }}-->
                             <div id="ticket-formset-container">
                                 {% for t_form in formset %}
                                     <div class="mb-3 p-3 border border-secondary rounded bg-dark">
@@ -148,9 +163,24 @@
     </div>
 </div>
 
+<!--<template id="empty-match-template">-->
+<!--    <div class="mb-3 p-3 border border-secondary rounded match-form-item bg-dark">-->
+<!--        {{ match_formset.empty_form|crispy }}-->
+<!--    </div>-->
+<!--</template>-->
 <template id="empty-match-template">
     <div class="mb-3 p-3 border border-secondary rounded match-form-item bg-dark">
-        {{ match_formset.empty_form|crispy }}
+        {{ match_formset.empty_form.game_type|as_crispy_field }}
+        {{ match_formset.empty_form.team_a|as_crispy_field }}
+        {{ match_formset.empty_form.team_b|as_crispy_field }}
+        {{ match_formset.empty_form.match_time|as_crispy_field }}
+
+        <div class="position-relative venue-search-wrapper">
+            {{ match_formset.empty_form.venue|as_crispy_field }}
+            <div class="geo-results-list venue-results"></div>
+        </div>
+
+        {{ match_formset.empty_form.DELETE|as_crispy_field }}
     </div>
 </template>
 <template id="empty-ticket-tier-template">
