@@ -19,7 +19,7 @@ urlpatterns = [
     path('selection/create/<int:pk>/', views.selection_form_create, name='selection_form_create'),
     path('published_forms/', views.published_forms, name='published_forms'),
     path('published_form/<int:pk>/', views.published_form_detail, name='published_form_detail'),
-
+path('selection-form/preview/<int:pk>/', views.form_preview, name='form_preview'),
     path('applications/', views.review_applications, name='review_applications'),
     path('applications/<int:pk>/<str:action>/', views.update_application_status, name='update_application_status'),
 
@@ -28,5 +28,6 @@ urlpatterns = [
     path('payment/initiate/<int:tier_id>/', views.init_payment, name='init_payment'), # Required for HTML
     path('payment/verify/', views.verify_payment, name='verify_payment'),             # Required for Khalti callback
     path('booking/success/<int:sale_id>/', views.booking_success, name='booking_success'),
-path('verify-ticket/', views.verify_ticket_gate, name='verify_ticket_gate'),
+    path('verify-ticket/', views.verify_ticket_gate, name='verify_ticket_gate'),
+
 ]

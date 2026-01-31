@@ -48,30 +48,6 @@ def register_view(request):
     return render(request, 'accounts/signup.html', {'form': form})
 
 
-# def login_view(request):
-#     if request.method == 'POST':
-#         form = CustomAuthenticationForm(request, data=request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data.get('username')
-#             password = form.cleaned_data.get('password')
-#             # role = form.cleaned_data.get('role')
-#             remember_me = form.cleaned_data.get('remember_me')
-#             user = authenticate(username=username, password=password)
-#             if user is not None:
-#                 login(request, user)
-#                 if remember_me:
-#                     request.session.set_expiry(1209600)
-#                 else:
-#                     request.session.set_expiry(0)
-#                 # if role == 'organizer':
-#                     # return redirect('organizer_dashboard')
-#                     # return redirect('organizer:dashboard')
-#                 return redirect('accounts:dashboard_redirect')
-#             else:
-#                 messages.error(request, "Invalid username or password.")
-#     else:
-#         form = CustomAuthenticationForm()
-#     return render(request, 'accounts/login.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -113,26 +89,6 @@ def login_view(request):
 
 
 
-
-# @login_required
-# def role_based_redirect(request):
-#     user = request.user
-#
-#     # 1. Debugging: Check the terminal to see what group this user actually has
-#     print(f"DEBUG: User {user.username} is in groups: {user.groups.all()}")
-#
-#     # 2. Check for Organizer group (Case-insensitive check is safer)
-#     if user.groups.filter(name__iexact='Organizer').exists():
-#         return redirect('organizer:dashboard')
-#
-#     # 3. Check for Athlete group
-#     if user.groups.filter(name__iexact='Athlete').exists():
-#         return redirect('accounts:user_dashboard')
-#
-#     # 4. Fallback (If no groups found, send to default user dashboard)
-#     return redirect('accounts:user_dashboard')
-
-
 @login_required
 def role_based_redirect(request):
     user = request.user
@@ -167,30 +123,58 @@ def user_dashboard(request):
         'transaction__ticket_type__event'
     )
 
-    # 2. Get Event IDs for stat counting
-    event_ids = user_apps.values_list('transaction__ticket_type__event_id', flat=True)
-    joined_events = Event.objects.filter(id__in=event_ids)
-
-    # 3. Trial Forms (Available for registration)
-    available_forms = PlayerSelectionForm.objects.filter(is_published=True)
-
-    # FIX STARTS HERE: Use 'applicant' instead of 'email'
+    # 2. My Applications (Forms the user HAS filled out)
+    # We want is_published=True because the form itself must be live,
+    # but it must belong to the current user (applicant).
     my_submissions = PlayerSelectionForm.objects.filter(
-        applicant=request.user,  # Changed from email=request.user.email
-        is_published=False
+        applicant=request.user,
+        is_published=True
     )
+
+    # 3. Available Trials (Forms the user HAS NOT filled out yet)
+    # Get IDs of forms the user already applied to so we can hide them
+    applied_event_names = my_submissions.values_list('event_name', flat=True)
+
+    available_forms = PlayerSelectionForm.objects.filter(
+        is_published=True
+    ).exclude(event_name__in=applied_event_names)
 
     context = {
         'user': request.user,
         'profile': profile,
-        'joined_events': joined_events,
-        'total_joined': joined_events.count(),
-        'title': 'User Dashboard',
+        'total_joined': user_apps.count(),
         'user_apps': user_apps,
-        'available_forms': available_forms,
-        'my_submissions': my_submissions,
+        'available_forms': available_forms,  # New trials
+        'my_submissions': my_submissions,  # Completed apps
     }
     return render(request, 'accounts/user_dashboard.html', context)
+
+    # 2. Get Event IDs for stat counting
+    # event_ids = user_apps.values_list('transaction__ticket_type__event_id', flat=True)
+    # joined_events = Event.objects.filter(id__in=event_ids)
+    #
+    # # 3. Trial Forms (Available for registration)
+    # available_forms = PlayerSelectionForm.objects.filter(is_published=True)
+    #
+    # # FIX STARTS HERE: Use 'applicant' instead of 'email'
+    # my_submissions = PlayerSelectionForm.objects.filter(
+    #     applicant=request.user,  # Changed from email=request.user.email
+    #     is_published=False
+    # )
+    #
+    # context = {
+    #     'user': request.user,
+    #     'profile': profile,
+    #     'joined_events': joined_events,
+    #     'total_joined': joined_events.count(),
+    #     'title': 'User Dashboard',
+    #     'user_apps': user_apps,
+    #     'available_forms': available_forms,
+    #     'my_submissions': my_submissions,
+    # }
+    # return render(request, 'accounts/user_dashboard.html', context)
+
+
 
 
 @login_required

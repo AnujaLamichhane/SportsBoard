@@ -1,7 +1,7 @@
 {% extends "organizer/sidebar.html" %}
 {% load static %}
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'organizer/published_form.html' %}">
+    <link rel="stylesheet" href="{% static 'organizer/css/organizer_dashboard.css' %}">
 {% endblock %}
 {% block content %}
 <div class="dashboard-body">
@@ -25,16 +25,37 @@
                         {% for form in forms %}
                         <tr>
                             <td class="ps-4">
-                                <span class="fw-bold text-white">{{ form.event_name }}</span>
-                            </td>
-                            <td><span class="badge bg-secondary">{{ form.event_type }}</span></td>
-                            <td>{{ form.created_at|date:"M d, Y" }}</td>
-                            <td class="text-end pe-4">
-                                <a href="{% url 'organizer:published_form_detail' form.pk %}" class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-eye"></i> View Detail
-                                </a>
-                            </td>
-                        </tr>
+<!--                                <span class="fw-bold text-white">{{ form.event_name }}</span>-->
+<!--                            </td>-->
+<!--                            <td><span class="badge bg-secondary">{{ form.event_type }}</span></td>-->
+<!--                            <td>{{ form.created_at|date:"M d, Y" }}</td>-->
+<!--                            <td class="text-end pe-4">-->
+<!--                                <a href="{% url 'organizer:published_form_detail' form.pk %}" class="btn btn-sm btn-outline-info">-->
+<!--                                    <i class="fas fa-eye"></i> View Detail-->
+<!--                                </a>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+
+                                <div class="d-flex flex-column">
+            <span class="fw-bold text-white">{{ form.event_name }}</span>
+            <small class="text-info" style="font-size: 0.75rem;">{{ form.sports }}</small>
+        </div>
+    </td>
+    <td><span class="badge bg-secondary">{{ form.level }}</span></td>
+    <td>{{ form.created_at|date:"M d, Y" }}</td>
+    <td class="text-end pe-4">
+        <div class="btn-group">
+            <a href="{% url 'organizer:form_preview' form.pk %}" class="btn btn-sm btn-info text-white" title="Preview Athlete Experience">
+                <i class="fas fa-play-circle"></i> Preview
+            </a>
+
+            <a href="{% url 'organizer:published_form_detail' form.pk %}" class="btn btn-sm btn-outline-info">
+                <i class="fas fa-users"></i> Submissions
+            </a>
+        </div>
+    </td>
+</tr>
+
                         {% empty %}
                         <tr>
                             <td colspan="4" class="text-center py-5 text-secondary">

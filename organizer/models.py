@@ -18,7 +18,18 @@ GAME_TYPE_CHOICES = [
 ]
 LEVEL_CHOICES = [('district', 'District'), ('province', 'Province'), ('national', 'National'), ('none', 'None')]
 GENDER_CHOICES = [('male', 'Male'), ('female', 'Female'), ('other', 'Other')]
+BLOOD_GROUP_CHOICES = [
+    ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
+    ('O+', 'O+'), ('O-', 'O-'), ('AB+', 'AB+'), ('AB-', 'AB-'),
+]
 
+EXPERIENCE_LEVEL_CHOICES = [
+    ('beginner', 'Beginner (School/College)'),
+    ('club', 'Club Level'),
+    ('district', 'District Level'),
+    ('provincial', 'Provincial Level'),
+    ('national', 'National/Professional'),
+]
 
 # --- 1. CORE EVENT MODELS ---
 
@@ -129,8 +140,20 @@ class PlayerSelectionForm(models.Model):
     guardian_name = models.CharField(max_length=100, blank=True)
     guardian_relation = models.CharField(max_length=50, blank=True)
     guardian_phone = models.CharField(max_length=15, blank=True)
+
+    blood_group = models.CharField(max_length=5, choices=BLOOD_GROUP_CHOICES, blank=True, null=True)
+    experience_level = models.CharField(max_length=20, choices=EXPERIENCE_LEVEL_CHOICES, default='beginner')
+    previous_experience_details = models.TextField(blank=True, help_text="List major tournaments or clubs")
+    medical_conditions = models.BooleanField(default=False, help_text="Do you have any medical conditions?")
+    medical_details = models.TextField(blank=True, help_text="If yes, please specify")
+
+    # Identity Verification
+    citizenship_number = models.CharField(max_length=50, blank=True, null=True)
+
     certificates = models.FileField(upload_to='documents/certs/', blank=True, null=True)
     citizenship = models.FileField(upload_to='documents/citizenship/', blank=True, null=True)
+
+
 
     # Status
     is_published = models.BooleanField(default=True)

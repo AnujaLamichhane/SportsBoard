@@ -73,10 +73,20 @@
                 <div class="col-lg-7">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3 class="text-white">Recent Events</h3>
-                        <div class="d-flex gap-2">
-                            <a href="{% url 'organizer:selection_form_create' %}" class="btn btn-info btn-sm">Create Form</a>
-                            <a href="{% url 'organizer:event_create' %}" class="btn btn-warning btn-sm">New Event</a>
-                        </div>
+<!--                        <div class="d-flex gap-2">-->
+<!--                            <a href="{% url 'organizer:selection_form_create' %}" class="btn btn-info btn-sm">Create Form</a>-->
+<!--                            <a href="{% url 'organizer:event_create' %}" class="btn btn-warning btn-sm">New Event</a>-->
+<!--                        </div>-->
+
+
+                      <div class="d-flex gap-2">
+    <a href="{% url 'organizer:published_forms' %}" class="btn btn-outline-info btn-sm">
+        <i class="fas fa-list-check me-1"></i> My Forms
+    </a>
+    <a href="{% url 'organizer:selection_form_create' %}" class="btn btn-info btn-sm">Create Form</a>
+    <a href="{% url 'organizer:event_create' %}" class="btn btn-warning btn-sm">New Event</a>
+</div>
+
                     </div>
                     <div class="card bg-dark-card p-3 mb-4">
                         <ul class="list-group list-group-flush">
@@ -103,6 +113,7 @@
                             {% endfor %}
                         </ul>
                     </div>
+
                 </div>
 
                 <div class="col-lg-5">
@@ -110,18 +121,7 @@
                     <div class="card bg-dark-card p-3 mb-4">
                         <ul class="list-group list-group-flush">
                            {% for sale in recent_sales %}
-<!--<li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">-->
-<!--    <div>-->
-<!--        <p class="mb-0 fw-bold">{{ sale.transaction.ticket_type.event.name }}</p>-->
-<!--        <small class="text-info">{{ sale.transaction.ticket_type.name }} ({{ sale.transaction.ticket_type.match.team_a }} vs {{ sale.transaction.ticket_type.match.team_b }})</small>-->
-<!--    </div>-->
-<!--    <div class="text-end">-->
-<!--        <span class="badge bg-{% if sale.transaction.status == 'PAID' %}success{% else %}warning{% endif %} d-block mb-1">-->
-<!--            {{ sale.transaction.status }}-->
-<!--        </span>-->
-<!--        <small class="text-success">NPR {{ sale.transaction.amount }}</small>-->
-<!--    </div>-->
-<!--</li>-->
+
 
 
 <li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">

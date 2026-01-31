@@ -166,25 +166,7 @@ def event_delete(request, event_id):
     # For a GET request, we render a confirmation page (recommended for safety)
     return render(request, 'organizer/event_confirm_delete.html', {'event': event})
 
-# def all_events(request):
-#     # Get the search term from the URL (e.g., ?search=Rara)
-#     search_query = request.GET.get('search', '')
-#
-#     if search_query:
-#         # Filter events where name OR location contains the search term
-#         events = Event.objects.filter(
-#             Q(name__icontains=search_query) |
-#             Q(location__icontains=search_query)
-#         ).order_by('-date_time')
-#     else:
-#         # If no search, show everything
-#         events = Event.objects.all().order_by('-date_time')
-#
-#     return render(request, 'organizer/all_events.html', {
-#         'events': events,
-#         'search_query': search_query # Pass it back to keep it in the input box
-#     })
-# #
+
 def all_events(request):
     search_query = request.GET.get('search', '')
     now = timezone.now()
@@ -283,21 +265,21 @@ def start_booking_process(request, event_id):
         return redirect('organizer:init_payment', tier_id=tier.id)
 
 
+
 @login_required
 def selection_form_create(request, pk=None):
-    # 1. Fetch the Template (The form created by the organizer)
+    # 1. Get the template if applying, or instance if editing
     template_form = get_object_or_404(PlayerSelectionForm, pk=pk) if pk else None
 
     is_org = request.user.groups.filter(name='Organizer').exists()
     is_player = not is_org
 
     if request.method == 'POST':
-        # If it's a player, we DON'T use 'instance=template_form'
-        # because we don't want them to overwrite the organizer's template.
+        # Organizer edits existing template OR Athlete submits new data
         form = PlayerSelectionCrispyForm(
             request.POST,
             request.FILES,
-            instance=None if is_player else template_form,
+            instance=template_form if is_org else None,
             is_player=is_player
         )
 
@@ -305,49 +287,44 @@ def selection_form_create(request, pk=None):
             application = form.save(commit=False)
 
             if is_org:
-                # Path: Organizer creating/editing the actual template
+                # ORGANIZER SAVING/PUBLISHING
                 application.organizer = request.user
-                application.is_published = True
+                application.is_published = True  # CRITICAL: This makes it show up for players
+                application.status = 'OPEN'
                 application.save()
-                messages.success(request, "Trial form updated and published!")
+                messages.success(request, "Trial form has been published!")
                 return redirect('organizer:dashboard')
             else:
-
-                exists = PlayerSelectionForm.objects.filter(
-                    applicant=request.user,
-                    event_name=template_form.event_name,
-                    is_published=False
-                ).exists()
-
-                if exists:
-                    messages.warning(request, "You have already submitted an application for this trial.")
+                # PLAYER SUBMITTING
+                # Check for double submission
+                if PlayerSelectionForm.objects.filter(applicant=request.user, event_name=template_form.event_name,
+                                                      is_published=False).exists():
+                    messages.warning(request, "Application already submitted.")
                     return redirect('accounts:user_dashboard')
 
-                # Path: Player submitting their personal data
-                # We manually link the submission to the original template's data
                 application.applicant = request.user
-                application.organizer = template_form.organizer  # The org who created it
-
-                # Copy event context from the template so the player doesn't have to type it
+                application.organizer = template_form.organizer
+                # Link context from template
                 application.event_name = template_form.event_name
                 application.sports = template_form.sports
                 application.level = template_form.level
-                application.address = template_form.address
-
-                application.is_published = False  # Keep private from other athletes
+                application.is_published = False  # Athletes don't publish their private data
                 application.status = 'PENDING'
                 application.save()
 
-                messages.success(request, "Your application has been submitted!")
+                messages.success(request, "Application submitted successfully!")
                 return redirect('accounts:user_dashboard')
+        else:
+            # Debugging: If form fails, show why in terminal
+            print(form.errors)
+            messages.error(request, "Please correct the errors below.")
     else:
-        # GET Request: For players, show the template data as 'initial' values
+        # GET request: Show empty form for Org, or template-filled form for Player
         form = PlayerSelectionCrispyForm(instance=template_form, is_player=is_player)
 
     return render(request,
                   'organizer/athlete_apply_form.html' if is_player else 'organizer/selection_form_create.html',
-                  {'form': form, 'is_player': is_player}
-                  )
+                  {'form': form, 'is_player': is_player})
 
 
 @login_required
@@ -579,4 +556,21 @@ def verify_ticket_gate(request):
         'ticket': ticket,
         'error': error,
         'ticket_code': ticket_code
+    })
+
+
+@login_required
+@user_passes_test(is_organizer_check)
+def form_preview(request, pk):
+    # Fetch the template the organizer created
+    template_form = get_object_or_404(PlayerSelectionForm, pk=pk, organizer=request.user)
+
+    # Initialize form in preview mode
+    form = PlayerSelectionCrispyForm(instance=template_form, is_player=True, preview_mode=True)
+
+    return render(request, 'organizer/athlete_apply_form.html', {
+        'form': form,
+        'is_player': False,
+        'is_preview': True,
+        'page_title': f"Preview: {template_form.event_name}"
     })
