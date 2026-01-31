@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from datetime import date
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -36,6 +37,17 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def is_past(self):
+        """Returns True if the event date has already passed."""
+        return self.date_time < timezone.now()
+
+    def get_effective_status(self):
+        """Returns COMPLETED if the date has passed, otherwise the database status."""
+        if self.is_past:
+            return 'COMPLETED'
+        return self.status
 
     @property
     def has_paid_tickets(self):

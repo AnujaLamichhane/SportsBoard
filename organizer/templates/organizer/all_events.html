@@ -35,7 +35,16 @@
                         <div style="width: 60px; height: 60px; background: #333; border-radius: 8px;" class="me-3"></div>
                     {% endif %}
                     <div>
-                        <h5 class="text-white mb-0">{{ event.name }}</h5>
+                        <h5 class="text-white mb-0">{{ event.name }}
+
+
+                            {% if event.status == 'COMPLETED' %}
+            <span class="badge bg-secondary ms-2" style="font-size: 0.6rem; vertical-align: middle;">FINISHED</span>
+        {% elif event.status == 'LIVE' %}
+            <span class="badge bg-danger ms-2 pulse" style="font-size: 0.6rem; vertical-align: middle;">LIVE</span>
+        {% endif %}
+
+                        </h5>
                         <small class="text-muted">{{ event.date_time|date:"M d, Y" }} • {{ event.location }}</small>
                     </div>
                 </div>
@@ -47,11 +56,28 @@
                 </div>
             </div>
         {% empty %}
+        <div class="text-center p-4 g-4">
+        {% if search_query %}
+            <p class="text-light fs-5">No events found matching "<strong>{{ search_query }}</strong>"</p>
+            <a href="{% url 'organizer:all_events' %}" class="btn btn-sm btn-outline-secondary">Clear Search</a>
+        {% else %}
+            <p class="text-light fs-5">You haven't created any events yet.</p>
+            <a href="{% url 'organizer:event_create' %}" class="btn btn-sm btn-warning">Create Your First Event</a>
+        {% endif %}
+    </div>
             <!-- <p class="text-muted">No events found.</p> -->
-            <div class="text-center p-4 g-4">
-                <p class="text-light fs-5">No events found matching "{{ search_query }}"</p>
-            </div>
+<!--            <div class="text-center p-4 g-4">-->
+<!--                <p class="text-light fs-5">No events found matching {{ search_query }}</p>-->
+<!--            </div>-->
         {% endfor %}
     </div>
 </div>
 {% endblock %}
+<script>
+    document.getElementById('searchInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent default if necessary
+            document.getElementById('searchForm').submit(); // Force the form to send
+        }
+    });
+</script>

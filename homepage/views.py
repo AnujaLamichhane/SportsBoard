@@ -55,32 +55,71 @@ def logout_user(request):
     return redirect("/")
 
 
-
 def all_events(request):
+    """
+    Public/User view to list events.
+    Strictly excludes past events so athletes and buyers only see active matches.
+    """
     sport_query = request.GET.get('sport')  # Captured from navbar link
+    now = timezone.now()
 
-    # Start with all published events
-    events = Event.objects.all().order_by('-created_at')
+    # 1. Background Maintenance:
+    # Automatically mark past events as COMPLETED in the database
+    Event.objects.filter(date_time__lt=now).exclude(status='COMPLETED').update(status='COMPLETED')
 
+    # 2. Start with only UPCOMING or LIVE events
+    # We use date_time__gte=now to ensure accuracy even if status wasn't updated
+    events = Event.objects.filter(date_time__gte=now).order_by('date_time')
+
+    # 3. Apply Sport Filtering if a query exists
     if sport_query:
-        # 1. Finds events where the MAIN game_type is the selected sport
-        # 2. OR finds events like "PEC Sports Week" that have matches of that sport
+        # Finds events where the MAIN game_type matches OR any match within the event matches
         events = events.filter(
             Q(game_type__iexact=sport_query) |
             Q(matches__game_type__iexact=sport_query)
         ).distinct()
 
-    upcoming_events = Event.objects.filter(
-        date_time__gte=timezone.now()
-    ).order_by('date_time')
-    event_dates = [e.date_time.strftime('%Y-%m-%d') for e in upcoming_events]
+    # 4. Sync Calendar: Only highlight dates for the filtered upcoming events
+    event_dates = [e.date_time.strftime('%Y-%m-%d') for e in events]
 
+    # 5. Determine Dynamic Page Title
+    display_sport = sport_query.capitalize() if sport_query else "All Upcoming"
+    page_title = f"{display_sport} Matches"
+    # Optional: Bulk update statuses to COMPLETED if they have passed
+    Event.objects.filter(date_time__lt=now).exclude(status='COMPLETED').update(status='COMPLETED')
     return render(request, 'homepage/all_events.html', {
         'events': events,
         'selected_sport': sport_query,
         'event_dates_json': json.dumps(event_dates),
-        'page_title': f"{sport_query.capitalize() if sport_query else 'All'} Matches"
+        'page_title': page_title
     })
+
+
+# def all_events(request):
+#     sport_query = request.GET.get('sport')  # Captured from navbar link
+#
+#     # Start with all published events
+#     events = Event.objects.all().order_by('-created_at')
+#
+#     if sport_query:
+#         # 1. Finds events where the MAIN game_type is the selected sport
+#         # 2. OR finds events like "PEC Sports Week" that have matches of that sport
+#         events = events.filter(
+#             Q(game_type__iexact=sport_query) |
+#             Q(matches__game_type__iexact=sport_query)
+#         ).distinct()
+#
+#     upcoming_events = Event.objects.filter(
+#         date_time__gte=timezone.now()
+#     ).order_by('date_time')
+#     event_dates = [e.date_time.strftime('%Y-%m-%d') for e in upcoming_events]
+#
+#     return render(request, 'homepage/all_events.html', {
+#         'events': events,
+#         'selected_sport': sport_query,
+#         'event_dates_json': json.dumps(event_dates),
+#         'page_title': f"{sport_query.capitalize() if sport_query else 'All'} Matches"
+#     })
 
 
 def privacy_policy(request):

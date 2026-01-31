@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.urls import reverse
 from django.db import transaction,IntegrityError
-# from django.core.mail import send_mail
+
 import uuid
 import requests
 import json
@@ -34,11 +34,7 @@ def is_organizer_check(user):
 @user_passes_test(is_organizer_check, login_url='/')
 def organizer_dashboard(request):
     organizer_events = Event.objects.filter(organizer=request.user)
-
-    # paid_sales = TicketSale.objects.filter(
-    #     transaction__ticket_type__match__event__in=organizer_events,
-    #     transaction__status='PAID'
-    # ).select_related('transaction__ticket_type__match__event')  # Optimized
+    now = timezone.now()
 
     paid_sales = TicketSale.objects.filter(
         transaction__ticket_type__event__in=organizer_events,  # Changed 'match__event' to 'event'
@@ -54,8 +50,8 @@ def organizer_dashboard(request):
 
     sales_data = []  # Fetch your real data here
     sales_data_json = json.dumps(sales_data)
-    upcoming_count = organizer_events.filter(date_time__gt=timezone.now()).count()
-
+    # upcoming_count = organizer_events.filter(date_time__gt=timezone.now()).count()
+    upcoming_count = organizer_events.filter(date_time__gt=now).count()
     context = {
         'total_revenue': total_revenue,
         'total_events': organizer_events.count(),
@@ -117,54 +113,6 @@ def create_event(request):
 
     })
 
-# @login_required
-# @user_passes_test(is_organizer_check, login_url='/')
-# def event_edit(request, event_id):
-#     event = get_object_or_404(Event, pk=event_id, organizer=request.user)
-#
-#     if request.method == 'POST':
-#         form = EventCreationForm(request.POST, request.FILES, instance=event)
-#         # formset = TicketTypeFormset(request.POST, request.FILES, instance=event)
-#         # match_formset = MatchFormset(request.POST, request.FILES, instance=event)
-#         match_formset = MatchFormset(request.POST, request.FILES, instance=event, prefix='matches')
-#         ticket_formset = TicketTypeFormset(request.POST, request.FILES, instance=event, prefix='tickets')
-#
-#         # Only save tickets if the event is not marked as free
-#         is_free = request.POST.get('isFreeEvent') == 'on'
-#         if not is_free:
-#             if ticket_formset.is_valid():
-#                 ticket_formset.save()
-#         else:
-#             # If changed to free, optionally delete existing tiers
-#             event.ticket_tiers.all().delete()
-#
-#         # if form.is_valid() and match_formset.is_valid():
-#         #     form.save()
-#         #     match_formset.save()
-#         #
-#         #     if formset.is_valid():
-#         #         formset.save()
-#
-#             messages.success(request, f"Event '{event.name}' updated successfully!")
-#             return redirect('organizer:event_detail', event_id=event.pk)
-#     else:
-#         form = EventCreationForm(instance=event)
-#         match_formset = MatchFormset(instance=event, prefix='matches')
-#         ticket_formset = TicketTypeFormset(instance=event, prefix='tickets')
-#
-#         # formset = TicketTypeFormset(instance=event)
-#         # match_formset = MatchFormset(instance=event)
-#
-#     context = {
-#         'form': form,
-#         # 'formset': formset,
-#         'match_formset': match_formset,  # Don't forget this!
-#         'ticket_formset': ticket_formset,
-#         'page_title': f'Edit Event: {event.name}',
-#         'event': event
-#     }
-#     return render(request, 'organizer/event_create.html', context)
-
 @login_required
 @user_passes_test(is_organizer_check, login_url='/')
 def event_edit(request, event_id):
@@ -218,25 +166,53 @@ def event_delete(request, event_id):
     # For a GET request, we render a confirmation page (recommended for safety)
     return render(request, 'organizer/event_confirm_delete.html', {'event': event})
 
-def all_events(request):
-    # Get the search term from the URL (e.g., ?search=Rara)
-    search_query = request.GET.get('search', '')
-    
-    if search_query:
-        # Filter events where name OR location contains the search term
-        events = Event.objects.filter(
-            Q(name__icontains=search_query) | 
-            Q(location__icontains=search_query)
-        ).order_by('-date_time')
-    else:
-        # If no search, show everything
-        events = Event.objects.all().order_by('-date_time')
-        
-    return render(request, 'organizer/all_events.html', {
-        'events': events,
-        'search_query': search_query # Pass it back to keep it in the input box
-    })
+# def all_events(request):
+#     # Get the search term from the URL (e.g., ?search=Rara)
+#     search_query = request.GET.get('search', '')
+#
+#     if search_query:
+#         # Filter events where name OR location contains the search term
+#         events = Event.objects.filter(
+#             Q(name__icontains=search_query) |
+#             Q(location__icontains=search_query)
+#         ).order_by('-date_time')
+#     else:
+#         # If no search, show everything
+#         events = Event.objects.all().order_by('-date_time')
+#
+#     return render(request, 'organizer/all_events.html', {
+#         'events': events,
+#         'search_query': search_query # Pass it back to keep it in the input box
+#     })
 # #
+def all_events(request):
+    search_query = request.GET.get('search', '')
+    now = timezone.now()
+
+    # 1. Start with all events for this organizer
+    base_events = Event.objects.filter(organizer=request.user)
+
+    # 2. Apply search filter to the base queryset if a query exists
+    if search_query:
+        base_events = base_events.filter(
+            Q(name__icontains=search_query) |
+            Q(location__icontains=search_query)
+        ).distinct()
+
+    # 3. Split the ALREADY FILTERED base_events into two lists
+    active_events = base_events.filter(date_time__gte=now).order_by('date_time')
+    past_events = base_events.filter(date_time__lt=now).order_by('-date_time')
+
+    # 4. Background maintenance: Update status in DB
+    base_events.filter(date_time__lt=now).exclude(status='COMPLETED').update(status='COMPLETED')
+
+    return render(request, 'organizer/all_events.html', {
+        'active_events': active_events,
+        'past_events': past_events,
+        'events': base_events,  # This ensures {% for event in events %} still works
+        'search_query': search_query,
+        'now': now
+    })
 
 
 def event_detail(request, event_id):
@@ -248,11 +224,7 @@ def event_detail(request, event_id):
     if request.user.is_authenticated and event.organizer == request.user:
         context['is_organizer'] = True
 
-        # Correct path for sales in the new schema
-        # paid_sales = TicketSale.objects.filter(
-        #     transaction__ticket_type__match__event=event,
-        #     transaction__status='PAID'
-        # )
+
 
         paid_sales = TicketSale.objects.filter(
             transaction__ticket_type__event=event,  # Remove 'match__'
@@ -454,25 +426,6 @@ def init_payment(request, tier_id):
 
     return redirect('organizer:event_detail', event_id=tier.event.id)
 
-    # response = requests.request("POST", url, headers=headers, data=payload)
-    # resp_dict = response.json()
-    #
-    # if response.status_code == 200:
-    #     # Create a PENDING transaction record
-    #     from .models import KhaltiTransaction
-    #     KhaltiTransaction.objects.create(
-    #         user=request.user,
-    #         ticket_type=tier,
-    #         pidx=resp_dict['pidx'],
-    #         amount=tier.price,
-    #         status='INITIATED',
-    #         # purchase_order_id=resp_dict['purchase_order_id']
-    #     )
-    #     # Redirect to Khalti's payment page
-    #     return redirect(resp_dict['payment_url'])
-    # else:
-    #     messages.error(request, "Failed to initiate payment with Khalti.")
-    #     return redirect('organizer:event_detail', event_id=tier.event.id)
 
 
 
