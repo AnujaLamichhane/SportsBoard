@@ -1,0 +1,195 @@
+{% extends "organizer/sidebar.html" %}
+
+{% block content %}
+<style>
+    /* Prevent the dashboard header from clipping the dropdown */
+    .dashboard-body {
+        overflow: visible !important;
+    }
+    /* Ensure the dropdown menu is on top of everything */
+    .dropdown-menu {
+        z-index: 9999 !important;
+    }
+</style>
+<div class="dashboard-body" style="background-color: #0d0e10; min-height: 100vh; padding: 2.5rem; color: white;">
+
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <a href="{% url 'organizer:published_form_detail' application.pk %}" class="btn btn-outline-secondary btn-sm me-3">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h3 class="mb-0">Athlete Profile Review</h3>
+        </div>
+<!--        <div class="d-flex gap-2">-->
+<!--            <a href="{% url 'organizer:update_application_status' application.pk 'APPROVED' %}" class="btn btn-success px-4 fw-bold">Approve Athlete</a>-->
+<!--            <a href="{% url 'organizer:update_application_status' application.pk 'REJECTED' %}" class="btn btn-danger px-4 fw-bold">Reject</a>-->
+<!--        </div>-->
+
+
+        <div class="d-flex gap-2">
+    {% if application.status == 'PENDING' %}
+        <button class="btn btn-success px-4 fw-bold" onclick="confirmStatus('APPROVED')">Approve Athlete</button>
+        <button class="btn btn-danger px-4 fw-bold" onclick="confirmStatus('REJECTED')">Reject</button>
+    {% else %}
+        <div class="dropdown">
+            <button class="btn btn-outline-info dropdown-toggle px-4 fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-edit me-2"></i>Edit Status
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow border-secondary">
+                <li><h6 class="dropdown-header">Update Status</h6></li>
+                {% if application.status != 'APPROVED' %}
+                <li><a class="dropdown-item text-success" href="#" onclick="confirmStatus('APPROVED')"><i class="fas fa-check me-2"></i>Approve</a></li>
+                {% endif %}
+                {% if application.status != 'REJECTED' %}
+                <li><a class="dropdown-item text-danger" href="#" onclick="confirmStatus('REJECTED')"><i class="fas fa-times me-2"></i>Reject</a></li>
+                {% endif %}
+                <li><hr class="dropdown-divider border-secondary"></li>
+                <li><a class="dropdown-item text-warning" href="#" onclick="confirmStatus('PENDING')"><i class="fas fa-undo me-2"></i>Reset to Pending</a></li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+
+
+
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h5 class="mb-0 text-info">Application Details</h5>
+                </div>
+                <div class="card-body">
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label class="text-white-50 small text-uppercase fw-bold">Full Name</label>
+        <p class="fs-5 fw-bold text-white">{{ application.full_name|default:application.applicant.get_full_name }}</p>
+    </div>
+    <div class="col-md-6">
+        <label class="text-white-50 small text-uppercase fw-bold">Email</label>
+        <p class="fs-5 text-white">{{ application.applicant.email }}</p>
+    </div>
+    <div class="col-12 mt-3">
+        <label class="text-white-50 small text-uppercase fw-bold">Medical History / Notes</label>
+        <div class="p-3 bg-white bg-opacity-10 rounded border border-secondary text-white">
+            {{ application.medical_history|default:"No medical history provided." }}
+        </div>
+    </div>
+</div>
+
+                </div>
+            </div>
+
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h5 class="mb-0 text-info">Verification Documents</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="text-white small d-block mb-2">Citizenship/ID Card</label>
+                            {% if application.citizenship %}
+                                <img src="{{ application.citizenship.url }}" class="img-fluid rounded border border-secondary shadow-sm" style="max-height: 300px; cursor: pointer;" onclick="window.open(this.src)">
+                            {% else %}
+                                <div class="p-5 text-center bg-secondary bg-opacity-10 border border-dashed rounded text-white">No ID Uploaded</div>
+                            {% endif %}
+
+                            {% if application.certificates %}
+                                <a href="{{ application.certificates.url }}" class="btn btn-outline-info mt-2" target="_blank">View Certificate</a>
+                            {% endif %}
+
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <label class="text-white small d-block mb-2">Profile Photo</label>
+                            {% if application.profile_photo %}
+                                <img src="{{ application.profile_photo.url }}" class="rounded-circle border border-4 border-primary shadow" style="width: 200px; height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center" style="width: 200px; height: 200px;">
+                                    <i class="fas fa-user fa-4x text-small"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-4">
+    <div class="card bg-dark border-secondary sticky-top" style="top: 2rem;">
+        <div class="card-body">
+            <h6 class="text-uppercase text-white-50 mb-4 small fw-bold" style="letter-spacing: 1px;">Current Status</h6>
+
+            <div class="d-flex align-items-center mb-4">
+                <div class="status-indicator me-3" style="width: 15px; height: 15px; border-radius: 50%;
+                    {% if application.status == 'PENDING' %}background-color: #ffc107;
+                    {% elif application.status == 'APPROVED' %}background-color: #198754;
+                    {% else %}background-color: #dc3545;{% endif %}"></div>
+                <h4 class="mb-0 text-white fw-bold">{{ application.get_status_display }}</h4>
+            </div>
+
+            <hr class="border-secondary opacity-50">
+
+            <div class="mb-3">
+                <span class="text-white-50 d-block small mb-1">Applied for Event:</span>
+                <span class="fw-bold text-white fs-5">{{ application.event_name }}</span>
+            </div>
+
+            <div class="mb-3">
+                <span class="text-white-50 d-block small mb-1">Category/Level:</span>
+                <span class="badge bg-secondary text-white">{{ application.get_level_display }}</span>
+            </div>
+
+            <div class="mb-3">
+                <span class="text-white-50 d-block small mb-1">Sport:</span>
+                <span class="text-info fw-bold fs-5">{{ application.sports }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </div>
+</div>
+
+<div class="modal fade" id="confirmStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+            <div class="modal-header border-secondary bg-black bg-opacity-20">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Confirm Status Update</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="fs-5">Are you sure you want to change this status to <strong id="targetStatusText" class="text-info"></strong>?</p>
+                <div class="p-3 bg-secondary bg-opacity-10 border border-secondary rounded">
+                    <p class="small text-small mb-0"><i class="fas fa-envelope me-2"></i>An automated email notification will be sent to the athlete immediately.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary bg-black bg-opacity-10">
+                <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">Cancel</button>
+                <a href="#" id="confirmStatusLink" class="btn btn-primary px-4 fw-bold">Confirm & Send Email</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmStatus(status) {
+    const modal = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
+    const link = document.getElementById('confirmStatusLink');
+    const text = document.getElementById('targetStatusText');
+
+    // Construct URL: organizer/applications/<pk>/<action>/
+    const appId = "{{ application.pk }}";
+    const targetUrl = `/organizer/applications/${appId}/${status}/`;
+
+    text.innerText = status;
+    link.href = targetUrl;
+
+    modal.show();
+}
+</script>
+
+{% endblock %}

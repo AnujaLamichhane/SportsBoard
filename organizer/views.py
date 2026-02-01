@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.urls import reverse
 from django.db import transaction,IntegrityError
-
+from django.core.mail import send_mail
 import uuid
 import requests
 import json
@@ -341,18 +341,25 @@ def published_forms(request):
     forms = PlayerSelectionForm.objects.filter(is_published=True).order_by('-created_at')
     
     return render(request, 'organizer/published_form.html', {'forms': forms})
-#
+
 @login_required
 def published_form_detail(request, pk):
-    # Fetch the PlayerSelectionForm model
+    # 1. Fetch the original template created by the organizer
     form_data = get_object_or_404(PlayerSelectionForm, pk=pk, organizer=request.user)
-    
+
+    # 2. Fetch the submissions (the actual athlete applications)
+    # We filter by is_published=False (submissions) and match the event name
+    submissions = PlayerSelectionForm.objects.filter(
+        event_name=form_data.event_name,
+        is_published=False
+    ).select_related('applicant')
+
     context = {
         'form_data': form_data,
+        'submissions': submissions,  # Add this to the context
         'page_title': 'Published Form Details'
     }
     return render(request, 'organizer/published_form_detail.html', context)
-
 
 
 
@@ -513,20 +520,44 @@ def review_applications(request):
 
 @login_required
 @user_passes_test(is_organizer_check, login_url='/')
-def update_application_status(request, pk, status_choice):
-    """Updates the status of a specific trial application."""
-    # Ensure the application belongs to this organizer's events
+def update_application_status(request, pk, action):
     application = get_object_or_404(PlayerSelectionForm, pk=pk, organizer=request.user)
 
     valid_statuses = ['APPROVED', 'REJECTED', 'PENDING']
-    if status_choice.upper() in valid_statuses:
-        application.status = status_choice.upper()
+    action_upper = action.upper()
+
+    if action_upper in valid_statuses:
+        application.status = action_upper
         application.save()
+
+        # --- EMAIL LOGIC START ---
+        if action_upper in ['APPROVED', 'REJECTED'] and application.email:
+            subject = f"Update on your Application for {application.event_name}"
+
+            if action_upper == 'APPROVED':
+                message = f"Congratulations {application.full_name}!\n\nYour application for {application.event_name} has been APPROVED. Please check the dashboard for further instructions."
+            else:
+                message = f"Hello {application.full_name},\n\nWe regret to inform you that your application for {application.event_name} was not selected at this time."
+
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [application.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                messages.warning(request, "Status updated, but email failed to send. Check your SMTP settings.")
+        # --- EMAIL LOGIC END ---
+
         messages.success(request, f"Application for {application.full_name} is now {application.status}.")
     else:
         messages.error(request, "Invalid status update.")
 
     return redirect('organizer:review_applications')
+
+
 
 
 @login_required
@@ -574,3 +605,16 @@ def form_preview(request, pk):
         'is_preview': True,
         'page_title': f"Preview: {template_form.event_name}"
     })
+
+
+@login_required
+@user_passes_test(is_organizer_check, login_url='/')
+def review_athlete_profile(request, pk):
+    # Ensure the application exists and belongs to this organizer
+    application = get_object_or_404(PlayerSelectionForm, pk=pk, organizer=request.user, is_published=False)
+
+    context = {
+        'application': application,
+        'page_title': f"Review: {application.full_name or application.applicant.username}"
+    }
+    return render(request, 'organizer/review_athlete_profile.html', context)

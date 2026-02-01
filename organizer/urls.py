@@ -22,6 +22,9 @@ urlpatterns = [
 path('selection-form/preview/<int:pk>/', views.form_preview, name='form_preview'),
     path('applications/', views.review_applications, name='review_applications'),
     path('applications/<int:pk>/<str:action>/', views.update_application_status, name='update_application_status'),
+path('applications/review/<int:pk>/', views.review_athlete_profile, name='review_athlete_profile'),
+
+
 
     # Ticketing & Khalti Payment (CRITICAL)
     path('book/<int:event_id>/', views.start_booking_process, name='start_booking'),
