@@ -19,6 +19,8 @@ urlpatterns = [
     path('news/', include('news.urls')),
     path('admin_panel/', include('admin_panel.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('payments/', include('payments.urls')),
+
 ]
 
 if settings.DEBUG:

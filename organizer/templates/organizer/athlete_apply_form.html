@@ -6,27 +6,63 @@
     {{ block.super }}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'organizer/css/player_selection.css' %}">
+    <style>
+        .selection-card { border-radius: 16px; overflow: hidden; background: white; margin-top: 20px; }
+        .card-header-custom { background: #0d6efd; color: white; padding: 2rem; border-radius: 16px 16px 0 0; }
+        .form-step.d-none { display: none !important; }
+        .is-invalid { border-color: #dc3545 !important; }
+        .progress { height: 8px; border-radius: 4px; background-color: #e9ecef; }
+        .btn-submit { background-color: #0d6efd; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; transition: 0.3s; }
+    </style>
 {% endblock %}
 
 {% block athlete_dashboard_content %}
-<div class="container d-flex justify-content-center">
-    <div class="col-lg-12 selection-card shadow">
-        <div class="card-header-custom">
-            <h2 class="fw-bold mb-1">{{ page_title }}</h2>
-            <p class="mb-0 opacity-75">Please ensure all mandatory fields (*) are filled correctly.</p>
-        </div>
-        
-        <div class="card-body p-0" style="background: transparent; color: #333; border-radius: 0 0 16px 16px;">
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% crispy form %}
-                
-                <div class="d-grid gap-2 mt-5">
-                    <button type="submit" class="btn-submit">
-                        Submit Final Application
-                    </button>
-                </div>
-            </form>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 selection-card shadow">
+            <div class="card-header-custom">
+                <h2 class="fw-bold mb-1">
+                    {% if is_preview %}<i class="fas fa-eye me-2"></i> Preview: {% endif %}
+                    {{ page_title }}
+                </h2>
+                <p class="mb-0 opacity-75">
+                    {% if is_player or is_preview %}Step-by-step application process.{% else %}Form Setup Mode{% endif %}
+                </p>
+            </div>
+
+            <div class="card-body p-4">
+                {% if is_player or is_preview %}
+                    <div class="progress mb-4">
+                        <div id="formProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 33%;"></div>
+                    </div>
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data" id="selectionForm">
+                    {% csrf_token %}
+                    {% crispy form %}
+
+                    <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+                        {% if is_player or is_preview %}
+                            <button type="button" id="prevBtn" class="btn btn-secondary px-4 d-none" onclick="nextPrev(-1)">
+                                <i class="fas fa-arrow-left me-2"></i> Previous
+                            </button>
+
+                            {% if is_preview %}
+                                <a href="{% url 'organizer:published_forms' %}" class="btn btn-outline-danger mx-2">Exit Preview</a>
+                            {% endif %}
+
+                            <button type="button" id="nextBtn" class="btn btn-primary px-5 ms-auto" onclick="nextPrev(1)">
+                                Next Step <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                            <button type="submit" id="submitBtn" class="d-none"></button>
+                        {% else %}
+                            <button type="submit" class="btn-submit">
+                                <i class="fas fa-save me-2"></i> Save & Publish Form
+                            </button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -35,31 +71,98 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+let currentStep = 1;
+const isPreview = {{ is_preview|yesno:"true,false" }};
+
+function showStep(n) {
+    const steps = document.getElementsByClassName("form-step");
+    if (steps.length === 0) return;
+
+    for (let i = 0; i < steps.length; i++) {
+        steps[i].classList.add("d-none");
+    }
+    steps[n - 1].classList.remove("d-none");
+
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    if (prevBtn) prevBtn.classList.toggle("d-none", n === 1);
+
+    if (nextBtn) {
+        if (n === steps.length) {
+            nextBtn.innerHTML = isPreview ? 'Finish Preview' : 'Submit Application <i class="fas fa-check-circle ms-2"></i>';
+            nextBtn.classList.replace("btn-primary", "btn-success");
+        } else {
+            nextBtn.innerHTML = 'Next Step <i class="fas fa-arrow-right ms-2"></i>';
+            nextBtn.classList.replace("btn-success", "btn-primary");
+        }
+    }
+
+    const progress = document.getElementById("formProgress");
+    if (progress) progress.style.width = (n / steps.length) * 100 + "%";
+}
+
+function nextPrev(n) {
+    const steps = document.getElementsByClassName("form-step");
+    if (n === 1 && !isPreview && !validateStep(currentStep)) return false;
+
+    currentStep = currentStep + n;
+
+    if (currentStep > steps.length) {
+        if (isPreview) {
+            alert("Preview ended successfully.");
+            currentStep = steps.length;
+            return false;
+        }
+        document.getElementById("submitBtn").click();
+        return false;
+    }
+    showStep(currentStep);
+    window.scrollTo(0, 0);
+}
+
+function validateStep(n) {
+    const stepDiv = document.getElementById("step-" + n);
+    if (!stepDiv) return true;
+    const inputs = stepDiv.querySelectorAll("input[required], select[required], textarea[required]");
+    let valid = true;
+    inputs.forEach(input => {
+        if (!input.value.trim()) {
+            input.classList.add("is-invalid");
+            valid = false;
+        } else {
+            input.classList.remove("is-invalid");
+        }
+    });
+    return valid;
+}
+
 document.addEventListener("DOMContentLoaded", function() {
+    showStep(currentStep);
+
+    // Age Calculation
     const dobInput = document.getElementById('id_dob');
     const ageField = document.getElementById('age_field');
-    const sameAddressCheck = document.getElementById('sameAddress');
-    const tempAddr = document.querySelector('[name="temporary_address"]');
-    const permAddr = document.querySelector('[name="permanent_address"]');
-
-    if (ageField) {
-        ageField.addEventListener('click', function() {
-            if (dobInput.value) {
-                const birthDate = new Date(dobInput.value);
+    if (dobInput && ageField) {
+        dobInput.addEventListener('change', function() {
+            if (this.value) {
+                const birthDate = new Date(this.value);
                 const today = new Date();
                 let age = today.getFullYear() - birthDate.getFullYear();
                 const m = today.getMonth() - birthDate.getMonth();
-                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) { age--; }
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
                 ageField.value = age + " Years";
-            } else {
-                alert("Please select Date of Birth first.");
             }
         });
     }
 
+    // Address Logic
+    const sameAddressCheck = document.getElementById('sameAddress');
+    const tempAddr = document.querySelector('[name="temporary_address"]');
+    const permAddr = document.querySelector('[name="permanent_address"]');
     if (sameAddressCheck) {
         sameAddressCheck.addEventListener('change', function() {
-            if (this.checked) {
+            if (this.checked && tempAddr) {
                 permAddr.value = tempAddr.value;
                 permAddr.readOnly = true;
             } else {
@@ -70,13 +173,3 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-

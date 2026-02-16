@@ -1,36 +1,22 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
+
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
 <style>
-    /* Force the entire page background to dark */
-    body {
-        background-color: var(--bg-color) !important;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Remove the white gap between navbar and dashboard */
-    .dashboard-container {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-        background-color: var(--bg-color)!important;
-    }
-
-    /* Ensure the form container doesn't have internal padding showing white */
-    .container, .container-fluid {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
+    body { background-color: var(--bg-color) !important; margin: 0; padding: 0; }
+    .dashboard-container { margin-top: 0 !important; padding-top: 0 !important; background-color: var(--bg-color)!important; }
+    .container, .container-fluid { padding: 0 !important; margin: 0 !important; }
 </style>
-{% endblock %} 
-{% block content %}
-<div class="dashboard-container" style="display: flex; min-height: 90vh; background: var(--bg-color);color: var(--text-color);">
+{% endblock %}
 
-    <aside style="width: 280px; background: var(--nav-bg); padding: 2.5rem 1.5rem; border-right: 1px solid rgba(128,128,128,0.9); display: flex; flex-direction: column;min-height: 100vh;">
+{% block content %}
+<div class="dashboard-container" style="display: flex; min-height: 90vh; background: var(--bg-color); color: var(--text-color);">
+
+    <aside style="width: 280px; background: var(--nav-bg); padding: 2.5rem 1.5rem; border-right: 1px solid rgba(128,128,128,0.9); display: flex; flex-direction: column; min-height: 100vh;">
         <div style="text-align: center; margin-bottom: 2.5rem;">
             <div style="position: relative; display: inline-block;">
-                <img src="{{ user.profile.profile_url }}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-color); padding: 3px; background: var(--bg-color);">
+                <img src="{{ request.user.profile.profile_url }}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-color); padding: 3px; background: var(--bg-color);">
                 <div style="position: absolute; bottom: 5px; right: 5px; width: 18px; height: 18px; background: #28a745; border-radius: 50%; border: 3px solid var(--nav-bg);"></div>
             </div>
             <h3 style="margin-top: 15px; color: var(--text-color); font-size: 1.2rem; font-weight: 700;">{{ user.username }}</h3>
@@ -39,16 +25,17 @@
 
         <nav style="display: flex; flex-direction: column; gap: 8px;">
             <a href="#" style="padding: 12px 18px; border-radius: 10px; background: var(--accent-color); color:var(--text-color); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 10px;">🏠 Overview</a>
-            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none;  display: flex;font-weight: 600; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">🏅 My Trials</a>
-            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; display: flex;font-weight: 600; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">⚙️ Settings</a>
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; display: flex; font-weight: 600; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">🏅 My Trials</a>
+            <a href="#" style="padding: 12px 18px; border-radius: 10px; color: var(--text-color); text-decoration: none; display: flex; font-weight: 600; align-items: center; gap: 10px;" onmouseover="this.style.background='rgba(128,128,128,0.1)'" onmouseout="this.style.background='transparent'">⚙️ Settings</a>
         </nav>
     </aside>
 
-    <main style="flex: 1; padding: 0; max-width: 1100px; margin: 0 auto; width: 100%;background-color:var(--bg-color);">
+    <main style="flex: 1; padding: 2rem; max-width: 1100px; margin: 0 auto; width: 100%; background-color: var(--bg-color);">
+
         {% block athlete_dashboard_content %}
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
             <div>
-                <h1 style="color: var(--text-color); margin-top: 30px; font-size: 1.8rem;">Performance Dashboard</h1>
+                <h1 style="color: var(--text-color); margin: 0; font-size: 1.8rem;">Performance Dashboard</h1>
                 <p style="color: var(--text-color); opacity: 0.6; margin-top: 5px;">Track your trial applications and event status.</p>
             </div>
             <div style="text-align: right;">
@@ -58,84 +45,118 @@
         </header>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 3.5rem;">
-            <div class="stat-card hover-lift" style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);">
+            <div class="stat-card" style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1);">
                 <p style="margin: 0; opacity: 0.6; font-size: 0.85rem; font-weight: 600; color: var(--text-color);">Applied Trials</p>
-                <h2 style="margin: 10px 0 0 0; color: var(--accent-color); font-size: 2rem;">{{ total_joined }}</h2>
+                <h2 style="margin: 10px 0 0 0; color: var(--accent-color); font-size: 2rem;">{{ my_submissions.count }}</h2>
             </div>
-            <div class="stat-card hover-lift" style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);">
-                <p style="margin: 0; opacity: 0.6; font-size: 0.85rem; font-weight: 600; color: var(--text-color);">Notifications</p>
-                <h2 style="margin: 10px 0 0 0; color: #ff7b00; font-size: 2rem;">{{ notification_count }}</h2>
+            <div class="stat-card" style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1);">
+                <p style="margin: 0; opacity: 0.6; font-size: 0.85rem; font-weight: 600; color: var(--text-color);">Event Tickets</p>
+                <h2 style="margin: 10px 0 0 0; color: #ff7b00; font-size: 2rem;">{{ user_apps.count }}</h2>
             </div>
         </div>
-        <!-- this -->
-        <div style="margin-top: 3rem;"> 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3 style="color: var(--text-color); font-size: 1.3rem;">Open Selection Trials</h3>
+
+
+
+        <div style="margin-top: 1rem; margin-bottom: 3rem;">
+    <h3 style="color: var(--text-color); font-size: 1.3rem; margin-bottom: 1.5rem;">🔥 Open Selection Trials</h3>
+
+
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+    {% for trial in available_forms %}
+    <a href="{% url 'organizer:selection_form_create' trial.pk %}" style="text-decoration: none; display: block; position: relative; z-index: 5;">
+        <div style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 2px solid var(--accent-color); transition: all 0.2s; cursor: pointer;"
+             onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.2)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <h4 style="color: var(--text-color); margin: 0;">{{ trial.event_name }}</h4>
+                <span style="font-size: 0.6rem; background: var(--accent-color); color: white; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; font-weight: bold;">Apply Now</span>
             </div>
 
+            <p style="color: var(--text-color); opacity: 0.7; font-size: 0.85rem; margin-top: 10px; margin-bottom: 15px;">
+                ⚽ {{ trial.sports }} | 🏆 {{ trial.get_level_display }}
+            </p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(128,128,128,0.2); padding-top: 15px;">
+                <small style="color: var(--text-color); opacity: 0.5;">
+                    <i class="fas fa-map-marker-alt"></i> {{ trial.address|truncatechars:15 }}
+                </small>
+                <span style="background: var(--accent-color); color: white; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 700;">Fill Form</span>
+            </div>
+        </div>
+    </a>
+    {% empty %}
+    <p style="color: var(--text-color); opacity: 0.5; grid-column: 1/-1; text-align: center; padding: 20px; background: rgba(128,128,128,0.05); border-radius: 10px;">No new trials available.</p>
+    {% endfor %}
+</div>
+
+
+
+
+</div>
+
+
+
+        <div style="margin-top: 3rem;">
+            <h3 style="color: var(--text-color); font-size: 1.3rem; margin-bottom: 1.5rem;">My Trial Applications</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
-                {% for form in available_forms %}
-                <div class="trial-card hover-lift" style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(255, 193, 7, 0.3); position: relative;">
-                    <span style="position: absolute; top: 10px; right: 15px; background: var(--accent-color); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 5px;">NEW</span>
-                    <h4 style="color: var(--text-color); margin-bottom: 5px;">{{ form.event_name }}</h4>
-                    <p style="color: var(--text-color); opacity: 0.7; font-size: 0.85rem; margin-bottom: 15px;">
-                        ⚽ {{ form.sports }} | 🏆 {{ form.get_level_display }}
+                {% for sub in my_submissions %}
+                <div style="background: var(--nav-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <h4 style="color: var(--text-color); margin: 0;">{{ sub.event_name }}</h4>
+                        <span style="font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: bold;
+                            {% if sub.status == 'PENDING' %} background: #ffc107; color: #000;
+                            {% elif sub.status == 'APPROVED' %} background: #28a745; color: #fff;
+                            {% else %} background: #dc3545; color: #fff; {% endif %}">
+                            {{ sub.get_status_display }}
+                        </span>
+                    </div>
+                    <p style="color: var(--text-color); opacity: 0.7; font-size: 0.85rem; margin-top: 10px;">
+                        ⚽ {{ sub.sports }} | 🏆 {{ sub.get_level_display }}
                     </p>
-                    
-                    <a href="{% url 'organizer:selection_form_create' pk=form.pk %}" 
-                    style="display: block; text-align: center; background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 8px; border-radius: 8px; text-decoration: none; font-weight: 600; ">
-                        Apply for Trial
-                    </a>
+                    <small style="color: var(--text-color); opacity: 0.5;">Applied: {{ sub.created_at|date:"M d, Y" }}</small>
                 </div>
                 {% empty %}
-                <p style="color: var(--text-color); opacity: 0.5;">No selection trials currently open.</p>
+                <p style="color: var(--text-color); opacity: 0.5;">No trial applications submitted yet.</p>
                 {% endfor %}
             </div>
         </div>
-        <div>
+
+        <div style="margin-top: 3rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3 style="color: var(--text-color); font-size: 1.3rem;">My Applied Events</h3>
+                <h3 style="color: var(--text-color); font-size: 1.3rem;">My Event Tickets</h3>
                 <a href="{% url 'homepage:view_events' %}" style="color: var(--accent-color); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Find More +</a>
             </div>
 
             {% for app in user_apps %}
-            <div style="background: var(--nav-bg); padding: 1.25rem 1.75rem; border-radius: 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; border-left: 6px solid var(--accent-color);
-             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: 0.3s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="background: var(--nav-bg); padding: 1.25rem 1.75rem; border-radius: 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; border-left: 6px solid var(--accent-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
                 <div>
-                    <h4 style="margin: 0; color: var(--text-color); font-size: 1.1rem;">{{ app.event.name }}</h4>
+                    <h4 style="margin: 0; color: var(--text-color); font-size: 1.1rem;">
+                        {{ app.transaction.ticket_type.event.name }}
+                    </h4>
                     <div style="display: flex; gap: 15px; margin-top: 5px;">
-                        <small style="color: var(--text-color); opacity: 0.6;">📍 {{ app.event.location }}</small>
-                        <small style="color: var(--text-color); opacity: 0.6;">📅 {{ app.event.date_time|date:"M d, Y" }}</small>
+                        <small style="color: var(--text-color); opacity: 0.6;">📍 {{ app.transaction.ticket_type.event.location }}</small>
+                        <small style="color: var(--text-color); opacity: 0.6;">🎟️ {{ app.transaction.ticket_type.name }}</small>
                     </div>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 25px;">
-                    <!-- <span style="padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
-                        {% if app.status == 'APPROVED' %}
-                            background: rgba(40, 167, 69, 0.15); color: #28a745;
-                        {% elif app.status == 'PENDING' %}
-                            background: rgba(255, 193, 7, 0.15); color: #f1c40f;
-                        {% else %} background :rgba(220, 53, 69, 0.15); color: #dc3545;
-                        {% endif %}">
-                        {{ app.get_status_display }} -->
-                    <!-- </span> -->
-                     <span class="status-badge status-{{ app.status|lower }}">
-                        {{ app.get_status_display }}
-                    </span>
-                    <a href="{% url 'organizer:event_detail' app.event.id %}" style="color: var(--text-color); opacity: 0.8; text-decoration: none; font-size: 1.1rem;">➔</a>
+                    <span style="background: rgba(40, 167, 69, 0.15); color: #28a745; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 800;">PAID</span>
+                    <a href="{% url 'organizer:booking_success' app.id %}" style="color: var(--text-color); opacity: 0.8; text-decoration: none; font-size: 1.1rem;">➔</a>
                 </div>
             </div>
             {% empty %}
             <div style="text-align: center; padding: 4rem 2rem; background: var(--nav-bg); border-radius: 20px; border: 2px dashed rgba(128,128,128,0.2);">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">🏟️</div>
-                <h4 style="color: var(--text-color); margin-bottom: 0.5rem;">No Applications Found</h4>
-                <p style="color: var(--text-color); opacity: 0.6; margin-bottom: 1.5rem;">You haven't applied for any trials or events yet.</p>
+                <h4 style="color: var(--text-color); margin-bottom: 0.5rem;">No Tickets Found</h4>
+                <p style="color: var(--text-color); opacity: 0.6; margin-bottom: 1.5rem;">You haven't purchased any tickets yet.</p>
                 <a href="{% url 'homepage:view_events' %}" style="background: var(--accent-color); color: white; padding: 10px 25px; border-radius: 8px; text-decoration: none; font-weight: 600;">Browse Events</a>
             </div>
             {% endfor %}
         </div>
         {% endblock athlete_dashboard_content %}
+
     </main>
 </div>
 {% endblock %}
-

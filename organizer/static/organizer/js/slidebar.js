@@ -10,6 +10,7 @@ document.querySelectorAll('.menu-item').forEach(item => {
 });
 
 
+
 function toggleSidebar() {
             const sidebar = document.getElementById('geminiSidebar');
             const mainContent = document.querySelector('.main-content');
@@ -20,4 +21,6 @@ function toggleSidebar() {
             
         }
         }
-        const chartData = JSON.parse('{{ sales_data_json|safe }}');
+        const chartData = JSON.parse('{{ sales_data_json|default:"[]"|escapejs }}');
+
+//        const chartData = JSON.parse('{{ sales_data_json|safe }}');

@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'organizer/css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'organizer/published_forms' %}">
+<!--    <link rel="stylesheet" href="{% static 'organizer/published_forms' %}">-->
 </head>
 {% block extra_head %}{% endblock %}
 <body class="bg-dark text-white">
 
     <div class="d-flex"> 
-        <nav class="gemini-sidebar" id="geminiSidebar">
+        <nav cl ass="gemini-sidebar" id="geminiSidebar">
             <div class="sidebar-header">
                 <i class="fas fa-bars menu-toggle-btn" onclick="toggleSidebar()"></i>
                 <span class="brand-name">SportsBoard Nepal</span>
@@ -50,13 +50,27 @@
 
                 <div class="sidebar-divider"></div>
 
-                <a href="#" class="menu-item">
-                    <i class="fas fa-user-clock"></i>
-                    <span class="menu-label">User Event Requests</span>
-                    {% if pending_applications > 0 %}
-                        <span class="badge rounded-pill bg-danger ms-auto menu-label">{{ pending_applications }}</span>
-                    {% endif %}
-                </a>
+<!--                <a href="#" class="menu-item">-->
+<!--                    <i class="fas fa-user-clock"></i>-->
+<!--                    <span class="menu-label">User Event Requests</span>-->
+<!--                    {% if pending_applications > 0 %}-->
+<!--                        <span class="badge rounded-pill bg-danger ms-auto menu-label">{{ pending_applications }}</span>-->
+<!--                    {% endif %}-->
+<!--                </a>-->
+
+                <a href="{% url 'organizer:review_applications' %}" class="menu-item {% if request.resolver_match.url_name == 'review_applications' %}active{% endif %}">
+    <i class="fas fa-user-clock"></i>
+    <span class="menu-label">User Event Requests</span>
+    {% if pending_applications > 0 %}
+        <span class="badge rounded-pill bg-danger ms-auto menu-label">{{ pending_applications }}</span>
+    {% endif %}
+</a>
+
+               <a href="{% url 'organizer:verify_ticket_gate' %}" class="menu-item {% if request.resolver_match.url_name == 'verify_ticket_gate' %}active{% endif %}" style="border: 1px solid rgba(255, 193, 7, 0.2); margin-top: 5px;">
+    <i class="fas fa-qrcode text-warning"></i>
+    <span class="menu-label">Gate Verification</span>
+</a>
+
             </div>
 
             <div class="sidebar-footer">
@@ -82,14 +96,17 @@
             {% endblock %}
         </div>
     </div>
-    <script src="{% static 'organizer/css/slidebar.js' %}"></script>
+    <script src="{% static 'organizer/js/slidebar.js' %}"></script>
     <script src="{% static 'organizer/js/charts.js' %}"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleSidebar() {
             document.getElementById('geminiSidebar').classList.toggle('sidebar-collapsed');
         }
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>
