@@ -1,0 +1,116 @@
+/* Header and Search Styling */
+.request-header h2 {
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    margin-top: 35px;
+}
+.request-header p{
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+.search-box {
+    position: relative;
+    width: 300px;
+    margin-bottom: 5px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Floating Table Rows */
+.requests-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
+
+.requests-table thead th {
+    color: #718096;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    padding: 10px 10px;
+    border: none;
+}
+
+.request-row {
+    background: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    transition: all 0.2s;
+}
+
+.request-row:hover {
+    transform: scale(1.005);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.request-row td {
+    padding: 20px;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.request-row td:first-child { border-left: 1px solid #f1f5f9; border-radius: 12px 0 0 12px; }
+.request-row td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 12px 12px 0; }
+
+/* Status Badges */
+.badge-status {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-status.pending { background: #fff7ed; color: #c2410c; }
+
+/* Action Buttons */
+.btn-action {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.btn-check { background: #10b981; }
+.btn-eye { background: #3b82f6; }
+.btn-cross { background: #ef4444; }
+
+.btn-action:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+/* Avatar Style */
+.avatar-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #ff8900;
+}

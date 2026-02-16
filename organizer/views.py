@@ -164,7 +164,7 @@ def create_event(request):
                 if formset.is_valid():
                     formset.save()
 
-                messages.success(request, "Event created successfully!")
+                # messages.success(request, "Event created successfully!")
                 return redirect('organizer:dashboard')
     else:
         form = EventCreationForm()
@@ -201,7 +201,7 @@ def event_edit(request, event_id):
             if formset.is_valid():
                 formset.save()
 
-            messages.success(request, f"Event '{event.name}' updated successfully!")
+            # messages.success(request, f"Event '{event.name}' updated successfully!")
             return redirect('organizer:event_detail', event_id=event.pk)
     else:
         form = EventCreationForm(instance=event)
@@ -228,7 +228,7 @@ def event_delete(request, event_id):
     if request.method == 'POST':
         event_name = event.name
         event.delete()
-        messages.success(request, f"Event '{event_name}' deleted successfully.")
+        # messages.success(request, f"Event '{event_name}' deleted successfully.")
         return redirect('organizer:dashboard')
 
     # For a GET request, we render a confirmation page (recommended for safety)
@@ -336,7 +336,7 @@ def start_booking_process(request, event_id):
             tier.available_quantity -= 1
             tier.save()
 
-            messages.success(request, "Booking initiated! Please present your ticket code at the venue.")
+            # messages.success(request, "Booking initiated! Please present your ticket code at the venue.")
             return redirect('organizer:booking_success', sale_id=sale.id)
         else:
             messages.error(request, "Sorry, this ticket tier just sold out!")
@@ -422,7 +422,7 @@ def selection_form_create(request, pk=None):
                 application.organizer = request.user
                 application.is_published = True
                 application.save()
-                messages.success(request, "Selection form configured and published!")
+                # messages.success(request, "Selection form configured and published!")
                 return redirect('organizer:dashboard')
             else:
                 # Path: Player submitting an application
@@ -441,7 +441,7 @@ def selection_form_create(request, pk=None):
                 application.status = 'pending'
                 application.save()
                 
-                messages.success(request, "Application submitted successfully!")
+                # messages.success(request, "Application submitted successfully!")
                 return redirect('accounts:user_dashboard')
         else:
             print(form.errors)

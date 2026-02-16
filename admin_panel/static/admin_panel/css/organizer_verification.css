@@ -1,0 +1,187 @@
+/* Container Enhancement */
+/* .verification-container {
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    border: 1px solid #edf2f6 !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+} */
+.verification-wrapper-fluid {
+    width: 100%;
+    background: transparent; 
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top:1px solid #1a202c;
+}
+/* Header Wrapper */
+.verification-header {
+    margin-bottom: 1.5rem;
+    padding: 0 10px; /* Slight horizontal padding to align with table edges */
+}
+
+/* Main Title */
+.verification-header h4 {
+    font-size: 2rem; 
+    letter-spacing: -0.5px;
+    color: #1a202c !important; /* Deep dark gray */
+    margin-bottom: 6px !important;
+}
+
+/* Subtext */
+.verification-header p {
+    font-size: 1rem;
+    color: #718096 !important; /* Muted Slate gray */
+    font-weight: 400;
+    margin-bottom: 6px;
+}
+
+/* View All Button Customization */
+.btn-outline-primary.rounded-pill {
+    border: 2px solid #3b82f6; /* Thicker border for a modern look */
+    color: #3b82f6;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.btn-outline-primary.rounded-pill:hover {
+    background-color: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Small screen adjustments */
+@media (max-width: 576px) {
+    .verification-header h4 {
+        font-size: 1.25rem;
+    }
+    .verification-header p {
+        font-size: 0.85rem;
+    }
+}
+.verification-container h5 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+
+/* Table Styling */
+.custom-verify-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-verify-table thead th {
+    background-color: #f8fafc;
+    /* color: #718096; */
+    color: black;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 12px 15px;
+    border-bottom: 2px solid #edf2f7;
+    text-align: left;
+}
+
+.custom-verify-table tbody tr {
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.custom-verify-table tbody tr:hover {
+    background-color: #f7fafc;
+}
+
+.custom-verify-table td {
+    padding: 16px 15px;
+    vertical-align: middle;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+/* Organizer Info Styling */
+.organizer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-initials {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background: #edf2f7;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+/* Document Link Styling */
+.doc-link {
+    color: #4c51bf;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.doc-link:hover {
+    text-decoration: underline;
+}
+
+/* Button Group Styling */
+.action-btns {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: white;
+}
+
+.btn-accept { background-color: #38a169; } /* Green */
+.btn-accept:hover { background-color: #2f855a; transform: scale(1.1); }
+
+.btn-view { background-color: #3182ce; }   /* Blue */
+.btn-view:hover { background-color: #2b6cb0; transform: scale(1.1); }
+
+.btn-reject { background-color: #e53e3e; }  /* Red */
+.btn-reject:hover { background-color: #c53030; transform: scale(1.1); }
+
+/* Status Badge Enhancement */
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: #fffaf0;
+    color: #dd6b20;
+    border: 1px solid #fbd38d;
+}
+
+.status-incomplete {
+    background-color: #f7fafc;
+    color: #718096;
+    border: 1px solid #e2e8f0;
+}

@@ -6,7 +6,7 @@ body {
             scrollbar-width: none;
         }
 
-        .hero {
+        .ahero {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
             url('https://images.pexels.com/photos/399187/pexels-photo-399187.jpeg');
             background-size: cover;
@@ -17,13 +17,13 @@ body {
             overflow: hidden;
         }
 
-        .hero h1 {
+        .ahero h1 {
             font-size: 3rem;
             margin-bottom: 10px;
             font-weight: 700;
         }
 
-        .hero p {
+        .ahero p {
             font-size: 1.2rem;
             max-width: 700px;
             margin: 0 auto;
@@ -40,7 +40,7 @@ body {
             margin-bottom: 20px;
             color: #ff7b00;
         }
-        .hero p{
+        .ahero p{
             color: white;
         }
 

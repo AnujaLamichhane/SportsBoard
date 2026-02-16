@@ -1,0 +1,103 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'admin_panel/css/adashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/organizer_requests.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid dashboard-page">
+    <div class="flex-main-dwrapper" id="adminWrapper">
+        
+        {% include 'admin_panel/components/_sidebar.html' %}
+
+        <div class="dsection-right">
+            <div class="content-container p-4">
+                
+                <div class="request-header d-flex justify-content-between align-items-center mb-5">
+                    <div>
+                        <h2 class="fw-bold text-dark mb-1">Organizer Requests</h2>
+                        <p class="text-muted">Manage and verify all tournament organizer applications.</p>
+                    </div>
+                    
+                    <div class="header-actions d-flex gap-3">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="requestSearch" placeholder="Search by name, email or status...">
+                        </div>
+                        <button class="btn btn-filter"><i class="fas fa-filter"></i> Filter</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="requests-table">
+                        <thead>
+                            <tr>
+                                <th>Organizer</th>
+                                <th>Contact Info</th>
+                                <th>Documents</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestTableBody">
+                            <tr class="request-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-box bg-soft-orange">PS</div>
+                                        <span class="fw-bold ms-3">Prabhat Shrestha</span>
+                                    </div>
+                                </td>
+                                <td>prabhat@example.com</td>
+                                <td>
+                                    <span class="doc-link"><i class="fas fa-file-pdf"></i> Citizenship</span>
+                                </td>
+                                <td><span class="badge-status pending">Pending</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button class="btn-action btn-check"><i class="fas fa-check"></i></button>
+                                        <button class="btn-action btn-eye"><i class="fas fa-eye"></i></button>
+                                        <button class="btn-action btn-cross"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="request-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-box bg-soft-orange">NT</div>
+                                        <span class="fw-bold ms-3">Nabin Thapa</span>
+                                    </div>
+                                </td>
+                                <td>987654321</td>
+                                <td>
+                                    <span class="doc-link"><i class="fas fa-file-pdf"></i> Citizenship</span>
+                                </td>
+                                <td><span class="badge-status pending">Pending</span></td>
+                                <td>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button class="btn-action btn-check"><i class="fas fa-check"></i></button>
+                                        <button class="btn-action btn-eye"><i class="fas fa-eye"></i></button>
+                                        <button class="btn-action btn-cross"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+    $("#requestSearch").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#requestTableBody tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
+</script>
+{% endblock %}

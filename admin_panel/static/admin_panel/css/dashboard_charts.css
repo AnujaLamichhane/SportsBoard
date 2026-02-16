@@ -1,0 +1,27 @@
+.chart-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #f0f0f0;
+    height: 100%;
+}
+
+.chart-card h5 {
+    color: #444;
+    font-size: 1.1rem;
+}
+
+/* Ensures the canvas doesn't break layout on mobile */
+.chart-container {
+    width: 100%;
+    margin: 0 auto;
+}
+.growth-chart-container {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #f0f0f0;
+}
+
+.growth-chart-container h5 {
+    font-size: 1.1rem;
+    color: #333;
+}

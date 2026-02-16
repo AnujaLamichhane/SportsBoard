@@ -1,0 +1,194 @@
+/* Container Layout */
+.manage-users-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Header Section */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.page-header h2 {
+    color: #2d3436;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Modern Search Bar (Pill Style) */
+.search-form {
+    display: flex;
+    background: #fff;
+    padding: 6px 10px;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
+    width: 100%;
+    max-width: 450px;
+    transition: all 0.3s ease;
+}
+
+.search-form:focus-within {
+    box-shadow: 0 4px 20px rgba(13, 110, 253, 0.15);
+    border-color: #0d6efd;
+}
+
+.search-form input {
+    border: none;
+    outline: none;
+    padding: 8px 15px;
+    width: 100%;
+    font-size: 0.95rem;
+    background: transparent;
+}
+
+.search-btn {
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.search-btn:hover {
+    background: #0056b3;
+}
+
+/* Table Card Styling */
+.table-wrapper {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+    overflow: hidden; /* Ensures corners stay rounded */
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.user-table thead {
+    background-color: #f8f9fa;
+}
+
+.user-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #636e72;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+.user-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f8f9fa;
+    color: #2d3436;
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+.user-table tr:last-child td {
+    border-bottom: none;
+}
+
+.user-table tr:hover {
+    background-color: #fcfdff;
+}
+
+/* Username emphasis */
+.username-text {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.status-active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-inactive {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* Delete Action Button */
+.btn-delete-action {
+    background: #fff;
+    color: #eb4d4b;
+    border: 1px solid #ffcccb;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-delete-action:hover {
+    background: #eb4d4b;
+    color: #fff;
+    border-color: #eb4d4b;
+    box-shadow: 0 4px 10px rgba(235, 77, 75, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .search-form {
+        max-width: 100%;
+    }
+}
+.btn-clear {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    background: #f1f2f6;
+    color: #57606f;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-clear:hover {
+    background: #dfe4ea;
+    color: #2f3542;
+}
+
+.search-form {
+    align-items: center; /* Ensure items are centered vertically */
+}

@@ -1,0 +1,61 @@
+.activity-feed-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #f0f0f0;
+    height: 100%;
+}
+
+.activity-list {
+    position: relative;
+}
+
+/* The vertical line connecting activities */
+.activity-list::before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: #f1f3f5;
+}
+
+.activity-item {
+    position: relative;
+    margin-bottom: 25px;
+    z-index: 1;
+}
+
+.activity-item:last-child {
+    margin-bottom: 0;
+}
+
+.activity-indicator {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 15px;
+    border: 3px solid #fff;
+    font-size: 0.9rem;
+}
+
+.activity-content p {
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: #adb5bd;
+}
+
+/* Color Variables (ensure these match your theme) */
+.bg-soft-orange { background: rgba(255, 137, 0, 0.1); }
+.bg-soft-blue   { background: rgba(0, 123, 255, 0.1); }
+.bg-soft-green  { background: rgba(40, 167, 69, 0.1); }
+.bg-soft-red    { background: rgba(220, 53, 69, 0.1); }

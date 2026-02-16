@@ -6,8 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SportsBoard{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/featured.css' %}">
+    <link rel="stylesheet" href="{% static 'css/value.css' %}">
+    <link rel="stylesheet" href="{% static 'css/key.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all_events.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
     {% block extra_head %}{% endblock %} 
 </head>
 <body>
@@ -22,6 +26,16 @@
             </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="{% url 'homepage:home' %}">Home</a></li>
+
+                
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'accounts:dashboard_redirect' %}" >Dashboard</a></li>
+                {% endif %}
+
+                <li id="adminNavPlaceholder" style="display: none;">
+                        <a href="{% url 'admin_panel:adashboard' %}">Dashboard</a>
+                </li>
+
                 <li class="dropdown">
                     <a href="#" id="sportsDropdown">Sports</a>
                     <div class="dropdown-content" id="sportsMenu">
@@ -31,13 +45,13 @@
 <!--                        <a href="/basketball">🏀 Basketball</a>-->
 <!--                        <a href="/badminton">🏸 Badminton</a>-->
 
-                   {% for sport in nav_sports %}
-                    <a href="{% url 'homepage:view_events' %}?sport={{ sport.code|urlencode }}">
-                {{ sport.name }}
-            </a>
-        {% empty %}
-            <a href="#">No Active Events</a>
-        {% endfor %}
+                            {% for sport in nav_sports %}
+                                <a href="{% url 'homepage:view_events' %}?sport={{ sport.code|urlencode }}">
+                            {{ sport.name }}
+                        </a>
+                    {% empty %}
+                        <a href="#">No Active Events</a>
+                    {% endfor %}
 
 
                     </div>
@@ -45,33 +59,43 @@
                 <li><a href="/viewevents">View Events</a></li>
                 <li><a href="/news">News</a></li>
                 <li><a href="/contact">Contact</a></li>
+                <!-- <li><a href="/admin_panel">ad</a></li> -->
+
             </ul>
             <button id="themeToggle">🌙</button>
             <button class="menu-toggle" id="menuToggle">☰</button>
             <!-- USER SECTION (Top Right) -->
             <div class="user-box">
-
                 {% if user.is_authenticated %}
                     <div class="user-info">
                         <i class="fa-solid fa-user-circle user-icon"></i>
-
-
-                      <a href="{% url 'accounts:dashboard_redirect' %}" style="text-decoration: none; color: inherit;">
-
+                        <a href="{% url 'accounts:dashboard_redirect' %}" style="text-decoration: none; color: inherit;">
                         <span class="welcome-text">Welcome, {{ user.username }}</span>
                         </a>
                     </div>
-
-
                     <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
 
                 {% else %}
-                <a href="/admin" class="admin-lock-link" title="Admin Login">
-            <i class="fa-solid fa-lock"></i>
-        </a>
+                <!-- <a href="{% url 'admin_panel:login' %}" class="admin-lock-link" title="Admin Login">
+                    <i class="fa-solid fa-lock"></i>
+                </a>
+                <a href="{% url 'account_login' %}" class="login-btn">Login</a>
+                <a href="{% url 'account_signup' %}" class="signup-btn">Sign Up</a> -->
+                <div id="guestContent" style="display: flex; align-items: center; gap: 10px;">
+                    <a href="{% url 'admin_panel:login' %}" class="admin-lock-link"><i class="fa-solid fa-lock"></i></a>
                     <a href="{% url 'account_login' %}" class="login-btn">Login</a>
                     <a href="{% url 'account_signup' %}" class="signup-btn">Sign Up</a>
+                </div>
+
+                <div id="adminContent" style="display: none; align-items: center; gap: 10px;">
+                    <div class="user-info" style="background: white; padding: 5px 15px; border-radius: 50px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center;">
+                        <i class="fa-solid fa-user-shield user-icon" style="color: #0d6efd; margin-right: 8px;"></i>
+                        <span class="welcome-text" style="color: #333;">Welcome, <b>Admin</b></span>
+                    </div>
+                    <a href="javascript:void(0);" onclick="adminLogout()" class="logout-btn">Logout</a>
+                </div>
                 {% endif %}
+
 
             </div>
 
@@ -81,19 +105,13 @@
 
 
     <main>
+        
             {% block content %}
             {% endblock %}
     </main>
 
     <footer class="main-footer">
         <div class="footer-container">
-            <!-- <div class="footer-logo">
-                <a href="javascript:void(0);" onclick="location.reload();" style="cursor: pointer;">
-                    <img src="{% static 'images/major_logo1.png' %}" alt="SportsBoard" class="navbar-logo">
-                </a>
-                <h3>SportsBoard Nepal</h3>
-                <p>Powered by Robust Technology</p>
-            </div> -->
             <div class="footer-logo">
                 <!-- <img src="{% static 'images/logo.png' %}" alt="SportsHub Logo" onerror="this.style.display='none'"> -->
                 <img src="{% static 'images/major_logo1.png' %}" alt="SportsBoard" class="navbar-logo">
@@ -133,9 +151,43 @@
         window.isUserLoggedIn = "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
         window.loginUrl = "{% url 'account_login' %}";
     </script>
+    <script>
+    function checkAdminAuth() {
+        // This looks for the "flag" you set in login.html
+        const isAdmin = sessionStorage.getItem('isAdminLoggedIn');
+        
+        if (isAdmin === 'true') {
+            // 1. Show the Admin Dashboard link
+            const adminNav = document.getElementById('adminNavPlaceholder');
+            if (adminNav) {
+                adminNav.style.setProperty('display', 'block', 'important');
+            }
+
+            // 2. Hide Guest (Login/Signup) and Show Admin (Welcome Admin)
+            const guestUI = document.getElementById('guestContent');
+            const adminUI = document.getElementById('adminContent');
+            
+            if (guestUI && adminUI) {
+                guestUI.style.setProperty('display', 'none', 'important');
+                adminUI.style.setProperty('display', 'flex', 'important');
+            }
+        }
+    }
+
+    // Run immediately
+    checkAdminAuth();
+    // Also run when page is fully loaded to be safe
+    window.addEventListener('load', checkAdminAuth);
+
+    function adminLogout() {
+        sessionStorage.removeItem('isAdminLoggedIn');
+        window.location.href = "{% url 'homepage:home' %}";
+    }
+</script>
     <script src="{% static 'js/buttons.js' %}"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

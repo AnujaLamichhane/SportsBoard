@@ -1,61 +1,73 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
-
+{% block extra_head %}
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+{% endblock %} 
 {% block content %}
-
-
-<div class="container py-4  events-page">
-   <div class="row">
-     <div class="col-lg-7 col-md-8 order-lg-1 order-2">
-            <h2 class="mb-4 fw-bold">🏆 All Scheduled Events</h2>
-
-         
-
-            <div class="events-main-layout">
+<div class="container-fluid events-page">
+    <div class="flex-main-wrapper">
+        <div class="section-left">
+            <div class="title-row-container">
+                <h2 class="event-title-left">🏆 All Scheduled Events</h2>
+                
+                <div class="search-box-wrapper">
+                    <form method="GET" action="" class="search-form">
+                        <input type="text" id="eventSearchInput" name="search" placeholder="Search events..." class="search-input" value="{{ search_query|default:'' }}">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="event-grid-layout">
                 {% for event in events %}
-
-
-
-<a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card" data-date="{{ event.date_time|date:'Y-m-d' }}">
-
-                    <div class="event-img-box" style="position: relative; height: 300px;">
-                        {% if event.photo %}
-                            <img src="{{ event.photo.url }}" alt="{{ event.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                        {% endif %}
-
-                        <div class="matches-list">
-                            {% for match in event.matches.all %}
-                                {% if not selected_sport or match.game_type|lower == selected_sport|lower %}
-                                <div class="match-badge">
-                                    <span style="color: #ffc107; font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">
-                                        {{ match.game_type|lower|capfirst }}
-                                    </span>
-                                    <div style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 5px 0;">
-                                        {{ match.team_a }} vs {{ match.team_b }}
-                                    </div>
-                                    <div class="text-white-50" style="font-size: 0.9rem;">
-                                        <i class="fas fa-clock me-1"></i> {{ match.match_time|date:"H:i" }} |
-                                        <i class="fas fa-map-marker-alt me-1"></i> {{ match.venue }}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            {% endfor %}
+                    <a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card" data-date="{{ event.date_time|date:'Y-m-d' }}">
+                        <div class="events-img">
+                            {% if event.photo %}
+                                <img src="{{ event.photo.url }}" alt="{{ event.name }}">
+                            {% else %}
+                                <div class="img-placeholder"></div>
+                            {% endif %}
                         </div>
-                    </div>
 
-                    <div class="event-text-box" style="padding: 15px; background: var(--bg-card);">
-                        <h4 class="fw-bold">{{ event.name }}</h4>
-                        <p class="text-muted mb-0"><i class="fas fa-calendar-alt me-2"></i>{{ event.date_time|date:"M d, Y" }}</p>
-                    </div>
-                </a>
+                        <div class="event-content">
+                            <h3>{{ event.name }}</h3>               
+                            <div class="event-meta">
+                                <span class="event-date">
+                                    <i class="far fa-calendar-alt"></i> 
+                                    <!-- <span class="date-text">
+                                        {% if event.end_date and event.start_date != event.end_date %}
+                                            Starting from {{ event.start_date|date:"M d, Y" }}
+                                        {% elif event.date_time %}
+                                            {{ event.date_time|date:"M d, Y" }}
+                                        {% else %}
+                                            Date TBD
+                                        {% endif %}
+                                         -->
+                                    <span class="event-date-text" data-eng-date="{{ event.date_time|date:'Y-m-d' }}">
+                                        {{ event.date_time|date:"D, M d" }}
+                                    </span>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
                 {% endfor %}
             </div>
         </div>
 
-        <div class="col-lg-4 col-md-4 order-lg-2 order-1">
-            <div class="sticky-top" style="top: 110px;">
+        <div class="section-right">
+            <div class="sticky-sidebar-container">
+                <!-- <h3 class="event-title-right">📅 Event Schedule</h3> -->
+                <div class="calendar-header-flex">
+                    <h3 class="event-title-right">📅 Event Schedule</h3>
+                    
+                    <!-- <button id="calendar-toggle-btn" class="btn-date-toggle" onclick="toggleCalendarSystem()">
+                        <span class="toggle-icon">AD</span>
+                        <span id="toggle-label">BS</span>
+                    </button> -->
+                </div>
                 <div class="calendar-widget-box">
-                    <h3 class="widget-header">📅 Event Schedule</h3>
                     <div id="right-side-calendar"></div>
 
                     <div class="mini-timeline mt-4">
@@ -72,50 +84,250 @@
         </div>
     </div>
 </div>
-
-
-
-
+{% endblock %}
+{% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-   <script>
-$(function() {
-    var eventDates = {{ event_dates_json|safe }};
+<script src="https://cdn.jsdelivr.net/npm/nepali-date-converter/dist/nepali-date-converter.umd.js"></script>
+<script id="event-data" type="application/json">{{ event_dates_json|safe }}</script>
+<script id="all-events-data" type="application/json">{{ events_json|safe }}</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.search-input');
+        const eventCards = document.querySelectorAll('.event-glass-card');
 
-    $("#right-side-calendar").datepicker({
-        beforeShowDay: function(date) {
-            var dateString = $.datepicker.formatDate('yy-mm-dd', date);
-            if (eventDates.indexOf(dateString) > -1) {
-                return [true, "highlight-event", "Event Day"];
-            }
-            return [true, "", ""];
-        },
+        searchInput.addEventListener('input', function(e) {
+            const value = e.target.value.toLowerCase().trim();
 
-        onSelect: function() {
-            var selectedDate = $.datepicker.formatDate(
-                'yy-mm-dd',
-                $(this).datepicker('getDate')
-            );
+            eventCards.forEach(card => {
+                // Get all text content inside the card (Title, Date, etc.)
+                const cardText = card.textContent.toLowerCase();
 
-            let found = false;
-
-            $(".event-glass-card").each(function() {
-                if ($(this).data("date") === selectedDate) {
-                    $(this).fadeIn(200);
-                    found = true;
+                if (cardText.includes(value)) {
+                    card.style.display = "flex"; // Show card
+                    card.style.animation = "fadeIn 0.3s ease"; // Optional: smooth fade in
                 } else {
-                    $(this).fadeOut(150);
+                    card.style.display = "none"; // Hide card
                 }
             });
+        });
+    });
+</script>
 
-            if (found) {
-                $('html, body').animate({
-                    scrollTop: $(".events-main-layout").offset().top - 100
-                }, 500);
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+<script>
+    $(function() {
+    // These must match the keys in your context dictionary
+    var eventDates = JSON.parse(document.getElementById('event-data').textContent);
+    var allEvents = JSON.parse(document.getElementById('all-events-data').textContent);
+
+    function updateSidebarTimeline(year, month, day = null) {
+        const timelineContainer = $('.mini-timeline');
+        timelineContainer.find('.timeline-mini-card, .no-events-msg').remove();
+        
+        // Ensure month is 2 digits (e.g. 2 -> "02")
+        const targetMonth = month < 10 ? '0' + month : month.toString();
+        const targetYear = year.toString();
+
+        const filtered = allEvents.filter(event => {
+            // Split "2026-02-01" to avoid JS Date timezone shifts
+            const parts = event.date.split('-'); 
+            const eYear = parts[0];
+            const eMonth = parts[1];
+            const eDay = parts[2];
+
+            const isSameMonth = (eYear === targetYear && eMonth === targetMonth);
+            
+            if (day) {
+                const targetDay = day < 10 ? '0' + day : day.toString();
+                return isSameMonth && eDay === targetDay;
+            }
+            return isSameMonth;
+        });
+
+        if (filtered.length === 0) {
+            timelineContainer.append('<p class="no-events-msg small text-muted mt-3">No events are in this month yet.</p>');
+        } else {
+            filtered.forEach(event => {
+                timelineContainer.append(`
+                    <div class="timeline-mini-card">
+                        <span class="d-block fw-bold">${event.name}</span>
+                        <span class="small text-warning">${event.formatted_date}</span>
+                    </div>
+                `);
+            });
+        }
+    }
+//  4. Initialize Calendar with working Nav Buttons
+    $('#right-side-calendar').datepicker({
+        inline: true,
+        showOtherMonths: true,
+        prevText: "Prev",
+        nextText: "Next",
+        dayNamesMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        
+        onChangeMonthYear: function(year, month, inst) {
+            // Update timeline when month changes (Prev/Next clicked)
+            updateSidebarTimeline(year, month);
+        },
+
+        onSelect: function(dateText, inst) {
+            // Update timeline for specific day
+            updateSidebarTimeline(inst.selectedYear, inst.selectedMonth + 1, inst.selectedDay);
+        },
+
+        beforeShowDay: function(date) {
+            // var dateString = $.datepicker.formatDate('yy-mm-dd', date);
+            // return eventDates.indexOf(dateString) > -1 ? [true, "event-highlight", "Event Day"] : [true, "", ""];
+            var dateString = $.datepicker.formatDate('yy-mm-dd', date);
+            var isEventDay = eventDates.indexOf(dateString) > -1;
+            
+            // Check if the date is Today
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            var isToday = date.getTime() === today.getTime();
+
+            if (isEventDay && isToday) {
+                // Priority 1: Both Today and Event (Dual Color)
+                return [true, "today-event-dual", "Today with Event"];
+            } else if (isEventDay) {
+                // Priority 2: Just an Event (Orange)
+                return [true, "event-highlight", "Event Day"];
+            } else {
+                // Priority 3: Normal day or Today without event (No black circle)
+                return [true, "", ""];
             }
         }
     });
+
+    // Initial load for today's month
+    // const today = new Date();
+    // updateSidebarTimeline(today.getFullYear(), today.getMonth() + 1);
+    // Get initial date
+const initialDate = $('#right-side-calendar').datepicker('getDate') || new Date();
+updateSidebarTimeline(initialDate.getFullYear(), initialDate.getMonth() + 1);
 });
 </script>
+<script>
+    /* =========================================
+   DATE CONVERTER LOGIC (AD <-> BS)
+   ========================================= */
 
+let isNepali = false;
+
+function toggleCalendarSystem() {
+    const btn = document.getElementById('calendar-toggle-btn');
+    const icon = btn.querySelector('.toggle-icon');
+    const label = document.getElementById('toggle-label');
+    const calendarContainer = document.getElementById('right-side-calendar');
+    const timelineDates = document.querySelectorAll('.event-date-text');
+
+    // Toggle State
+    isNepali = !isNepali;
+
+    if (isNepali) {
+        // 1. Update Button UI
+        btn.classList.add('active-bs');
+        icon.innerText = 'BS'; // Shows current mode
+        label.innerText = 'AD'; // Shows option to switch back
+        
+        // 2. Convert Timeline Dates to Nepali
+        timelineDates.forEach(el => {
+            const engDate = el.getAttribute('data-eng-date'); 
+            el.innerText = convertToBS(engDate);
+        });
+        renderNepaliCalendarGrid();
+    } else {
+        // 1. Reset Button UI
+        btn.classList.remove('active-bs');
+        icon.innerText = 'AD';
+        label.innerText = 'BS';
+        
+        // 2. Restore Original English Dates
+        timelineDates.forEach(el => {
+            el.innerText = el.getAttribute('data-original-text');
+        });
+        // 2. RESTORE ENGLISH CALENDAR GRID
+        renderEnglishCalendarGrid();
+    }
+}
+
+/**
+ * Simple Conversion Logic
+ * Converts "YYYY-MM-DD" to a Nepali Format
+ */
+function convertToBS(adDateString) {
+    if (!adDateString) return "TBD";
+
+    // Split the date (YYYY-MM-DD)
+    const parts = adDateString.split('-');
+    const year = parseInt(parts[0]);
+    const month = parseInt(parts[1]);
+    const day = parseInt(parts[2]);
+
+    // Simple Offset logic (Approximate for UI display)
+    // For 100% accuracy, use 'nepali-date-converter' library
+    let bsYear = year + 56;
+    let bsMonth = "";
+    
+    // Simple Mapping for Jan/Feb/March 2026
+    const monthMap = {
+        1: "माघ",
+        2: "फागुन",
+        3: "चैत"
+    };
+
+    bsMonth = monthMap[month] || "महिना";
+    
+    // Return formatted string
+    return `${bsMonth} ${day + 7}, ${bsYear + 1}`; 
+}
+
+function renderNepaliCalendarGrid() {
+    const calendarDiv = document.getElementById('right-side-calendar');
+    
+    // This creates a static Nepali Grid for January/Magh as an example
+    // In a full app, you'd calculate these numbers based on the year
+    calendarDiv.innerHTML = `
+        <div class="nepali-calendar-ui">
+            <div class="cal-header">
+                <span class="cal-month">माघ २०८२</span>
+            </div>
+            <div class="cal-grid">
+                <div class="day-name">आइत</div><div class="day-name">सोम</div><div class="day-name">मंगल</div>
+                <div class="day-name">बुध</div><div class="day-name">बिही</div><div class="day-name">शुक्र</div><div class="day-name">शनि</div>
+                
+                <div class="day empty"></div><div class="day empty"></div><div class="day">१</div>
+                <div class="day">२</div><div class="day">३</div><div class="day">४</div><div class="day">५</div>
+                <div class="day highlight">६</div><div class="day">७</div><div class="day">८</div><div class="day">९</div>
+                <div class="day">१०</div><div class="day">११</div><div class="day">१२</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderEnglishCalendarGrid() {
+    // You can either reload the page or put your original JS calendar init function here
+    // location.reload(); 
+    
+    // Or manually put back the English HTML:
+    document.getElementById('right-side-calendar').innerHTML = `
+        <div class="calendar-ui">
+            <div class="cal-header"><span>January 2026</span></div>
+            </div>
+    `;
+}
+
+// Initial Setup: Save English text so we can revert back
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.event-date-text').forEach(el => {
+        el.setAttribute('data-original-text', el.innerText);
+    });
+});
+</script>
 {% endblock %}

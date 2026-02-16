@@ -4,103 +4,186 @@
         {% block content %}
 
         <div class="hero">
-            <img src="{% static 'images/im2.png' %}" alt="Sports" />
+            <!-- <img src="{% static 'images/im2.png' %}" alt="Sports" /> -->
+             <div class="shape one"></div>
+            <div class="shape two"></div>
             <div class="hero-content">
-                <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
-                <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p>
-
+                <!-- <h2>The <span class="highlight">sports</span> platform.<br>Where <span class="highlight2">passion</span> becomes <span class="highlight3">achievement</span>.</h2>
+                <p>Join players, fans, and teams from across the country. Compete, connect, and celebrate your love for sports.</p> -->
+                <h1>The sports platform. <br>Where <span>passion</span> becomes achievement.</h1>
+                <p>Join players, fans, and teams across the country. Compete, connect, and celebrate your love for sports.</p>
                 <!-- <button class="join-btn">Join This</button> -->
-
-
-
             </div>
+            <div class="hero-image"></div>
         </div> 
         
 
+    
+
     <section class="featured-section">
-     <h2 class="featured-title"> Today's Featured Matches</h2>
+        <h2 class="featured-title">Today's Featured Matches</h2>
 
         <div class="featured-grid">
             {% for event in featured_events %}
-            <a href="{% url 'organizer:event_detail' event.id %}" class="featured-card">
+                {% if event.date_time|date:"Ymd" >= now|date:"Ymd" %}  
+                
+                    <a href="{% url 'organizer:event_detail' event.id %}" class="featured-card">
+                        
+                        <div class="featured-img">
+                            {% if event.photo %}
+                                <img src="{{ event.photo.url }}" alt="{{ event.name }}">
+                            {% else %}
+                                <div class="img-placeholder"></div>
+                            {% endif %}
+                        </div>
 
-                <div class="featured-img">
-                    {% if event.photo %}
-                        <img src="{{ event.photo.url }}" alt="{{ event.name }}">
-                    {% endif %}
-                </div>
-
-                <div class="featured-content">
-                    <h3>{{ event.name }}</h3>
-                    <p class="event-status">{{ event.get_status_display }}</p>
-                    <!-- <button class="book-btn">Book Now</button> -->
-                </div>
-
-            </a>
+                        <div class="featured-content">
+                            <h3>{{ event.name }}</h3>
+                            
+                            <div class="event-meta">
+                                <span class="event-date">
+                                    <i class="far fa-calendar-alt"></i> 
+                                    <span class="date-text">
+                                        {% if event.end_date and event.start_date != event.end_date %}
+                                            Starting from {{ event.start_date|date:"M d, Y" }}
+                                        {% elif event.date_time %}
+                                            {{ event.date_time|date:"M d, Y" }}
+                                        {% else %}
+                                            Date TBD
+                                        {% endif %}
+                                </span>
+                                </span>
+                                
+                                <button class="status-btn {{ event.status }}">
+                                    {{ event.get_status_display }}
+                                </button>
+                            </div>
+                        </div>
+                    </a>
+                {% endif %}
             {% empty %}
-            <p style="color:white;">No featured matches yet.</p>
+            <div class="empty-state">
+                <p>No featured matches yet.</p>
+            </div>
             {% endfor %}
         </div>
     </section>
 
     <section class="value-section">
-        <h2 class="value-title">Why Choose SportsBoard?</h2>
-        <div class="value-cards">
-<!--            <a href="{% url 'homepage:go_athlete' %}" class="value-card">-->
-                <a href="{% url 'accounts:dashboard_redirect' %}?role_type=athlete" class="value-card">
+        <h2 class="value-title"><span>How</span> It Works</h2>
+        <div class="container">
+            <div class="value-card">
                 <div class="icon icon-athlete">
                     <i class="fas fa-running"></i>
                 </div>
                 <h3>For Athletes: Find Your Opportunity</h3>
                 <p>Apply for trials, track selections, and build your profile.</p>
-            </a>
-<!--            <a href="{% url 'homepage:go_organizer' %}" class="value-card">-->
-                <a href="{% url 'accounts:dashboard_redirect' %}?role_type=organizer" class="value-card">
+            </div>
+            <div class="value-card">
                 <div class="icon icon-organizer">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <h3>For Organizers: Simplify & Manage</h3>
-                <p>Post notices, handle applications, and manage ticket sales easily.</p>
-            </a>
+                <p>Post notices, handle applications, and manage ticket sales easily in one place.</p>
+            </div>
             <div class="value-card">
-                <div class="icon icon-fans">
-                    <i class="fas fa-ticket-alt"></i>
+                <div class="icon icon-admin">
+                    <!-- <i class="fas fa-clipboard-list"></i> -->🛡️
                 </div>
-                <h3>For Fans: Your Ticket to the Action</h3>
-                <p>Never miss a match — buy tickets securely and stay updated.</p>
+                <h3>For Admin</h3>
+                <p>Approve events, manage site users, and monitor the overall sports system safety.</p>
+            </div>
+
+        </div>
+    </section>
+    <section class="sb-features-section">
+        <h2 class="sb-featured-title">Key Features</h2>
+        <div class="sb-features-wrapper">
+            <div class="sb-features-container scrolling-track">
+                
+                <div class="sb-feature-card sb-zigzag-1 sb-border-green">
+                    <div class="sb-card-top">
+                        <h3>🏅 Athlete Profiles</h3>
+                        <p>Explore detailed profiles, achievements, and statistics.</p>
+                    </div>
+                    <div class="sb-card-bottom">
+                        <span class="sb-arrow">↗</span>
+                        <span class="sb-feature-icon">🏃</span> </div>
+                </div>
+
+                <div class="sb-feature-card sb-zigzag-2 sb-border-orange">
+                    <div class="sb-card-top">
+                        <h3>📢 Sports News</h3>
+                        <p>Stay updated with national and international match news.</p>
+                    </div>
+                    <div class="sb-card-bottom">
+                        <span class="sb-arrow">↗</span>
+                        <span class="sb-feature-icon">📰</span> </div>
+                </div>
+
+                <div class="sb-feature-card sb-zigzag-1 sb-border-blue">
+                    <div class="sb-card-top">
+                        <h3>📸 Media Gallery</h3>
+                        <p>View high-quality images and match event galleries.</p>
+                    </div>
+                    <div class="sb-card-bottom">
+                        <span class="sb-arrow">↗</span>
+                        <span class="sb-feature-icon">📷</span> </div>
+                </div>
+
+                <div class="sb-feature-card sb-zigzag-2 sb-border-purple">
+                    <div class="sb-card-top">
+                        <h3>🎟 Event Announcements</h3>
+                        <p>Get informed about upcoming tournaments and schedules.</p>
+                    </div>
+                    <div class="sb-card-bottom">
+                        <span class="sb-arrow">↗</span>
+                        <span class="sb-feature-icon">🏟️</span> </div>
+                </div>
+
+                <div class="sb-feature-card sb-zigzag-1 sb-border-yellow">
+                    <div class="sb-card-top">
+                        <h3>📊 Match Statistics</h3>
+                        <p>Access scoreboards, stats, and analytical insights.</p>
+                    </div>
+                    <div class="sb-card-bottom">
+                        <span class="sb-arrow">↗</span>
+                        <span class="sb-feature-icon">📈</span> </div>
+                </div>
+
+                <div class="sb-feature-card sb-zigzag-2 sb-border-red">
+                    <div class="sb-card-top">
+                        <h3>🌍 Multi-Sport</h3>
+                        <p>All sports, one platform — the most inclusive portal.</p>
+                    </div>
+                    <div class="sb-card-bottom">
+                        <span class="sb-arrow">↗</span>
+                        <span class="sb-feature-icon">🏆</span> </div>
+                </div>
+
             </div>
         </div>
-
-        <div class="photos">
-            <div class="ph">
-                <img src="{% static 'images/cricket1s.jpg' %}" alt="Sports" />
+    </section>
+    <!-- STATS -->
+    <section class="impact-section">
+        <h2>Our Impact</h2>
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-number">50+</span>
+                <span class="stat-label">Events</span>
             </div>
-            <div class="ph">
-                <img src="{% static 'images/foot.jpg' %}" alt="Sports" />
-                <div class="overlay-text">EASIER PARTICIPATION</div>
+            <div class="stat-item">
+                <span class="stat-number">1200+</span>
+                <span class="stat-label">Participants</span>
             </div>
-            <div class="ph">
-                <img src="{% static 'images/vollyball.jpg' %}" alt="Sports" />
+            <div class="stat-item">
+                <span class="stat-number">15+</span>
+                <span class="stat-label">Organizers</span>
             </div>
-            <div class="ph">
-                <img src="{% static 'images/basketballs.jpg' %}" alt="Sports" />
-                <div class="overlay-text">SUPPORT NEPALI SPORTS</div>
+            <div class="stat-item">
+                <span class="stat-number">10+</span>
+                <span class="stat-label">Sports</span>
             </div>
-            <div class="ph">
-                <img src="{% static 'images/badminton.jpg' %}" alt="Sports" />
-                <div class="overlay-text">LOCALIZE DATA</div>
-            </div>
-            <div class="ph">
-                <img src="{% static 'images/swimming.jpg' %}" alt="Sports" />
-            </div>
-            <div class="ph">
-                <img src="{% static 'images/kabbadi.jpg' %}" alt="Sports" />
-                <div class="overlay-text">UNIFIED PLATFORM</div>
-            </div>
-            <div class="ph">
-                <img src="{% static 'images/boxing.jpg' %}" alt="Sports" />
-            </div>
-
         </div>
     </section>
 

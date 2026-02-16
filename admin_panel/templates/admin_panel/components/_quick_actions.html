@@ -1,0 +1,76 @@
+<div class="quick-actions-section mb-5">
+    <h5 class="fw-bold mb-3 text-secondary">Quick Actions</h5>
+    <div class="row g-3">
+        <div class="col-md-4">
+           
+                <div class="action-body">
+                    <div class="action-icon-circle bg-soft-blue text-blue">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="action-info">
+                        <h6 class="mb-0 fw-bold">Verify Users</h6>
+                        <small class="text-muted">12 Pending accounts</small>
+                    </div>
+                </div>
+            <!-- </a> -->
+        </div>
+
+        <div class="col-md-4">
+            <div class="action-card shadow-sm border-0" data-bs-toggle="modal" data-bs-target="#announcementModal" role="button">
+                <div class="action-body">
+                    <div class="action-icon-circle bg-soft-orange text-orange">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="action-info">
+                        <h6 class="mb-0 fw-bold">Broadcast</h6>
+                        <small class="text-muted">Send site-wide alert</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dropdown h-100">
+                <div class="action-card shadow-sm border-0 dropdown-toggle no-caret" data-bs-toggle="dropdown" role="button">
+                    <div class="action-body">
+                        <div class="action-icon-circle bg-soft-green text-green">
+                            <i class="fas fa-file-download"></i>
+                        </div>
+                        <div class="action-info">
+                            <h6 class="mb-0 fw-bold">Export Data</h6>
+                            <small class="text-muted">Download events list</small>
+                        </div>
+                    </div>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                    <li><a class="dropdown-item py-2" href="#"><i class="fas fa-file-csv me-2 text-success"></i> Download CSV</a></li>
+                    <li><a class="dropdown-item py-2" href="#"><i class="fas fa-file-pdf me-2 text-danger"></i> Download PDF</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="announcementModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Send Announcement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="announcementForm">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Message Title</label>
+                        <input type="text" class="form-control" placeholder="e.g. Tournament Postponed">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Description</label>
+                        <textarea class="form-control" rows="3" placeholder="Enter message details..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Push Notification</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

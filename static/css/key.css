@@ -1,0 +1,150 @@
+/* --- SECTION WRAPPER --- */
+.sb-features-section {
+    padding: 40px 5%;
+    background-color: #ffffff;
+    max-width: 1400px;
+    /* margin: 0 auto; */
+    overflow: hidden;
+    margin-left: 40px;
+}
+.sb-featured-title {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 40px;
+    color: var(--text-color);
+    border-left: 5px solid #ff7a18;
+    padding-left: 20px;
+}
+.sb-features-wrapper {
+    overflow-x: auto;
+    padding: 60px 0;
+    scrollbar-width: none; /* Hide for Firefox */
+    position: relative;
+    /* mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); */
+}
+.scrolling-track {
+    display: flex;
+    gap: 25px;
+    width: max-content;
+    /* This creates the infinite loop effect */
+    animation: scrollAnimation 20s linear infinite;
+}
+
+@keyframes scrollAnimation {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-50% - 15px)); } /* Adjust based on card count */
+}
+
+/* Pause on hover so users can read */
+.sb-features-wrapper:hover .scrolling-track,
+.sb-features-wrapper:hover .sb-feature-card {
+    animation-play-state: paused;
+}
+
+.sb-features-wrapper::-webkit-scrollbar {
+    display: none; /* Hide for Chrome/Safari */
+}
+
+.sb-features-container {
+    display: flex;
+    gap: 25px;
+}
+
+/* --- THE CARD DESIGN --- */
+.sb-feature-card {
+    min-width: 300px;
+    height: 250px;
+    background: #ffffff;
+    border-radius: 40px; /* Large rounded corners as per image */
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    border: 1.5px solid #f1f1f1; /* Light border around the whole card */
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.sb-feature-card:hover {
+    transform: translateY(-8px);
+}
+
+.sb-zigzag-1 {
+    animation: zigzagUp 5s ease-in-out infinite;
+}
+
+/* Card type B: Moves Down then Up (Opposite timing) */
+.sb-zigzag-2 {
+    animation: zigzagDown 5s ease-in-out infinite;
+}
+
+@keyframes zigzagUp {
+    0%, 100% { transform: translateY(20px); }
+    50% { transform: translateY(-20px); } /* Moves up 15px */
+}
+
+@keyframes zigzagDown {
+    0%, 100% { transform: translateY(-20px); }
+    50% { transform: translateY(20px); } /* Moves down 15px */
+}
+
+/* --- SOLID BOTTOM BORDER (NOT GLOW) --- */
+/* We use a pseudo-element to create a clean, solid color line at the bottom curve */
+.sb-feature-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 5px; /* Thickness of the bottom color */
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    /* transition: height 0.3s ease; */
+    animation: movingLine 3s linear infinite;
+}
+@keyframes movingLine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+/* Specific Border Colors */
+.sb-border-green::after  { background-color: #4ade80; }
+.sb-border-orange::after { background-color: #fb923c; }
+.sb-border-blue::after   { background-color: #60a5fa; }
+.sb-border-purple::after { background-color: #a78bfa; }
+.sb-border-yellow::after { background-color: #facc15; }
+.sb-border-red::after    { background-color: #f87171; }
+
+/* --- CONTENT STYLING --- */
+.sb-card-top h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.sb-card-top p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* --- BOTTOM ELEMENTS --- */
+.sb-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 10px; /* Space from the colored bottom border */
+}
+
+.sb-arrow {
+    font-size: 22px;
+    color: #b1b1b1;
+    font-weight: bold;
+}
+
+.sb-feature-icon {
+    font-size: 34px;
+    filter: grayscale(0.2); /* Softens the emoji color slightly */
+}

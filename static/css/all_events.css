@@ -1,0 +1,544 @@
+/* Container padding to prevent content from touching screen edges */
+.events-page {
+    padding: 1% 5%;
+}
+/* Establish the Flexbox Layout */
+.flex-main-wrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Allows stacking on smaller screens */
+    width: 100%;
+    margin-top: 50px;
+    min-height: 100vh;
+}
+
+/* Left Half */
+.section-left {
+    flex: 0 0 60%; /* Does not grow, does not shrink, exactly 60% width */
+    max-width: 60%;
+    border-right: 3px solid #e0e0e0; /* The Center Divider Line */
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+.event-title-left{
+    font-size: 30px;
+    font-weight: 400px;
+}
+.title-row-container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;            
+    margin-bottom: 40px;           
+    width: 100%;
+}
+/* search */
+.search-box-wrapper {
+    position: relative;
+    width: 250px; /* Fixed width for the search bar */
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 50px; /* Pill shape */
+    padding: 5px 15px;
+    transition: all 0.3s ease;
+}
+
+.search-form:focus-within {
+    border-color: #ff7a18;
+    box-shadow: 0 0 10px rgba(255, 122, 24, 0.1);
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    width: 100%;
+    font-size: 14px;
+    color: #333;
+}
+
+.search-btn {
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.search-btn:hover {
+    color: #ff7a18; /* Match theme on hover */
+}
+
+/* Mobile: Stack them if screen gets too tight */
+@media (max-width: 576px) {
+    .header-flex-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .search-box-wrapper {
+        width: 100%;
+    }
+}
+.event-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+    padding: 15px;
+}
+
+.event-glass-card {
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #818181;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Professional easing */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.09);
+    position: relative;
+    margin-bottom: 20px;
+    top: 0; /* Necessary for the lift effect */
+}
+
+/* --- The Hover State --- */
+.event-glass-card:hover {
+    top: -8px; /* Lifts the card up */
+    border-color: #ff7a18; /* Subtle highlight with your orange theme color */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12); /* Deeper shadow for depth */
+}
+
+.events-img {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.events-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.event-glass-card:hover .events-img img {
+    transform: scale(1.1); /* Zooms in slightly on hover */
+}
+
+.event-content {
+    padding: 15px;
+    background: #ffffff;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-content h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    min-height: 56px;
+}
+
+
+
+/* Responsive: Stack sections on top of each other for mobile */
+@media (max-width: 991px) {
+    .section-left, .section-right {
+        flex: 0 0 100%;
+        max-width: 100%;
+        border-right: none;
+        padding: 0;
+    }
+    
+    .section-left {
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 30px;
+        margin-bottom: 30px;
+    }
+}
+
+
+
+
+
+.event-title-right{
+    font-size: 30px;
+    font-weight: 400px;
+    margin-bottom: 40px;
+
+}
+/* Right Half */
+.section-right {
+    flex: 0 0 40%;
+    max-width: 40%;
+    padding-left: 40px;
+    box-sizing: border-box;
+}
+
+/* Container Card */
+.calendar-widget-box {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 25px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.04);
+    /* border: 1px solid #f2f2f2; */
+    border: 1px solid black;
+    max-width: 430px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Quick Timeline Styling */
+.timeline-label {
+    font-size: 0.9em;
+    font-weight: 800;
+    color: black;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.timeline-mini-card {
+    background: #fff5eb; /* Light orange tint */
+    border-left: 4px solid #ff8000;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Remove default jQuery UI styles */
+.ui-datepicker-inline {
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 3.3rem;
+}
+
+/* Day Headers (Su, Mo, Tu...) */
+.ui-datepicker th {
+    color: black !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    padding: 10px 0 !important;
+}
+
+/* Individual Day Numbers */
+.ui-state-default {
+    background: transparent !important;
+    border: none !important;
+    text-align: center !important;
+    color: #444 !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+}
+
+
+/* Header Layout Fix */
+.ui-datepicker-header {
+    background: transparent !important;
+    border: none !important;
+    display: flex !important;
+    flex-direction: row-reverse !important; /* FLIPS TITLE TO RIGHT */
+    justify-content: space-between !important;
+    align-items: center;
+    padding: 0 0 20px 0 !important;
+    position: relative;
+}
+
+/* Month and Year Styling */
+.ui-datepicker-title {
+    margin: 0 !important;
+    color: #ff8000 !important;
+    font-weight: 800 !important;
+    font-size: 1.4rem;
+    line-height: 1;
+    order: 3;
+}
+
+
+/* Prev and Next Buttons */
+.ui-datepicker-prev, .ui-datepicker-next {
+    position: static !important; /* Removes absolute positioning */
+    cursor: pointer !important;
+    display: inline-block !important;
+    height: auto !important;
+    width: auto !important;
+    z-index: 10;
+}
+.ui-datepicker-next { order: 1; position: static !important; cursor: pointer; }
+.ui-datepicker-prev { order: 2; position: static !important; cursor: pointer; margin-left: 10px; }
+
+/* Hide default icons and show text like your edit */
+.ui-icon { display: none !important; }
+
+.ui-datepicker-prev::after {
+    content: "Prev";
+    font-weight: 700;
+    color: #333;
+    font-size: 0.85rem;
+}
+
+.ui-datepicker-next::after {
+    content: "Next";
+    font-weight: 700;
+    color: #333;
+    font-size: 0.85rem;
+    /* margin-left: 15px; Gap between Prev and Next */
+}
+
+/* --- Circular Highlight & Hover for Current Date --- */
+.ui-datepicker-today a {
+    background-color: transparent !important;
+    border: 2px solid #ff8000 !important; /* Circle for current date */
+    border-radius: 50% !important;
+    color: #ff8000 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto !important;
+}
+
+/* Hover effect for the current date circle */
+.ui-datepicker-today a:hover {
+    background-color: #ff8000 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 128, 0, 0.5);
+}
+
+
+
+/* Optional: Subtle background for event days */
+/* .event-highlight {
+    background-color: rgba(255, 128, 0, 0.05) !important;
+    border-radius: 50%;
+} */
+
+/* Ensure the Quick Timeline cards look consistent */
+.timeline-mini-card {
+    background: #fff5eb;
+    border-left: 4px solid #ff8000;
+    padding: 12px 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: transform 0.2s ease;
+}
+
+.timeline-mini-card:hover {
+    transform: translateX(5px);
+}
+/* --- Day Circles & Glow --- */
+.ui-state-default {
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    text-align: center !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect */
+.ui-state-default:hover {
+    background: #fff5eb !important;
+    color: #ff8000 !important;
+    transform: scale(1.1);
+}
+.ui-state-highlight, 
+.ui-widget-content .ui-state-highlight {
+    border: none !important;
+    background: none !important;
+    color: inherit !important;
+}
+.event-highlight a {
+    color: #ff8000 !important;
+    font-weight: 800 !important;
+    border: 2px solid #ff8000 !important;
+    border-radius: 50% !important;
+    width: 38px !important; /* Slightly larger for the glow */
+    height: 38px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto !important;
+    
+    /* The Glow Effect */
+    background: rgba(255, 128, 0, 0.08) !important;
+    box-shadow: 0 0 12px rgba(255, 128, 0, 0.4), 
+                inset 0 0 8px rgba(255, 128, 0, 0.2) !important;
+    text-shadow: 0 0 5px rgba(255, 128, 0, 0.3);
+    animation: eventPulse 2s infinite ease-in-out;
+    /* transition: all 0.3s ease; */
+    transition: all 0.3s ease-in-out;
+}
+.today-event-dual a {
+    background-color: #ff7b00 !important; /* Orange Background */
+    color: #ff7b00 !important;
+    border: 2px solid #000000 !important; /* Black Border for 'Today' */
+    border-radius: 50%;
+    font-weight: bold;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+/* The Pulse Animation Logic */
+@keyframes eventPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 128, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 12px rgba(255, 128, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 128, 0, 0);
+    }
+}
+.event-highlight a:hover {
+    box-shadow: 0 0 20px rgba(255, 128, 0, 0.7) !important;
+    background: #ff8000 !important;
+    color: #ffffff !important;
+    transform: scale(1.1);
+}
+
+/* --- Regular Circle for Today (Non-Event) --- */
+.ui-datepicker-today:not(.event-highlight) a {
+    border: 2px solid #444 !important; /* Neutral color if no event */
+    border-radius: 50% !important;
+    color: #333 !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* =========================================
+   CALENDAR HEADER & TOGGLE BUTTON
+   ========================================= */
+
+/* 1. Flex Container for Title and Button */
+.calendar-header-flex {
+    display: flex;
+    justify-content: space-between; /* Pushes Title to left, Button to right */
+    align-items: center;            /* Perfectly aligns them vertically */
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0; /* Optional: subtle divider */
+}
+
+/* 2. Title Styling */
+/* .event-title-right {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+} */
+
+/* 3. The Toggle Button (Pill Design) */
+.btn-date-toggle {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px; /* Creates the rounded pill shape */
+    padding: 5px 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif; /* or your theme font */
+}
+
+/* 4. Icon/Label Inside the Button */
+.toggle-icon {
+    background: #ff7b00; /* Your theme orange */
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+
+#toggle-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+}
+
+/* 5. Hover & Active States */
+.btn-date-toggle:hover {
+    background-color: #ffffff;
+    border-color: #ff7b00;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+/* State when Nepali (BS) is active */
+.btn-date-toggle.active-bs {
+    background-color: #1a365d; /* Dark blue for a 'switched' feel */
+    border-color: #1a365d;
+}
+
+.btn-date-toggle.active-bs #toggle-label {
+    color: white;
+}
+
+.btn-date-toggle.active-bs .toggle-icon {
+    background: white;
+    color: #1a365d;
+}
+/* =========================================
+   NEPALI CALENDAR GRID STYLING
+   ========================================= */
+
+.nepali-calendar-ui {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+}
+
+.cal-header {
+    font-weight: bold;
+    color: #ff7b00;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.day-name {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #999;
+    padding-bottom: 5px;
+}
+
+.day {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.day:hover {
+    background-color: #fff4eb;
+}
+
+.day.highlight {
+    background-color: #ff7b00;
+    color: white;
+    font-weight: bold;
+}

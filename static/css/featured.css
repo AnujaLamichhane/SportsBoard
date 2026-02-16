@@ -1,159 +1,168 @@
-:root {
-    --bg-color: #ffffff;
-    --text-color: #111111;
-    --nav-bg: #ffffff;
-    --nav-text:#111111;
-    --footer-bg: #ffffff;
-    --footer-text: #111111;
-  }
-
-/* Light mode overrides */
-body.dark-mode {
-    --bg-color: #111111;
-    --text-color: #ffffff;
-    --nav-bg: #111111;
-    --nav-text: #ffffff;
-    --footer-bg: #111111;
-    --footer-text: #ffffff;
-  }
-
-/* --- 1. Featured Section Container --- */
+/* --- 1. FEATURED SECTION CONTAINER --- */
 .featured-section {
-    padding: 60px 30px;
-    background-color: var(--bg-color); 
-    color:var(--text-color);
-    width: 100%;
-    /*height: 50%;*/
-    max-width: 1600px;
-    overflow: hidden;
-    position: relative;
-    /*margin-left: 5%;*/
+    padding: 80px 8%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    max-width: 1400px;
     /* margin: 0 auto; */
+    overflow: hidden;
 }
 
 .featured-title {
-    font-size: 2.2em;
-    font-weight: 700;
-    margin-bottom: 40px;
+    font-size: 40px;
+    font-weight: 800;
+    /* text-align: center; */
+    margin-top: 20px;
+    margin-bottom: 50px;
     color: var(--text-color);
-    padding-left: 10px; /* Aligns with the grid padding */
+    border-left: 5px solid #ff7a18;
+    padding-left: 20px;
+    
 }
 
-.featured-title .flame-icon {
-    color: #ff9800; /* Bright Orange accent */
-    margin-right: 10px;
-}
-
-/* --- 2. Grid Layout --- */
+/* --- 2. THE GRID --- */
 .featured-grid {
-    /* Responsive grid: 3 columns on desktop, adapts down to 1 */
     display: grid;
-    /*grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));*/
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 30px;
-    padding: 0 10px;
-    width: 100%;
+    padding: 10px;
 }
 
-/* --- 3. Individual Featured Card (The <a> tag) --- */
+/* --- 3. THE FEATURED CARD (Exact Border Match) --- */
 .featured-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 20px; /* Matches your image radius */
+    overflow: hidden; /* Clips the orange bars to the card corners */
+    text-decoration: none;
     display: flex;
     flex-direction: column;
-    height: 350px; /* Fixed height for consistent grid appearance */
-    border-radius: 10px;
-    overflow: hidden; /* Ensures image and content stay within rounded corners */
-    text-decoration: none; /* Remove underline from the anchor tag */
-    background-color: #333333; /* Fallback/background for the card body */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    position: relative;
-    transition: transform 0.3s, box-shadow 0.3s;
-    width: 100%;
+    border: 1px solid #f0f0f0; 
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    z-index: 1;
 }
 
+/* These pseudo-elements act as the bold orange bars */
+.featured-card::before,
+.featured-card::after {
+    content: '';
+    position: absolute;
+    background-color: #ff7a18; /* Exact Brand Orange */
+    transition: all 0.4s ease-in-out;
+    z-index: 5; /* Ensures bars sit above images */
+    opacity: 0;
+    border-radius: 20px;
+}
+
+/* Horizontal Bar: Bottom-Left */
+.featured-card::before {
+    bottom: 0;
+    right: 0;
+    width: 0; /* Starts hidden */
+    height: 4px; /* Bold thickness from image */
+    border-bottom-left-radius: 20px;
+}
+
+/* Vertical Bar: Top-Right */
+.featured-card::after {
+    bottom: 0;
+    right: 0;
+    width: 4px; /* Bold thickness from image */
+    height: 0; /* Starts hidden */
+    border-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 40px;
+}
+
+/* --- 4. HOVER EFFECTS --- */
 .featured-card:hover {
-    transform: translateY(-8px); /* Lift card on hover */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* --- 4. Image Container and Styling --- */
-.featured-img {
-    position: absolute; /* Allows image to be the full background */
-    top: 0;
-    left: 0;
-    width: 100%;
+/* Reveal and grow the bars to ~65% length on hover */
+.featured-card:hover::before {
+    width: 100%; 
+    opacity: 1;
+    
+}
+
+.featured-card:hover::after {
     height: 100%;
+    opacity: 1;
+    border-bottom-right-radius:20px ;
+}
+
+/* --- 5. IMAGE & CONTENT --- */
+.featured-img {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
 }
 
 .featured-img img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures image covers the entire card area */
-    display: block;
-    filter: brightness(0.7); /* Darken the image for better text contrast */
-    transition: filter 0.3s;
+    object-fit: cover;
 }
 
-.featured-card:hover .featured-img img {
-    filter: brightness(0.5); /* Darken slightly more on hover */
-}
-
-/* --- 5. Featured Content (Text Overlay) --- */
 .featured-content {
-    position: relative; /* CRITICAL: Lifts content above the image/overlay */
-    z-index: 10;
-    
-    /* Layout: Push content to the bottom of the card */
-    margin-top: auto; 
-    padding: 20px;
-    width: 100%;
-    
-    /* Gradient overlay for text readability over the image */
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
-    color: #ffffff;
+    padding: 25px;
+    background: #ffffff;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    z-index: 3;
 }
 
 .featured-content h3 {
-    font-size: 1.5em;
+    font-size: 20px;
     font-weight: 700;
-    margin-bottom: 5px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    color: #1f2937;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    min-height: 56px;
 }
 
-.event-status {
-    font-size: 0.9em;
-    color: #ff9800; /* Orange accent for status */
+
+/* --- 6. DATE & STATUS ROW (Exact Alignment) --- */
+.event-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 2px solid #e5e7e5;
+}
+
+.event-date {
+    display: flex;
+    align-items: center; /* Centers icon and text side-by-side */
+    gap: 8px;
+    color: #6b7280;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 15px;
 }
 
-/* --- 6. Book Button (Call to Action) --- */
-.book-btn {
-    display: block;
-    width: 80%;
-    padding: 10px;
-    background-color: #007bff; /* Primary Blue CTA */
-    color: white;
+.event-date i {
+    color: #ff7a18;
+    font-size: 16px;
+}
+
+.status-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
     border: none;
-    border-radius: 5px;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: background-color 0.2s;
+    text-transform: capitalize;
+    color: white;
 }
 
-.book-btn:hover {
-    background-color: #0056b3;
+.status-btn.live, .status-btn.upcoming {
+    background-color: #ff7a18;
 }
 
-/* Ensure the empty message is visible */
-.featured-section p {
-    padding-left: 10px;
-}
-
-/* Add a Media Query for Mobile/Small tablets so they stack */
-@media (max-width: 992px) {
-    .featured-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
+.status-btn.completed {
+    background-color: #059669;
 }

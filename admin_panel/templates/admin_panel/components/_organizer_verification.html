@@ -1,0 +1,64 @@
+<div class="verification-wrapper-fluid mb-5">
+    <div class="verification-header d-flex justify-content-between align-items-center mb-4 px-2">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">Organizer Verification</h4>
+            <p class="text-muted small">Review and authorize new sport organizers</p>
+        </div>
+        <a href="{% url 'admin_panel:organizer_requests' %}" class="btn btn-sm btn-outline-primary px-4 rounded-pill">
+            View All
+        </a>
+    </div>
+    <table class="custom-verify-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Contact Info</th>
+                <th>Documents</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="organizer-info">
+                        <div class="avatar-initials">PS</div>
+                        <span>Prabhat Shrestha</span>
+                    </div>
+                </td>
+                <td>prabhat@example.com</td>
+                <td>
+                    <a href="#" class="doc-link">
+                        <i class="far fa-file-pdf"></i> Citizenship.pdf
+                    </a>
+                </td>
+                <td><span class="status-pill status-pending">Pending</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon btn-accept" title="Accept"><i class="fas fa-check"></i></button>
+                        <button class="btn-icon btn-view" title="View"><i class="fas fa-eye"></i></button>
+                        <button class="btn-icon btn-reject" title="Reject"><i class="fas fa-times"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="organizer-info">
+                        <div class="avatar-initials">NT</div>
+                        <span>Nabin Thapa</span>
+                    </div>
+                </td>
+                <td>986765432</td>
+                <td class="text-muted small italic">UNUPLOADED</td>
+                <td><span class="status-pill status-pending">Rejected</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon btn-accept" title="Accept"><i class="fas fa-check"></i></button>
+                        <button class="btn-icon btn-view" title="View"><i class="fas fa-eye"></i></button>
+                        <button class="btn-icon btn-reject" title="Reject"><i class="fas fa-times"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,78 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'admin_panel/css/adashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/organizer_requests.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/manage_users.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid dashboard-page">
+    <div class="flex-main-dwrapper" id="adminWrapper">
+        
+        {% include 'admin_panel/components/_sidebar.html' %}
+
+        <div class="dsection-right">
+            <div class="manage-users-container">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-users-gear"></i> Manage Users</h2>
+                    
+                    <form method="GET" class="search-form">
+                        <input type="text" name="search" placeholder="Search by name or email..." value="{{ query|default:'' }}">
+                        <button type="submit" class="search-btn">Search</button>
+                        {% if query %}
+                            <a href="{% url 'admin_panel:manage_users' %}" class="btn-clear">
+                                <i class="fa-solid fa-xmark"></i> Clear
+                            </a>
+                        {% endif %}
+                    </form>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email Address</th>
+                                <th>Date Joined</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="username-text">{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="status-badge status-active">Active</span>
+                                </td>
+                                <td>
+                                    <form action="{% url 'admin_panel:delete_user' user.id %}" method="POST" onsubmit="return confirm('Delete this user forever?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-delete-action">
+                                            <i class="fa-solid fa-trash-can"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Security Guard: Kick out if not logged in as Admin
+    if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
+        window.location.href = "{% url 'admin_panel:login' %}";
+    }
+</script>
+
+{% endblock %}

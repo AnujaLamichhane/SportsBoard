@@ -15,8 +15,9 @@ from django.db.models import Q
 # Create your views here.
 def home(request):
     featured_events = Event.objects.filter(
-        status__in=['LIVE', 'UPCOMING']
-    ).order_by('-created_at') [:3]
+        status__in=['LIVE', 'UPCOMING'],
+        date_time__date__gte=timezone.now().date() #
+    ).order_by('date_time')[:3]#
 
     return render(request, 'homepage/home.html',{
         'featured_events': featured_events
@@ -88,10 +89,10 @@ def logout_user(request):
 
 
 def all_events(request):
-    sport_query = request.GET.get('sport')  # Captured from navbar link
-
+    sport_query = request.GET.get('sport')  
+    search_query = request.GET.get('search')  # New: Captured from search bar#
     # Start with all published events
-    events = Event.objects.all().order_by('-created_at')
+    events = Event.objects.all().order_by('-date_time')#
 
     if sport_query:
         # 1. Finds events where the MAIN game_type is the selected sport
@@ -101,15 +102,34 @@ def all_events(request):
             Q(matches__game_type__iexact=sport_query)
         ).distinct()
 
-    upcoming_events = Event.objects.filter(
-        date_time__gte=timezone.now()
-    ).order_by('date_time')
-    event_dates = [e.date_time.strftime('%Y-%m-%d') for e in upcoming_events]
+    if search_query:
+       events = events.filter(
+            Q(name__icontains=search_query) | 
+            Q(matches__game_type__icontains=search_query) |
+            Q(matches__team_a__icontains=search_query) |
+            Q(matches__team_b__icontains=search_query)
+        ).distinct()
+        
+    # upcoming_events = Event.objects.filter(
+    #     date_time__gte=timezone.now()
+    # ).order_by('date_time')
+    all_calendar_events = Event.objects.all()
+    event_dates = [e.date_time.strftime('%Y-%m-%d') for e in all_calendar_events if e.date_time]
+    events_list = []
+    for e in all_calendar_events:
+        if e.date_time:
+            events_list.append({
+                'name': e.name,
+                'date': e.date_time.strftime('%Y-%m-%d'),
+                'formatted_date': e.date_time.strftime('%a, %b %d')
+            })
 
     return render(request, 'homepage/all_events.html', {
         'events': events,
+        'search_query': search_query,#
         'selected_sport': sport_query,
         'event_dates_json': json.dumps(event_dates),
+        'events_json': json.dumps(events_list),
         'page_title': f"{sport_query.capitalize() if sport_query else 'All'} Matches"
     })
 

@@ -1,0 +1,186 @@
+:root {
+    --sidebar-full-width: 300px;
+    --sidebar-collapsed-width: 55px; 
+    --transition-speed: 0.2s;
+    --primary-color: #ff8900; /* Orange/Gold from your reference */
+    --hover-bg: #f8f9fa;
+    --active-bg: #fff8ed; /* Light gold tint for white theme */
+    --text-main: #333;
+    --text-muted: #777;
+}
+
+main {
+    padding: 0 !important;
+    margin-top: 80px;
+    margin-bottom: 0;
+    display: block;
+    /* background-color: #f4f7f6; */
+}
+ 
+.dashboard-page {
+    /* padding-top: 20px ; */
+    display: block;
+    min-height: 100vh;
+    margin-top: 0 !important;
+    max-width: 100%;
+    background-color: #f4f7f6;
+}
+.dashboard-header h2 {
+    letter-spacing: -0.5px;
+    
+}
+.flex-main-dwrapper {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 55px);
+    /* background: transparent;  */
+}
+
+/* SIDEBAR SECTION */
+.dsection-left {
+    width: var(--sidebar-full-width);
+    transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 2px solid #e0e0e0; 
+    overflow-x: hidden;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    background-color: #f7fafc;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.dsidebar-header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: bolder;
+    padding: 0 18px;
+    margin-top: 50px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #ddd;
+}
+/* .dbrand-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+} */
+.dsidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+}
+.dmenu-toggle-btn {
+    cursor: pointer;
+    font-size: 1.6rem;
+    font-weight: bold;
+    min-width: 25px;
+    text-align: center;
+    margin-right: 18px;
+    pointer-events: auto;
+}
+.dnav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    color: black;
+    font-size: 2rem;
+    text-decoration: none;
+    transition: background 0.2s;
+    margin: 3px 0;
+}
+.dnav-link:hover{
+    background: #eeeeee;
+    border-radius: 12px;
+}
+.dnav-link.active {
+    background-color: var(--active-bg);
+    color: var(--primary-color);
+    border-radius: 12px;
+}
+.dnav-link.active i {
+    color: var(--primary-color);
+}
+/* Maintain Icon Visibility */
+.dnav-link i {
+    font-size: 1.2rem;
+    min-width: 25px;
+    text-align: center;
+    color: #333;
+}
+
+.link-text {
+    margin-left: 20px;
+    font-size: 1.3rem;
+    opacity: 1;
+    transition: opacity 0.2s;
+}
+
+/* COLLAPSED STATE */
+/* .flex-main-dwrapper.collapsed .dsection-left {
+    width: var(--sidebar-collapsed-width);
+}
+
+.flex-main-dwrapper.collapsed .dbrand-name,
+.flex-main-dwrapper.collapsed .link-text {
+    display: none;
+}
+.flex-main-dwrapper.collapsed .dnav-link {
+    justify-content: center;
+    padding: 15px 0;
+}
+.flex-main-dwrapper.collapsed .dnav-link i {
+    margin: 0;
+} */
+
+/* Sidebar default width */
+/* .dsection-left {
+    width: var(--sidebar-full-width);
+    transition: width 0.3s ease;
+    flex-shrink: 0;
+} */
+
+/* When the wrapper has the 'collapsed' class, shrink the sidebar */
+#adminWrapper.collapsed .dsection-left {
+    width: var(--sidebar-collapsed-width) !important;
+    padding-left: 0;
+    padding-right: 0;
+}
+#adminWrapper.collapsed .dsidebar-header {
+    justify-content: center;
+    padding: 0;
+}
+/* Hide text when collapsed */
+#adminWrapper.collapsed .link-text,
+#adminWrapper.collapsed .dbrand-name {
+    display: none !important;
+}
+
+/* RIGHT CONTENT SECTION */
+.dsection-right {
+    flex: 1;
+    padding: 30px;
+    background-color: #f4f7f6;
+}
+.dleft-content {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    font-size: 1.9rem;
+    font-weight: bolder;
+    padding: 0 18px;
+    margin-top: 30px;
+    border-bottom: 2px solid #eee;
+}
+.adashboard-header {
+    font-size: 1.8rem;
+    letter-spacing: -0.3px;
+    margin-bottom: 45px;
+    margin-top: 30px;
+}
+.adashboard-header h2{
+    margin-bottom: 10px;
+}

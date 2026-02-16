@@ -17,6 +17,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('organizer/', include('organizer.urls', namespace='organizer')),
     path('news/', include('news.urls')),
+    path('admin_panel/', include('admin_panel.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]
 

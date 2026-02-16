@@ -1,0 +1,87 @@
+<nav class="dsection-left" id="adminSidebar">
+    <div class="dsidebar-header">
+        <div class="dsidebar-logo">
+            <i class="fas fa-bars dmenu-toggle-btn" id="sidebarToggle" onclick="toggleSidebar()"></i>
+            <span class="dbrand-name">AdminPanel</span>
+        </div>
+    </div>
+
+    <div class="dsidebar-menu">
+        <ul class="dnav-list">
+            <li class="dnav-item">
+                <a href="{% url 'admin_panel:adashboard' %}" class="dnav-link {% if request.resolver_match.url_name == 'adashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="link-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="dnav-item">
+                <a href="{% url 'admin_panel:organizer_requests' %}" class="dnav-link {% if request.resolver_match.url_name == 'organizer_requests' %}active{% endif %}" >
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span class="link-text">Organizer Requests</span>
+                </a>
+            </li>
+            
+            <li class="dnav-item">
+                <a href="{% url 'admin_panel:manage_users' %}" class="dnav-link {% if request.resolver_match.url_name == 'manage_users' %}active{% endif %}">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span class="link-text">Manage Users</span>
+                </a>
+            </li>
+
+            <li class="dnav-item">
+                <a href="#" class="dnav-link ">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span class="link-text">Sports</span>
+                </a>
+            </li>
+
+            <!-- <li class="dnav-item">
+                <a href="#" class="dnav-link">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span class="link-text">Event Requests</span>
+                    <span class="badge bg-danger rounded-pill ms-auto link-text">5</span>
+                </a>
+            </li> -->
+
+            <li class="dnav-item">
+                <a href="#" class="dnav-link">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span class="link-text">Reports</span>
+                </a>
+            </li>
+
+            <div class="dsidebar-divider"></div>
+
+            <li class="dnav-item">
+                <a href="#" class="dnav-link">
+                    <i class="fa-solid fa-gears"></i>
+                    <span class="link-text">System Settings</span>
+                </a>
+            </li>
+
+            <li class="dnav-item mt-auto">
+                <a href="{% url 'logout' %}" class="dnav-link text-danger">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="link-text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<script>
+function toggleSidebar() {
+    const wrapper = document.getElementById('adminWrapper');
+    const sidebar = document.getElementById('adminSidebar');
+    
+    if (wrapper) {
+        // We use 'collapsed' because that is what your CSS #adminWrapper.collapsed uses
+        wrapper.classList.toggle('collapsed');
+    }
+    
+    if (sidebar) {
+        sidebar.classList.toggle('collapsed');
+    }
+}
+</script>
+
+    
