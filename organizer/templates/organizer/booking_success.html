@@ -16,35 +16,71 @@
         .bg-dark-card { background-color: #1e1e1e; }
     </style>
 </head>
-<body class="bg-dark text-white">
+<body class="bg-dark text-white" style="font-family: 'Inter', sans-serif;">
     <div class="container mt-5 text-center">
-        <div class="card bg-dark-card p-5 border-0 shadow-lg mx-auto" style="max-width: 500px; border-radius: 20px;">
+        <div class="card bg-dark-card p-5 border border-secondary shadow-lg mx-auto" style="max-width: 500px; border-radius: 20px;">
+
             <div class="mb-3 no-print">
                 <i class="fas fa-check-circle text-success fa-4x"></i>
             </div>
-            <h2 class="text-warning mb-4">Official Entry Ticket</h2>
 
-            <div class="bg-white p-3 rounded mb-4 d-inline-block shadow">
+            <h2 class="text-warning fw-bold mb-4">OFFICIAL ENTRY TICKET</h2>
+
+            <div class="bg-white p-3 rounded mb-4 d-inline-block shadow-sm">
                 <div id="qrcode"></div>
             </div>
 
-            <div class="text-start border-top border-secondary pt-3 mt-3">
-                <p class="mb-1"><strong>Event:</strong> {{ sale.transaction.ticket_type.event.name }}</p>
-                <p class="mb-1"><strong>Venue:</strong> {{ sale.transaction.ticket_type.event.location }}</p>
-                <p class="mb-1"><strong>Tier:</strong> {{ sale.transaction.ticket_type.name }}</p>
-                <p class="mb-1"><strong>Ticket Code:</strong> <span class="text-info">{{ sale.ticket_code }}</span></p>
-                <p class="mb-0 mt-2 small text-muted"><strong>Ref:</strong> {{ sale.transaction.pidx|truncatechars:15 }}</p>
+            <div class="text-start border-top border-light border-opacity-25 pt-4 mt-2">
+                <p class="mb-2 h5"><strong class="text-warning">Event:</strong> {{ sale.transaction.ticket_type.event.name }}</p>
+                <p class="mb-1 text-light"><strong>Venue:</strong> {{ sale.transaction.ticket_type.event.location }}</p>
+                <p class="mb-1 text-light"><strong>Tier:</strong> {{ sale.transaction.ticket_type.name }}</p>
+
+                <div class="p-2 mt-3 bg-black bg-opacity-25 rounded border border-info border-opacity-25">
+                    <p class="mb-0 small text-info text-uppercase fw-bold">Ticket Code</p>
+                    <p class="mb-0 h4 font-monospace text-white">{{ sale.ticket_code }}</p>
+                </div>
+
+                <p class="mb-0 mt-3 small text-white-50"><strong>Transaction ID:</strong> {{ sale.transaction.pidx|truncatechars:20 }}</p>
             </div>
 
             <div class="mt-4 no-print d-grid gap-2">
-                <button onclick="window.print()" class="btn btn-light">
+                <button onclick="window.print()" class="btn btn-warning fw-bold text-dark">
                     <i class="fas fa-print me-2"></i>Print / Save as PDF
                 </button>
-                <a href="{% url 'accounts:user_dashboard' %}" class="btn btn-outline-warning">Go to My Dashboard</a>
+                <a href="{% url 'accounts:user_dashboard' %}" class="btn btn-outline-light btn-sm">Return to Dashboard</a>
             </div>
         </div>
-        <p class="mt-4 text-muted small no-print">Show this QR code at the entrance for verification.</p>
+        <p class="mt-4 text-white-50 small no-print">Please have this QR code ready for scanning at the gate.</p>
     </div>
+<!--<body class="bg-dark text-white">-->
+<!--    <div class="container mt-5 text-center">-->
+<!--        <div class="card bg-dark-card p-5 border-0 shadow-lg mx-auto" style="max-width: 500px; border-radius: 20px;">-->
+<!--            <div class="mb-3 no-print">-->
+<!--                <i class="fas fa-check-circle text-success fa-4x"></i>-->
+<!--            </div>-->
+<!--            <h2 class="text-warning mb-4">Official Entry Ticket</h2>-->
+
+<!--            <div class="bg-white p-3 rounded mb-4 d-inline-block shadow">-->
+<!--                <div id="qrcode"></div>-->
+<!--            </div>-->
+
+<!--            <div class="text-start border-top border-secondary pt-3 mt-3">-->
+<!--                <p class="mb-1"><strong>Event:</strong> {{ sale.transaction.ticket_type.event.name }}</p>-->
+<!--                <p class="mb-1"><strong>Venue:</strong> {{ sale.transaction.ticket_type.event.location }}</p>-->
+<!--                <p class="mb-1"><strong>Tier:</strong> {{ sale.transaction.ticket_type.name }}</p>-->
+<!--                <p class="mb-1"><strong>Ticket Code:</strong> <span class="text-info">{{ sale.ticket_code }}</span></p>-->
+<!--                <p class="mb-0 mt-2 small text-muted"><strong>Ref:</strong> {{ sale.transaction.pidx|truncatechars:15 }}</p>-->
+<!--            </div>-->
+
+<!--            <div class="mt-4 no-print d-grid gap-2">-->
+<!--                <button onclick="window.print()" class="btn btn-light">-->
+<!--                    <i class="fas fa-print me-2"></i>Print / Save as PDF-->
+<!--                </button>-->
+<!--                <a href="{% url 'accounts:user_dashboard' %}" class="btn btn-outline-warning">Go to My Dashboard</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <p class="mt-4 text-muted small no-print">Show this QR code at the entrance for verification.</p>-->
+<!--    </div>-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
