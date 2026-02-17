@@ -563,7 +563,6 @@ def update_application_status(request, pk, action):
 
 
 
-
 @login_required
 @user_passes_test(is_organizer_check)
 def verify_ticket_gate(request):
@@ -571,27 +570,82 @@ def verify_ticket_gate(request):
     ticket = None
     error = None
 
+    # 1. ALWAYS calculate the headcount and history (outside the IF block)
+    # This ensures the numbers show up as soon as you open the page
+    total_checked_in = TicketSale.objects.filter(
+        transaction__ticket_type__event__organizer=request.user,
+        is_used=True
+    ).count()
+
+    # recent_checkins = TicketSale.objects.filter(
+    #     transaction__ticket_type__event__organizer=request.user,
+    #     is_used=True
+    # ).order_by('-id')[:5]  # Get last 5 successful entries
+
     if ticket_code:
         try:
-            # Only allow organizers to verify tickets for THEIR events
+            # 2. Search for the ticket
             ticket = TicketSale.objects.get(
                 ticket_code__iexact=ticket_code.strip(),
                 transaction__ticket_type__event__organizer=request.user
             )
 
-            # Action: Check-in the user
+            # 3. Handle the "Grant Entry" button click
             if request.method == "POST" and not ticket.is_used:
                 ticket.is_used = True
+                ticket.checked_in_at = timezone.now()
                 ticket.save()
                 messages.success(request, f"Entry Granted for {ticket.buyer.username}!")
+                # Refresh the count/history after a successful check-in
+                return redirect(f"{request.path}?ticket_code={ticket_code}")
+
         except TicketSale.DoesNotExist:
+            # THIS triggers your error box for random/fake codes
             error = "Invalid Ticket Code. Access Denied."
 
     return render(request, 'organizer/verify_ticket.html', {
         'ticket': ticket,
         'error': error,
+        'total_checked_in': total_checked_in,
+        # 'recent_checkins': recent_checkins,
         'ticket_code': ticket_code
     })
+
+
+
+
+# @login_required
+# @user_passes_test(is_organizer_check)
+# def verify_ticket_gate(request):
+#     ticket_code = request.GET.get('ticket_code')
+#     ticket = None
+#     error = None
+#
+#     if ticket_code:
+#         try:
+#             # Only allow organizers to verify tickets for THEIR events
+#             ticket = TicketSale.objects.get(
+#                 ticket_code__iexact=ticket_code.strip(),
+#                 transaction__ticket_type__event__organizer=request.user
+#             )
+#             total_checked_in = TicketSale.objects.filter(
+#                 transaction__ticket_type__event__organizer=request.user,
+#                 is_used=True
+#             ).count()
+#             # Action: Check-in the user
+#             if request.method == "POST" and not ticket.is_used:
+#                 ticket.is_used = True
+#                 ticket.save()
+#                 messages.success(request, f"Entry Granted for {ticket.buyer.username}!")
+#         except TicketSale.DoesNotExist:
+#             error = "Invalid Ticket Code. Access Denied."
+#
+#     return render(request, 'organizer/verify_ticket.html', {
+#         'ticket': ticket,
+#         'error': error,
+#         'total_checked_in': total_checked_in,
+#         'ticket_code': ticket_code
+#     })
 
 
 @login_required

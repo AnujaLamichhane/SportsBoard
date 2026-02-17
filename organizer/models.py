@@ -108,7 +108,7 @@ class TicketSale(models.Model):
     ticket_code = models.CharField(max_length=50, unique=True)
     is_used = models.BooleanField(default=False)  # For gate scanning
     bought_at = models.DateTimeField(auto_now_add=True)
-
+    checked_in_at = models.DateTimeField(null=True, blank=True)
     def __str__(self):
         return f"Ticket {self.ticket_code} for {self.transaction.user.username}"
 
