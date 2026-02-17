@@ -126,10 +126,16 @@ def user_dashboard(request):
     # 2. My Applications (Forms the user HAS filled out)
     # We want is_published=True because the form itself must be live,
     # but it must belong to the current user (applicant).
+    # my_submissions = PlayerSelectionForm.objects.filter(
+    #     applicant=request.user,
+    #     is_published=True
+    # )
+
     my_submissions = PlayerSelectionForm.objects.filter(
         applicant=request.user,
-        is_published=True
+        is_published=False  # Submissions by athletes are False
     )
+
 
     # 3. Available Trials (Forms the user HAS NOT filled out yet)
     # Get IDs of forms the user already applied to so we can hide them
@@ -146,33 +152,9 @@ def user_dashboard(request):
         'user_apps': user_apps,
         'available_forms': available_forms,  # New trials
         'my_submissions': my_submissions,  # Completed apps
+        'applied_count': my_submissions.count(),
     }
     return render(request, 'accounts/user_dashboard.html', context)
-
-    # 2. Get Event IDs for stat counting
-    # event_ids = user_apps.values_list('transaction__ticket_type__event_id', flat=True)
-    # joined_events = Event.objects.filter(id__in=event_ids)
-    #
-    # # 3. Trial Forms (Available for registration)
-    # available_forms = PlayerSelectionForm.objects.filter(is_published=True)
-    #
-    # # FIX STARTS HERE: Use 'applicant' instead of 'email'
-    # my_submissions = PlayerSelectionForm.objects.filter(
-    #     applicant=request.user,  # Changed from email=request.user.email
-    #     is_published=False
-    # )
-    #
-    # context = {
-    #     'user': request.user,
-    #     'profile': profile,
-    #     'joined_events': joined_events,
-    #     'total_joined': joined_events.count(),
-    #     'title': 'User Dashboard',
-    #     'user_apps': user_apps,
-    #     'available_forms': available_forms,
-    #     'my_submissions': my_submissions,
-    # }
-    # return render(request, 'accounts/user_dashboard.html', context)
 
 
 

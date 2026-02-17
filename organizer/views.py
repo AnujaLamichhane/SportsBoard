@@ -305,6 +305,10 @@ def selection_form_create(request, pk=None):
                 application.applicant = request.user
                 application.organizer = template_form.organizer
                 # Link context from template
+
+                if template_form.event:
+                    application.event = template_form.event
+
                 application.event_name = template_form.event_name
                 application.sports = template_form.sports
                 application.level = template_form.level
