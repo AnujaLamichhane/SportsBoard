@@ -14,8 +14,10 @@
 {% block extra_head %}{% endblock %}
 <body class="bg-dark text-white">
 
+
+
     <div class="d-flex"> 
-        <nav cl ass="gemini-sidebar" id="geminiSidebar">
+        <nav class="gemini-sidebar" id="geminiSidebar">
             <div class="sidebar-header">
                 <i class="fas fa-bars menu-toggle-btn" onclick="toggleSidebar()"></i>
                 <span class="brand-name">SportsBoard Nepal</span>
@@ -74,7 +76,7 @@
             </div>
 
             <div class="sidebar-footer">
-                <a href="#" class="menu-item">
+                <a href="{% url 'organizer:settings' %}" class="menu-item">
                     <i class="fas fa-cog"></i> 
                     <span class="menu-label">Settings</span>
                 </a>

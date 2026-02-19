@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from datetime import date
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 User = get_user_model()
 
@@ -170,3 +171,31 @@ class PlayerSelectionForm(models.Model):
             return today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
         return 0
 
+
+class OrganizerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='organizer_profile')
+
+    # Profile & Organization Details
+    organization_name = models.CharField(max_length=255, blank=True)
+    organization_logo = models.ImageField(upload_to='org_logos/', blank=True, null=True)
+    contact_email = models.EmailField(blank=True)
+    contact_phone = models.CharField(max_length=20, blank=True)
+    bio = models.TextField(blank=True, help_text="Short description of your organization/club.")
+
+    # Gate Security Preferences
+    enable_scanner_sound = models.BooleanField(default=True, help_text="Play a beep sound on successful scan.")
+    auto_submit_scan = models.BooleanField(default=True,
+                                           help_text="Automatically submit the form after a QR code is detected.")
+
+    # Payment & Payout Configuration (Financials)
+    khalti_merchant_id = models.CharField(max_length=100, blank=True,
+                                          help_text="Your Khalti Business ID for receiving payments.")
+    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00,
+                                         help_text="Optional tax to add to ticket prices.")
+
+    # Notification Settings
+    email_notifications = models.BooleanField(default=True)
+    daily_summary_report = models.BooleanField(default=False, help_text="Receive a daily PDF summary of registrations.")
+
+    def __str__(self):
+        return f"Settings for {self.user.username}"

@@ -14,14 +14,15 @@ from decimal import Decimal
 from django.utils import timezone
 
 # Consolidated Model Imports (Removed 'Application')
-from .models import Event, TicketSale, TicketType, PlayerSelectionForm,KhaltiTransaction,Match
+from .models import Event, TicketSale, TicketType, PlayerSelectionForm,KhaltiTransaction,Match,OrganizerProfile
 
 # Consolidated Form Imports
 from .forms import (
     EventCreationForm,
     TicketTypeFormset,
     MatchFormset,
-    PlayerSelectionCrispyForm
+    PlayerSelectionCrispyForm,
+    OrganizerSettingsForm
 )
 
 
@@ -35,6 +36,24 @@ def is_organizer_check(user):
 def organizer_dashboard(request):
     organizer_events = Event.objects.filter(organizer=request.user)
     now = timezone.now()
+
+    # NEW: Fetch or create organizer profile for branding/settings
+    profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
+
+    # --- PROFILE COMPLETION LOGIC ---
+    # Define fields that you consider "essential" for a complete profile
+    essential_fields = [
+        profile.organization_name,
+        profile.organization_logo,
+        profile.khalti_merchant_id,
+        profile.contact_phone,
+        profile.bio
+    ]
+
+    filled_count = sum(1 for field in essential_fields if field)
+    completion_percentage = int((filled_count / len(essential_fields)) * 100)
+    # --------------------------------
+
 
     paid_sales = TicketSale.objects.filter(
         transaction__ticket_type__event__in=organizer_events,  # Changed 'match__event' to 'event'
@@ -53,6 +72,9 @@ def organizer_dashboard(request):
     # upcoming_count = organizer_events.filter(date_time__gt=timezone.now()).count()
     upcoming_count = organizer_events.filter(date_time__gt=now).count()
     context = {
+        'profile': profile,
+        'completion_percentage': completion_percentage,  # Pass this to template
+        'total_revenue': total_revenue,
         'total_revenue': total_revenue,
         'total_events': organizer_events.count(),
         'tickets_sold': paid_sales.count(),
@@ -614,38 +636,6 @@ def verify_ticket_gate(request):
 
 
 
-# @login_required
-# @user_passes_test(is_organizer_check)
-# def verify_ticket_gate(request):
-#     ticket_code = request.GET.get('ticket_code')
-#     ticket = None
-#     error = None
-#
-#     if ticket_code:
-#         try:
-#             # Only allow organizers to verify tickets for THEIR events
-#             ticket = TicketSale.objects.get(
-#                 ticket_code__iexact=ticket_code.strip(),
-#                 transaction__ticket_type__event__organizer=request.user
-#             )
-#             total_checked_in = TicketSale.objects.filter(
-#                 transaction__ticket_type__event__organizer=request.user,
-#                 is_used=True
-#             ).count()
-#             # Action: Check-in the user
-#             if request.method == "POST" and not ticket.is_used:
-#                 ticket.is_used = True
-#                 ticket.save()
-#                 messages.success(request, f"Entry Granted for {ticket.buyer.username}!")
-#         except TicketSale.DoesNotExist:
-#             error = "Invalid Ticket Code. Access Denied."
-#
-#     return render(request, 'organizer/verify_ticket.html', {
-#         'ticket': ticket,
-#         'error': error,
-#         'total_checked_in': total_checked_in,
-#         'ticket_code': ticket_code
-#     })
 
 
 @login_required
@@ -676,3 +666,26 @@ def review_athlete_profile(request, pk):
         'page_title': f"Review: {application.full_name or application.applicant.username}"
     }
     return render(request, 'organizer/review_athlete_profile.html', context)
+
+
+@login_required
+@user_passes_test(is_organizer_check)
+def organizer_settings(request):
+    # Get the profile or create one if it doesn't exist yet
+    profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        # Pass request.FILES for the organization logo upload
+        form = OrganizerSettingsForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Settings updated successfully!")
+            return redirect('organizer:settings')
+    else:
+        form = OrganizerSettingsForm(instance=profile)
+
+    return render(request, 'organizer/settings.html', {
+        'form': form,
+        'profile': profile,
+        'page_title': 'Account & Organizer Settings'
+    })

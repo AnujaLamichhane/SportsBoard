@@ -1,0 +1,52 @@
+{% extends "organizer/sidebar.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="text-white mb-4">Account Settings</h2>
+
+    <div class="card bg-dark-card border-secondary shadow-lg">
+        <div class="card-header border-secondary bg-transparent">
+            <ul class="nav nav-pills card-header-pills" id="settingsTab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active text-white" data-bs-toggle="pill" data-bs-target="#profile-tab">Organization Profile</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#security-tab">Gate Security</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#payment-tab">Payments (Khalti)</button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="profile-tab">
+                        <div class="row">
+                            <div class="col-md-6">{{ form.organization_name|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.organization_logo|as_crispy_field }}</div>
+                        </div>
+                        {{ form.bio|as_crispy_field }}
+                    </div>
+
+                    <div class="tab-pane fade" id="security-tab">
+                        <div class="alert alert-info bg-info bg-opacity-10 border-info text-info">
+                            Configure how your QR scanner behaves during live events.
+                        </div>
+                        {{ form.enable_scanner_sound|as_crispy_field }}
+                        {{ form.auto_submit_scan|as_crispy_field }}
+                    </div>
+
+                    <div class="tab-pane fade" id="payment-tab">
+                        {{ form.khalti_merchant_id|as_crispy_field }}
+                        {{ form.tax_percentage|as_crispy_field }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning mt-4 px-5 fw-bold">Save Settings</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
