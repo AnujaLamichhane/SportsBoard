@@ -31,6 +31,13 @@ EXPERIENCE_LEVEL_CHOICES = [
     ('provincial', 'Provincial Level'),
     ('national', 'National/Professional'),
 ]
+VERIFICATION_CHOICES = [
+        ('none', 'Not Submitted'),
+        ('pending', 'Pending Review'),
+        ('verified', 'Verified'),
+        ('rejected', 'Rejected'),
+    ]
+
 
 # --- 1. CORE EVENT MODELS ---
 
@@ -176,11 +183,21 @@ class OrganizerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='organizer_profile')
 
     # Profile & Organization Details
+    # Profile & Organization Details
     organization_name = models.CharField(max_length=255, blank=True)
-    organization_logo = models.ImageField(upload_to='org_logos/', blank=True, null=True)
-    contact_email = models.EmailField(blank=True)
+    organization_logo = models.ImageField(upload_to='org_logos/', blank=True, null=True,
+                                          help_text="This acts as your profile photo.")
+
+    # NEW FIELDS: Contact and Address
     contact_phone = models.CharField(max_length=20, blank=True)
+    contact_email = models.EmailField(blank=True)  # Optional, can use user.email
+    address = models.CharField(max_length=255, blank=True, help_text="Full address of your organization")
+
     bio = models.TextField(blank=True, help_text="Short description of your organization/club.")
+
+    # NEW FIELD: Certificate for verification
+    certificate = models.FileField(upload_to='certificates/', blank=True, null=True,
+                                   help_text="Upload your registration certificate or citizenship.")
 
     # Gate Security Preferences
     enable_scanner_sound = models.BooleanField(default=True, help_text="Play a beep sound on successful scan.")
@@ -196,6 +213,9 @@ class OrganizerProfile(models.Model):
     # Notification Settings
     email_notifications = models.BooleanField(default=True)
     daily_summary_report = models.BooleanField(default=False, help_text="Receive a daily PDF summary of registrations.")
+
+    verification_status = models.CharField(max_length=20, choices=VERIFICATION_CHOICES, default='none')
+    is_verified = models.BooleanField(default=False)  # Keep this for the badge logic
 
     def __str__(self):
         return f"Settings for {self.user.username}"

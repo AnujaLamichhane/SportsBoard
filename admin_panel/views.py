@@ -3,6 +3,9 @@ from django.shortcuts import render
 # Create your views here.
 from django.contrib.auth.decorators import user_passes_test
 
+from organizer.models import OrganizerProfile
+
+
 # @user_passes_test(lambda u: u.is_staff)
 def login_view(request):
     return render(request, 'admin_panel/login.html')
@@ -12,12 +15,14 @@ def dashboard(request):
 
 def organizer_requests(request):
     # You can fetch your organizers here:
+    profiles = OrganizerProfile.objects.all().order_by('-verification_status')
     # pending_organizers = Organizer.objects.filter(status='pending')
-    return render(request, 'admin_panel/organizer_requests.html')
+    return render(request, 'admin_panel/organizer_requests.html', {'profiles': profiles})
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
+
 
 def manage_users(request):
     # Fetch all users except the current superuser (optional)

@@ -1,6 +1,7 @@
 {% extends "organizer/sidebar.html" %}
 {% load crispy_forms_tags %}
 
+
 {% block content %}
 <div class="container-fluid">
     <h2 class="text-white mb-4">Account Settings</h2>
@@ -17,23 +18,42 @@
                 <li class="nav-item">
                     <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#payment-tab">Payments (Khalti)</button>
                 </li>
+                <li class="nav-item">
+                    <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#submit-request-tab">Submit Request</button>
+                </li>
             </ul>
         </div>
+
         <div class="card-body">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
+
+
+
                 <div class="tab-content">
+
                     <div class="tab-pane fade show active" id="profile-tab">
                         <div class="row">
                             <div class="col-md-6">{{ form.organization_name|as_crispy_field }}</div>
                             <div class="col-md-6">{{ form.organization_logo|as_crispy_field }}</div>
+
                         </div>
+                        <div class="row">
+
+        <div class="col-md-6">{{ form.contact_email|as_crispy_field }}</div>
+        <div class="col-md-6">{{ form.contact_phone|as_crispy_field }}</div>
+    </div>
+
+                        {{ form.address|as_crispy_field }}
                         {{ form.bio|as_crispy_field }}
+
                     </div>
 
+
+
                     <div class="tab-pane fade" id="security-tab">
-                        <div class="alert alert-info bg-info bg-opacity-10 border-info text-info">
-                            Configure how your QR scanner behaves during live events.
+                        <div class="alert alert-info bg-info bg-opacity-10 border-info text-info small">
+                            <i class="fas fa-info-circle me-1"></i> Configure how your QR scanner behaves during live events.
                         </div>
                         {{ form.enable_scanner_sound|as_crispy_field }}
                         {{ form.auto_submit_scan|as_crispy_field }}
@@ -42,9 +62,52 @@
                     <div class="tab-pane fade" id="payment-tab">
                         {{ form.khalti_merchant_id|as_crispy_field }}
                         {{ form.tax_percentage|as_crispy_field }}
+
+                        <div class="mt-4 p-3 border border-secondary rounded">
+            <h5 class="text-info"><i class="fas fa-file-upload me-2"></i>Verification Documents</h5>
+            <p class="text-white-50 small">Upload your registration certificate or citizenship for admin review.</p>
+            {{ form.certificate|as_crispy_field }}
+        </div>
+
+                    </div>
+
+
+                    <div class="tab-pane fade" id="submit-request-tab">
+                        <div class="text-center py-4">
+                            {% if profile.verification_status == 'none' %}
+                                {% if completion_percentage == 100 %}
+                                    <i class="fas fa-file-signature fa-3x text-info mb-3"></i>
+                                    <h4 class="text-white">Ready for Verification</h4>
+                                    <p class="text-white-50">Your profile is 100% complete. Submit it now for admin approval.</p>
+                                    <button type="button"
+                                            onclick="window.location.href='{% url 'organizer:submit_verification' %}'"
+                                            class="btn btn-info px-5 fw-bold text-dark">
+                                        Submit Verification Request
+                                    </button>
+                                {% else %}
+                                    <i class="fas fa-lock fa-3x text-secondary mb-3"></i>
+                                    <h4 class="text-white">Profile Incomplete</h4>
+                                    <p class="text-white-50">You must complete your profile (Currently {{ completion_percentage }}%) before you can request verification.</p>
+                                    <div class="progress bg-dark mb-3" style="height: 12px; max-width: 400px; margin: 0 auto; border: 1px solid #444;">
+                                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" style="width: {{ completion_percentage }}%"></div>
+                                    </div>
+                                {% endif %}
+                            {% elif profile.verification_status == 'pending' %}
+                                <i class="fas fa-user-clock fa-3x text-warning mb-3"></i>
+                                <h4 class="text-white">Request Pending</h4>
+                                <p class="text-white-50">Our admins are currently reviewing your organization details.</p>
+                            {% elif profile.is_verified %}
+                                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                                <h4 class="text-success fw-bold">Verified Organizer</h4>
+                                <p class="text-white-50">Your account is fully verified. Your badge is now active.</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-warning mt-4 px-5 fw-bold">Save Settings</button>
+
+                <div class="mt-4 border-top border-secondary pt-3">
+                    <button type="submit" class="btn btn-warning px-5 fw-bold shadow">Save Settings</button>
+                </div>
             </form>
         </div>
     </div>

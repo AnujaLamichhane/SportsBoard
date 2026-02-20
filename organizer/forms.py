@@ -232,17 +232,19 @@ class OrganizerSettingsForm(forms.ModelForm):
         model = OrganizerProfile
         fields = [
             'organization_name', 'organization_logo', 'contact_email',
-            'contact_phone', 'bio', 'enable_scanner_sound',
-            'auto_submit_scan', 'khalti_merchant_id', 'tax_percentage',
-            'email_notifications', 'daily_summary_report'
+            'contact_phone', 'address', 'bio', 'certificate', # Added address & certificate
+            'enable_scanner_sound', 'auto_submit_scan',
+            'khalti_merchant_id', 'tax_percentage'
         ]
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Tell athletes about your club...'}),
-            'khalti_merchant_id': forms.TextInput(attrs={'placeholder': 'Enter your Merchant Secret Key'}),
+            'address': forms.TextInput(attrs={'placeholder': 'City, Street, Ward No.'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # We remove the complex Layout here because you are manually
+        # placing fields in tabs in your HTML template.
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(

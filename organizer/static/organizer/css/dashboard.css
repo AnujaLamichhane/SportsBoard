@@ -145,6 +145,7 @@ font-weight: 500;
     --accent-blue: #0dcaf0;
     --text-gray: #b0b0b0;
     --hover-bg: #1e1e1e;
+    --bg-color: #121212;
 }
 
 /* --- Sidebar Base Styling --- */
@@ -379,4 +380,17 @@ input[type="search"]::-webkit-search-cancel-button {
 .btn-khalti:hover {
     background-color: #4c2575;
     color: white;
+}
+
+label, .control-label, .form-label {
+    color: #ffffff !important;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-text, .help-block, .text-muted {
+    color: #aaaaaa !important; /* Light gray for readability on black */
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 0.25rem;
 }
