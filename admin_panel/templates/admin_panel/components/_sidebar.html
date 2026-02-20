@@ -42,7 +42,12 @@
                     <span class="badge bg-danger rounded-pill ms-auto link-text">5</span>
                 </a>
             </li> -->
-
+            <li class="dnav-item">
+                <a href="{% url 'admin_panel:manage_feedback' %}" class="dnav-link {% if request.resolver_match.url_name == 'manage_feedback' %}active{% endif %}">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span class="link-text">Reviews & Feedback</span>
+                </a>
+            </li>
             <li class="dnav-item">
                 <a href="#" class="dnav-link">
                     <i class="fa-solid fa-chart-line"></i>

@@ -89,7 +89,8 @@ main {
     color: black;
     font-size: 2rem;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
     margin: 3px 0;
 }
 .dnav-link:hover{
@@ -100,6 +101,8 @@ main {
     background-color: var(--active-bg);
     color: var(--primary-color);
     border-radius: 12px;
+    border-left: 4px solid #fd7e14;
+    font-weight: 600;
 }
 .dnav-link.active i {
     color: var(--primary-color);
