@@ -1,0 +1,254 @@
+{% extends "homepage/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
+    <style>
+        /* Force horizontal layout */
+        .flex { display: flex !important; }
+        .min-h-screen { min-height: 100vh; }
+        
+        .sidebar-column {
+            width: 280px; /* Fixed width for your sidebar */
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .flex-1 {
+            flex: 1; /* Takes up remaining width */
+            background-color: #f9fafb;
+            padding: 2rem;
+        }
+
+        /* Form Styling */
+        .form-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Current Avatar Styling */
+        .current-avatar img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff8c00;
+        }
+        
+    /* Layout Logic */
+    .dashboard-wrapper {
+        display: flex;
+        min-height: 100vh;
+    }
+    
+    
+
+    .main-content {
+        flex: 1;
+        padding: 40px;
+    }
+
+    /* Increased Font Sizes */
+    .main-title { 
+        font-size: 36px; /* Large header */
+        font-weight: 700; 
+        margin-bottom: 10px; 
+    }
+
+    .sub-text { 
+        font-size: 19px; /* Readable sub-header */
+        color: #666; 
+    }
+
+    .section-title { 
+        font-size: 24px; /* Form section headers */
+        font-weight: 600; 
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .input-group label { 
+        font-size: 18px; /* Larger field labels */
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    /* Target Django's auto-rendered inputs */
+    .form-input, input[type="text"], input[type="email"] { 
+        font-size: 18px !important; /* Larger text inside boxes */
+        padding: 12px !important; 
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .btn-save {
+        font-size: 19px; /* Larger button text */
+        padding: 12px 35px;
+        background: #FF8C00;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-right: 20px;
+        margin-left: 400px;
+    }
+    .btn-cancel{
+        font-size: 19px; /* Larger button text */
+        padding: 12px 35px;
+        background: #FF8C00;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-right: 20px;
+        text-decoration: none;
+    }
+    /* Centering the Upload Area */
+    .profile-upload-area {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 20px 0;
+}
+
+.current-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #ff8c00; /* Your theme orange */
+    color: #ff8c00;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: #ff8c00;
+    color: #fff;
+}
+
+.hint-text {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 8px;
+}
+    
+    
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="flex min-h-screen bg-gray-50">
+    
+    <div class="sidebar-column">
+        {% include "accounts/_sidebar.html" %}
+    </div>
+    <main class="flex-1 p-8">
+        <div class="edit-profile-container">
+            <div class="header-section">
+                <h1 class="main-title">Profile Settings</h1>
+                <p class="sub-text">Manage your personal information and athlete credentials.</p>
+            </div>
+            {% if messages %}
+            <div class="messages-container" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid transparent; {% if message.tags == 'success' %} background-color: #d4edda; color: #155724; border-color: #c3e6cb; {% else %} background-color: #fff3cd; color: #856404; border-color: #ffeeba; {% endif %}">
+                        <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+{% endif %}
+            <form method="POST" enctype="multipart/form-data" class="profile-form">
+                {% csrf_token %}
+
+                <div class="form-card">
+                    <h3 class="section-title">Personal Information</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>First Name</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="input-group">
+                            <label>Last Name</label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Email Address</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card mt-6">
+                    <h3 class="section-title">Athlete Image</h3>
+                    <div class="profile-upload-area">
+                        <div class="current-avatar">
+                            <img src="{% if user.profile.image %}{{ user.profile.image.url }}{% else %}/static/images/default-avatar.png{% endif %}" 
+                                id="avatar-preview" alt="Profile">
+                        </div>
+                        
+                        <div class="upload-controls">
+                            <label for="id_image" class="btn-outline" style="cursor: pointer;">
+                                <i class="fas fa-upload"></i> Change Photo
+                            </label>
+                            
+                            <div style="display: none;">
+                                {{ profile_form.image }}
+                            </div>
+                            
+                            <p class="hint-text">JPG, PNG or GIF. Max size 2MB.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Save Changes</button>
+                    <a href="{% url 'accounts:user_dashboard' %}" class="btn-cancel">Discard Changes</a>
+                </div>
+            </form>
+            
+        </div>
+    </main>
+</div>
+<script>
+    document.getElementById('id_image').onchange = function (evt) {
+    const [file] = this.files;
+    if (file) {
+        document.getElementById('avatar-preview').src = URL.createObjectURL(file);
+    }
+};
+</script>
+{% endblock %}

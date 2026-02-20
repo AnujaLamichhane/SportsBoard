@@ -15,6 +15,10 @@ urlpatterns = [
     # path('apply/player/', views.player_application_view, name='player_application'),
 # path('apply/<int:event_id>/', views.player_application_view, name='player_apply'),
 #     path('google/login/', views.custom_google_login, name='custom_google_login'),
-   path('logout/', csrf_exempt(LogoutView.as_view()), name='logout'), # 12/23 change
-
+    path('logout/', csrf_exempt(LogoutView.as_view()), name='logout'), # 12/23 change
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('my-trials/', views.my_trials, name='my_trials'),
+    path('my-trials/download/<int:pk>/', views.download_trial_pdf, name='download_trial_pdf'),
+    path('my-trials/view/<int:pk>/', views.trial_detail_view, name='trial_detail_view'),
+    path('available-trials/', views.available_trials_view, name='available_trials'),
 ]
