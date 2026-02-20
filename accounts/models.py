@@ -88,3 +88,23 @@ def manage_user_profile(sender, instance, created, **kwargs):
         if hasattr(instance, 'profile'):
             instance.profile.save()
 
+class Feedback(models.Model):
+    CATEGORY_CHOICES = [
+        ('general', 'General Help'),
+        ('bug', 'Technical Issue and Bug Report'),
+        ('suggestion', 'Feature Suggestion'),
+        ('other', 'Other'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_email = models.EmailField()
+    rating = models.IntegerField(default=0)
+    subject = models.CharField(max_length=255)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.subject}"
+    class Meta:
+        verbose_name_plural = "User Feedback"

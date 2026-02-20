@@ -1,8 +1,9 @@
 /* Layout */
 .dashboard-wrapper {
     display: flex;
-    min-height: 90vh;
+    min-height: 100vh;
     background: #f8f9fa;
+    width: 100%;
 }
 
 /* Main Content */
@@ -10,17 +11,26 @@
     flex: 1;
     padding: 40px;
 }
-
+.sidebar {
+    width: 280px;            /* Forces the 280px width from your first image */
+    min-width: 280px;
+    flex-shrink: 0;          /* Prevents the sidebar from getting squashed */
+    background: var(--nav-bg);
+    border-right: 1px solid #e2e8f0; /* Restores the missing border line */
+}
 /* Header */
 .page-header h2 {
     font-size: 35px;
     margin-bottom: 25px;
     margin-top: 15px;
+    color: #2d3748;
+
 }
 
 .page-header p {
     color: #777;
     margin-bottom: 30px;
+    font-size: 18px;
 }
 
 /* Search */

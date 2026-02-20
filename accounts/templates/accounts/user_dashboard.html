@@ -98,7 +98,6 @@
                         📍 {{ sub.event_venue_address|default:"Not Provided" }}
                     </small>
                     <small class="timestamp">Applied: {{ sub.created_at|date:"M d, Y" }}</small>
-
                 </div>
                 {% empty %}
                 <p class="empty-msg">No trial applications submitted yet.</p>

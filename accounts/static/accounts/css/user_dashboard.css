@@ -9,27 +9,25 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end; /* Aligns date with the bottom of the title */
-    margin-bottom: 3.5rem; /* Increased spacing for a cleaner look */
-    padding-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Increased spacing for a cleaner look */
+    padding-bottom: 1rem;
     border-bottom: 1px solid rgba(128, 128, 128, 0.05);
 }
 
 /* Titles */
 .dashboard-header h1 {
-    color: var(--text-color);
-    font-size: 2.1rem; /* Larger, bold font size */
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    margin: 0;
+    font-size: 35px;
+    margin-bottom: 25px;
+    margin-top: 15px;
+    color: #2d3748;
 }
 
 .dashboard-header .subtitle {
-    color: var(--text-color);
-    font-size: 1.3rem;
-    font-weight: 500;
-    opacity: 0.6; /* Softens the text like the admin panel */
-    margin-top: 8px;
+    color: #777;
+    margin-bottom: 30px;
+    font-size: 20px;
 }
+
 
 /* Date Box - Right Aligned */
 .header-date {
@@ -51,7 +49,7 @@
     margin-top: 4px;
 }
 .sidebar {
-    width: 280px;
+    width: 250px;
     background-color: #f7fafc;
     border-right: 1px solid rgba(128, 128, 128, 0.2);
     display: flex;
@@ -63,7 +61,6 @@
 .main-content {
     flex: 1;
     padding: 2rem 3rem ;
-    /* max-width: 1100px; */
     margin: 0 ;
     width: 100%;
     background-color: #f4f7f6;
@@ -127,9 +124,10 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 24px;
+    padding: 12px 15px;
     text-decoration: none !important;
     font-weight: 600;
+    font-size: larger;
     color: var(--text-color);
     border-left: 5px solid transparent;
     transition: all 0.2s ease-in-out;
@@ -150,16 +148,17 @@
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    gap: 30px;
     margin-bottom: 3.5rem;
 }
 
-.stat-card {
+/* .stat-card {
     background: var(--nav-bg);
-    padding: 1.5rem;
+    padding: 2.2rem 2rem;
     border-radius: 16px;
     border: 1px solid rgba(128, 128, 128, 0.1);
-}
+    min-height: 120px;
+} */
 
 .card-grid {
     display: grid;
@@ -313,28 +312,81 @@
 
 
 /* Individual Stat Card */
-.stat-card {
+
+.stats-grid .stat-card {
     background: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 1.7rem 1.7rem; /* Increased padding for more height */
+    min-height: 150px;      /* Set a fixed minimum height */
     display: flex;
     flex-direction: column;
+    justify-content: center; /* Centers content vertically */
+    align-items: center;     /* Centers content horizontally */
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-left: 30px;
+    animation: none !important; /* Forcefully removes any inherited pulse effect */
 }
 
 .stat-card:hover {
     transform: translateY(-8px);
-    
-    /* Subtle border color shift to match the brand orange */
     border-color: rgba(255, 123, 0, 0.4);
-    
-    /* Multi-layered shadow for depth */
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 
                 0 5px 15px rgba(255, 123, 0, 0.05);
 }
 
+.stats-grid .stat-label {
+    margin-bottom: 20px;     /* Adds margin below label / above number */
+    font-size: 1.5rem;
+    color: #ff7b00;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value-primary, 
+.stat-value-secondary {
+    font-size: 2.5rem;       /* Larger numbers for better visibility */
+    font-weight: 800;
+    color: #2d3748;
+    margin: 0;
+}
+
+
+/* 1. Stop all animations on the cards and their contents */
+.stat-card, 
+.stat-card *, 
+.stat-icon, 
+.stat-icon i {
+    animation: none !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important; /* Keep hover, kill pulse */
+}
+
+/* 2. Remove any hidden pulse rings (pseudo-elements) */
+.stat-card::before, 
+.stat-card::after, 
+.stat-icon::before, 
+.stat-icon::after {
+    display: none !important;
+    content: none !important;
+    animation: none !important;
+}
+.card-grid{
+    margin-left: 30px;
+}
+
+.card-grid .stat-card{
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    
+}
+.card-grid .stat-card:hover{
+    transform: translateY(-8px);
+    border-color: rgba(255, 123, 0, 0.4);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 
+                0 5px 15px rgba(255, 123, 0, 0.05);
+}
 /* Card Header Layout */
 .card-header {
     display: flex;

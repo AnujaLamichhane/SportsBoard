@@ -21,4 +21,5 @@ urlpatterns = [
     path('my-trials/download/<int:pk>/', views.download_trial_pdf, name='download_trial_pdf'),
     path('my-trials/view/<int:pk>/', views.trial_detail_view, name='trial_detail_view'),
     path('available-trials/', views.available_trials_view, name='available_trials'),
+    path('feedback/', views.feedback_view, name='feedback'),
 ]

@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from organizer.models import Event, TicketSale,PlayerSelectionForm
-from accounts.models import Profile
+from accounts.models import Profile, Feedback
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.shortcuts import get_object_or_404
@@ -320,3 +320,33 @@ def available_trials_view(request):
     }
     
     return render(request, 'accounts/available_trial.html', context)
+@login_required
+def feedback_view(request):
+    if request.method == 'POST':
+        # Capture data from the merged form
+        rating = request.POST.get('rating',0)
+        subject = request.POST.get('subject')
+        category = request.POST.get('category')
+        message = request.POST.get('message')
+
+        if not rating or not subject or not message:
+            messages.error(request, "Please provide a rating, subject, and a detailed message.")
+            # Return to the form with existing data so they don't lose progress
+            return render(request, 'accounts/feedback.html', {
+                'active_tab': 'feedback',
+                'form_data': request.POST 
+            })
+        # Save to database
+        Feedback.objects.create(
+            user=request.user,
+            email=request.user.email,
+            rating=rating,
+            subject=subject,
+            category=category,
+            message=message
+        )
+        
+        messages.success(request, "Feedback submitted successfully! We will get back to you soon.")
+        return redirect('accounts:user_dashboard')
+    
+    return render(request, 'accounts/feedback.html', {'active_tab': 'feedback'})
