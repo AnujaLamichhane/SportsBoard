@@ -14,7 +14,7 @@ from decimal import Decimal
 from django.utils import timezone
 
 # Consolidated Model Imports (Removed 'Application')
-from .models import Event, TicketSale, TicketType, PlayerSelectionForm,KhaltiTransaction,Match,OrganizerProfile
+from .models import Event, TicketSale, TicketType, PlayerSelectionForm,KhaltiTransaction,Match,OrganizerProfile,OrganizerFeedback
 
 # Consolidated Form Imports
 from .forms import (
@@ -689,3 +689,23 @@ def organizer_settings(request):
         'profile': profile,
         'page_title': 'Account & Organizer Settings'
     })
+
+
+@login_required
+@user_passes_test(is_organizer_check)
+def help_feedback(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        f_type = request.POST.get('feedback_type')
+        message = request.POST.get('message')
+
+        OrganizerFeedback.objects.create(
+            organizer=request.user,
+            subject=subject,
+            feedback_type=f_type,
+            message=message
+        )
+        messages.success(request, "Your feedback has been submitted! We will get back to you soon.")
+        return redirect('organizer:dashboard')
+
+    return render(request, 'organizer/help_feedback.html')

@@ -199,3 +199,22 @@ class OrganizerProfile(models.Model):
 
     def __str__(self):
         return f"Settings for {self.user.username}"
+
+
+class OrganizerFeedback(models.Model):
+    FEEDBACK_TYPES = [
+        ('ISSUE', 'Technical Issue'),
+        ('FEATURE', 'Feature Request'),
+        ('HELP', 'General Help'),
+        ('OTHER', 'Other'),
+    ]
+
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=200)
+    feedback_type = models.CharField(max_length=10, choices=FEEDBACK_TYPES, default='HELP')
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.feedback_type}: {self.subject} by {self.organizer.username}"

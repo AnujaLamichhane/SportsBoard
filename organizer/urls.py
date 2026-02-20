@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.organizer_dashboard, name='dashboard'),
     path('all-events/', views.all_events, name='all_events'),
 path('settings/', views.organizer_settings, name='settings'),
+path('help/', views.help_feedback, name='help_feedback'),
     # Event CRUD
     path('events/create/', views.create_event, name='event_create'),
     path('events/<int:event_id>/', views.event_detail, name='event_detail'),
