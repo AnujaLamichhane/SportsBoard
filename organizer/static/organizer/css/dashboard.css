@@ -1,144 +1,8 @@
-/* organizer/static/organizer/css/dashboard.css */
-
+/* --- Imports & Variables --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-body{
-    font-family: "Poppins", sans-serif !important;
-    background-color:var(--bg-color); 
-}  
-
-/* Custom Card for Dark Theme */
-.bg-dark-card {
-    background-color:var(--bg-color) !important;
-    border: 1px solid #333;
-    color:white;
-}
-
-/* Overriding Bootstrap list group items */
-.list-group-item.bg-dark-card {
-    background-color: #1e1e1e !important;
-    border-color: #333 !important;
-}
-/* --- Input Fields (Text, Select, File) --- */
-.form-control, .form-select {
-    /* Use a better looking font (e.g., modern sans-serif like system-ui or fallbacks) */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #fff; /* White text */
-    background-color: #2b2b2b !important; /* Slightly lighter dark background for contrast */
-    border: 1px solid #444; /* Subtle border */
-    border-radius: 4px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.form-control:focus, .form-select:focus {
-    color: #fff;
-    background-color: #333 !important;
-    border-color: #ff9900; /* Focus color matching your warning/accent button */
-    box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25); /* Glow effect */
-}
-/* --- Crispy Forms Labels and Help Text --- */
-label {
-    color: #f0f0f0; /* Near-white label color */
-    font-weight: 500;
-}
-.help-block {
-    color: #aaa; /* Lighter gray for help text */
-    font-size: 0.85rem;
-}
-
-/* Status Tags to match the image */
-.status-tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    color: white;
-}
-.status-live { background-color: #dc3545; } /* Red */
-.status-upcoming { background-color: #ff9900; } /* Orange */
-.status-completed { background-color: #28a745; } /* Green */
-
-/* Payment Status Badges */
-.bg-paid { background-color: #28a745 !important; }
-.bg-pending { background-color: #ffc107 !important; }
-.bg-rejected { background-color: #dc3545 !important; }
-
-/* Custom Button */
-.create-event-btn {
-    background-color: #ff9900 !important;
-    border-color: #ff9900 !important;
-    color: white !important;
-}
-
-.dashboard-container {
-    padding-top: 20px;
-    padding-bottom: 50px;
-}
-/* --- Buttons --- */
-.btn-warning {
-    background-color: #ff9900 !important;
-    border-color: #ff9900 !important;
-    color: #1a1a1a !important; /* Dark text on orange button */
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-.btn-warning:hover {
-    background-color: #cc7a00 !important;
-    border-color: #cc7a00 !important;
-}
-
-/* --- Date Time Picker Icon (If using bootstrap 5) --- */
-.form-control::-webkit-calendar-picker-indicator {
-    filter: invert(1); /* Makes the calendar icon white */
-}
-
-/* Target the delete checkbox input and its label */
-.formset-item .form-check {
-    /* Hides the entire div containing the checkbox and label */
-    display: none;
-}
-
-/* Stat Cards - Equal Height */
-.stat-card {
-min-height: 140px;
-border-radius: 15px;
-padding: 20px;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-background: #1e1e1e;
-color: white;
-}
-
-
-.stat-icon {
-font-size: 30px;
-}
-
-
-.text-small {
-font-size: 13px;
-opacity: 0.8;
-}
-
-
-.bg-dark-card {
-background: #1b1b1b !important;
-border-radius: 15px !important;
-}
-
-
-.create-event-btn,
-.create-form-btn {
-border-radius: 12px;
-font-weight: 500;
-}
-
-/* --- CSS Variables for Easy Theme Management --- */
 :root {
-    --sb-bg: black;         /* Deeper black for the sidebar */
+    --sb-bg: black;
     --sb-width: 290px;
     --sb-collapsed: 80px;
     --accent-orange: #ff9900;
@@ -146,9 +10,16 @@ font-weight: 500;
     --text-gray: #b0b0b0;
     --hover-bg: #1e1e1e;
     --bg-color: #121212;
+    --dark-input: #2b2b2b;
 }
 
-/* --- Sidebar Base Styling --- */
+/* --- Base Styling --- */
+body {
+    font-family: "Poppins", sans-serif !important;
+    background-color: var(--bg-color);
+}
+
+/* --- Layout & Sidebar --- */
 .gemini-sidebar {
     width: var(--sb-width);
     height: 100vh;
@@ -163,58 +34,26 @@ font-weight: 500;
     z-index: 1000;
 }
 
-/* Sidebar Header */
-.sidebar-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 15px;
-    margin-bottom: 0;
-    overflow: hidden;
-    height: 70px;
-}
 .main-content {
-    margin-left: 260px; /* Must match the sidebar width exactly */
-    width: calc(100% - 260px); /* Fill the remaining width */
+    margin-left: 260px;
+    width: calc(100% - 260px);
     padding: 2rem;
     min-height: 100vh;
 }
 
-.menu-toggle-btn {
-    font-size: 20px;
-    color: var(--text-gray);
-    cursor: pointer;
-    min-width: 45px;
-    height: 45px;
+.sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    transition: all 0.2s;
-    margin: 0;
-    padding: 0;
-    line-height: 1;
-}
-
-.menu-toggle-btn:hover {
-    background-color: var(--hover-bg);
-    color: white;
+    height: 70px;
+    padding: 0 15px;
 }
 
 .brand-name {
     color: white;
     font-weight: 700;
     font-size: 1.15rem;
-    white-space: nowrap;
     margin-left: 10px;
     letter-spacing: 0.5px;
-    transition: opacity 0.2s;
-}
-
-/* Menu Items */
-.sidebar-menu {
-    flex: 1;
 }
 
 .menu-item {
@@ -225,15 +64,7 @@ font-weight: 500;
     color: var(--text-gray);
     border-radius: 12px;
     margin-bottom: 8px;
-    white-space: nowrap;
     transition: all 0.2s ease;
-}
-
-.menu-item i {
-    font-size: 18px;
-    min-width: 25px;
-    margin-right: 15px;
-    text-align: center;
 }
 
 .menu-item:hover {
@@ -242,144 +73,25 @@ font-weight: 500;
 }
 
 .menu-item.active {
-    background-color: rgba(255, 153, 0, 0.1); /* Subtle orange glow */
-    color: var(--accent-orange);
-    font-weight: 600;
-}
-
-.menu-item.active i {
+    background-color: rgba(255, 153, 0, 0.1);
     color: var(--accent-orange);
 }
 
-.sidebar-divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, #333, transparent);
-    margin: 20px 0;
+/* --- Forms & Inputs --- */
+.form-control, .form-select {
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+    background-color: var(--dark-input) !important;
+    border: 1px solid #444;
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* --- Badge Styling --- */
-.menu-item .badge {
-    padding: 5px 8px;
-    font-size: 0.7rem;
-    font-weight: 600;
-}
-
-/* --- Footer Section --- */
-.sidebar-footer {
-    padding-top: 10px;
-    border-top: 1px solid #222;
-}
-
-
-/* --- COLLAPSED STATE LOGIC --- */
-.sidebar-collapsed {
-    width: var(--sb-collapsed);
-    padding: 15px 10px;
-}
-
-.sidebar-collapsed .menu-label, 
-.sidebar-collapsed .brand-name {
-    opacity: 0;
-    pointer-events: none;
-    width: 0;
-    margin: 0;
-}
-
-.sidebar-collapsed .menu-item {
-    justify-content: center;
-    padding: 12px 0;
-}
-
-.sidebar-collapsed .menu-item i {
-    margin-right: 0;
-    font-size: 20px;
-}
-
-.sidebar-collapsed .sidebar-header {
-    justify-content: center;
-}
-
-/* search in all events */
-.search-input {
-    width: 300px;
-    border-radius: 20px; 
-    font-size: 0.9rem;
-    color: #f0f0f0;
-    transition: all 0.3s ease;
-    background-color: #25282b !important; /* Darker than the body background */
-}
-#searchInput::placeholder {
-    color: #ffffff !important;
-    opacity: 1 !important; /* Browsers make placeholders transparent by default; this fixes it */
-}
-.input-group-text i.fa-search {
-    color: #ffffff !important;
-}
-.search-input::placeholder {
-    color: #bbbbbb!important; /* Light gray for the placeholder */
-    opacity: 1; 
-}
-.search-input:focus {
-    width: 350px; /* Slightly expands on focus */
-    border-color: #ffc107; /* Highlight with your theme yellow */
-    box-shadow: 0 0 8px rgba(255, 193, 7, 0.2);
-    outline: none;
-}
-
-.search-container i {
-    z-index: 10;
-}
-.clear-search {
-    z-index: 5;
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.clear-search:hover {
-    color: #ffc107 !important; /* Your theme yellow */
-}
-
-/* Ensure padding on the right so text doesn't go under the X */
-.form-control.pe-5 {
-    padding-right: 2.5rem !important;
-}
-
-/* Remove the default browser "X" for type="search" if you use it */
-input[type="search"]::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-}
-
-/* published form */
-.table-dark {
-    background-color: #25282b !important;
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-.table thead th {
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    border-bottom: 1px solid #3d4144 !important;
-}
-
-.table td {
-    vertical-align: middle;
-    border-color: #3d4144 !important;
-}
-
-.btn-khalti {
-    background-color: #5d2e8e; /* Khalti Purple */
-    color: white;
-    border: none;
-}
-.btn-khalti:hover {
-    background-color: #4c2575;
-    color: white;
+.form-control:focus, .form-select:focus {
+    color: #fff;
+    background-color: #333 !important;
+    border-color: var(--accent-orange);
+    box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25);
 }
 
 label, .control-label, .form-label {
@@ -389,8 +101,98 @@ label, .control-label, .form-label {
 }
 
 .form-text, .help-block, .text-muted {
-    color: #aaaaaa !important; /* Light gray for readability on black */
+    color: #aaaaaa !important;
     font-size: 0.85rem;
-    display: block;
-    margin-top: 0.25rem;
 }
+
+/* --- UI Components (Cards/Buttons) --- */
+.bg-dark-card {
+    background: #1b1b1b !important;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 15px !important;
+}
+
+.stat-card {
+    min-height: 140px;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #1e1e1e;
+}
+
+.btn-warning {
+    background-color: var(--accent-orange) !important;
+    border-color: var(--accent-orange) !important;
+    color: #1a1a1a !important;
+    font-weight: bold;
+}
+
+.btn-khalti {
+    background-color: #5d2e8e;
+    color: white;
+    border: none;
+}
+
+/* --- Status Badges --- */
+.status-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+.status-live { background-color: #dc3545; }
+.status-upcoming { background-color: var(--accent-orange); }
+.status-completed { background-color: #28a745; }
+
+/* --- Settings Circular Preview Section --- */
+
+/* 1. Hide messy Django default FileField labels & Clear checkboxes */
+.logo-upload-wrapper .clearablefileinput label,
+.logo-upload-wrapper .clearablefileinput a,
+.logo-upload-wrapper .form-check,
+.logo-upload-wrapper br {
+    display: none !important;
+}
+
+/* 2. Style the circular preview container */
+.logo-preview-container {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--accent-blue);
+    background: #25282b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.logo-preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 3. Hide the extra asterisk on the logo field */
+.logo-upload-wrapper .asteriskField {
+    display: none;
+}
+
+/* 4. Ensure the actual input sits clean inside the wrapper */
+.custom-file-input-container label {
+    display: none !important;
+}
+
+/* --- Helper Classes --- */
+.sidebar-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #333, transparent);
+    margin: 20px 0;
+}
+
+

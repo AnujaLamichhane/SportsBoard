@@ -1,7 +1,6 @@
 {% extends "organizer/sidebar.html" %}
 {% load crispy_forms_tags %}
 
-
 {% block content %}
 <div class="container-fluid">
     <h2 class="text-white mb-4">Account Settings</h2>
@@ -10,106 +9,207 @@
         <div class="card-header border-secondary bg-transparent">
             <ul class="nav nav-pills card-header-pills" id="settingsTab" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active text-white" data-bs-toggle="pill" data-bs-target="#profile-tab">Organization Profile</button>
+                    <button class="nav-link active text-white" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#profile-tab" type="button">1. Organization Profile</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#security-tab">Gate Security</button>
+                    <button class="nav-link text-white" id="pills-security-tab" data-bs-toggle="pill" data-bs-target="#security-tab" type="button">2. Gate Security</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#payment-tab">Payments (Khalti)</button>
+                    <button class="nav-link text-white" id="pills-payment-tab" data-bs-toggle="pill" data-bs-target="#payment-tab" type="button">3. Payments & Docs</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#submit-request-tab">Submit Request</button>
+                    <button class="nav-link text-white" id="pills-submit-tab" data-bs-toggle="pill" data-bs-target="#submit-request-tab" type="button">4. Final Submission</button>
                 </li>
             </ul>
         </div>
 
         <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
+            {% if form.errors %}
+            <div class="alert alert-danger bg-danger bg-opacity-10 border-danger text-danger border-start border-4 mb-4">
+                <h6 class="fw-bold"><i class="fas fa-exclamation-circle me-2"></i>Please fix the following:</h6>
+                <ul class="mb-0 small">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" id="wizardForm">
                 {% csrf_token %}
 
-
-
                 <div class="tab-content">
-
                     <div class="tab-pane fade show active" id="profile-tab">
                         <div class="row">
                             <div class="col-md-6">{{ form.organization_name|as_crispy_field }}</div>
-                            <div class="col-md-6">{{ form.organization_logo|as_crispy_field }}</div>
-
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-white">Organization Logo</label>
+                                <div class="d-flex align-items-center gap-3 logo-upload-wrapper">
+                                    <div class="logo-preview-container">
+                                        {% if profile.organization_logo %}
+                                            <img id="logo-preview" src="{{ profile.organization_logo.url }}" alt="Logo">
+                                        {% else %}
+                                            <img id="logo-preview" src="https://via.placeholder.com/90?text=Logo" alt="Placeholder">
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1 custom-file-input-container">
+                                        {{ form.organization_logo|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row">
-
-        <div class="col-md-6">{{ form.contact_email|as_crispy_field }}</div>
-        <div class="col-md-6">{{ form.contact_phone|as_crispy_field }}</div>
-    </div>
-
+                        <div class="row mt-3">
+                            <div class="col-md-6">{{ form.contact_email|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.contact_phone|as_crispy_field }}</div>
+                        </div>
                         {{ form.address|as_crispy_field }}
                         {{ form.bio|as_crispy_field }}
 
+                        <div class="mt-4 border-top border-secondary pt-3 text-end">
+                            <button type="button" class="btn btn-info px-4 fw-bold next-step">
+                                Next: Security <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
                     </div>
 
-
-
                     <div class="tab-pane fade" id="security-tab">
-                        <div class="alert alert-info bg-info bg-opacity-10 border-info text-info small">
-                            <i class="fas fa-info-circle me-1"></i> Configure how your QR scanner behaves during live events.
+                        <div class="alert alert-info bg-info bg-opacity-10 border-info text-info small mb-4">
+                            <i class="fas fa-info-circle me-1"></i> These settings affect your live event QR scanning.
                         </div>
                         {{ form.enable_scanner_sound|as_crispy_field }}
                         {{ form.auto_submit_scan|as_crispy_field }}
+
+                        <div class="mt-4 border-top border-secondary pt-3 d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary prev-step">Back</button>
+                            <button type="button" class="btn btn-info px-4 fw-bold next-step">
+                                Next: Payments <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="tab-pane fade" id="payment-tab">
-                        {{ form.khalti_merchant_id|as_crispy_field }}
-                        {{ form.tax_percentage|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-md-8">{{ form.khalti_merchant_id|as_crispy_field }}</div>
+                            <div class="col-md-4">{{ form.tax_percentage|as_crispy_field }}</div>
+                        </div>
 
-                        <div class="mt-4 p-3 border border-secondary rounded">
-            <h5 class="text-info"><i class="fas fa-file-upload me-2"></i>Verification Documents</h5>
-            <p class="text-white-50 small">Upload your registration certificate or citizenship for admin review.</p>
-            {{ form.certificate|as_crispy_field }}
-        </div>
+                        <div class="mt-4 p-3 border border-secondary rounded bg-dark">
+                            <h5 class="text-info small fw-bold mb-2">Legal Verification</h5>
+                            <p class="text-white-50 small mb-3">Upload your registration certificate or citizenship for Admin review.</p>
+                            {{ form.certificate|as_crispy_field }}
+                        </div>
 
+                        <div class="mt-4 border-top border-secondary pt-3 d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary prev-step">Back</button>
+                            <button type="submit" class="btn btn-warning px-5 fw-bold shadow">
+                                <i class="fas fa-save me-2"></i> Save & Continue
+                            </button>
+                        </div>
                     </div>
 
-
                     <div class="tab-pane fade" id="submit-request-tab">
-                        <div class="text-center py-4">
+                        <div class="text-center py-5">
                             {% if profile.verification_status == 'none' %}
                                 {% if completion_percentage == 100 %}
-                                    <i class="fas fa-file-signature fa-3x text-info mb-3"></i>
-                                    <h4 class="text-white">Ready for Verification</h4>
-                                    <p class="text-white-50">Your profile is 100% complete. Submit it now for admin approval.</p>
+                                    <div class="animate__animated animate__pulse animate__infinite">
+                                        <i class="fas fa-file-signature fa-4x text-info mb-3"></i>
+                                    </div>
+                                    <h4 class="text-white">Profile 100% Complete!</h4>
+                                    <p class="text-white-50 mb-4">Your details are saved. Click below to send your profile for Admin verification.</p>
                                     <button type="button"
                                             onclick="window.location.href='{% url 'organizer:submit_verification' %}'"
-                                            class="btn btn-info px-5 fw-bold text-dark">
-                                        Submit Verification Request
+                                            class="btn btn-info btn-lg px-5 fw-bold text-dark shadow-lg">
+                                        SUBMIT FOR VERIFICATION
                                     </button>
                                 {% else %}
                                     <i class="fas fa-lock fa-3x text-secondary mb-3"></i>
                                     <h4 class="text-white">Profile Incomplete</h4>
-                                    <p class="text-white-50">You must complete your profile (Currently {{ completion_percentage }}%) before you can request verification.</p>
-                                    <div class="progress bg-dark mb-3" style="height: 12px; max-width: 400px; margin: 0 auto; border: 1px solid #444;">
+                                    <p class="text-white-50">You are at {{ completion_percentage }}%. Please complete all steps to unlock the submission button.</p>
+                                    <div class="progress bg-dark mb-4" style="height: 12px; max-width: 400px; margin: 0 auto; border: 1px solid #444;">
                                         <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" style="width: {{ completion_percentage }}%"></div>
                                     </div>
                                 {% endif %}
                             {% elif profile.verification_status == 'pending' %}
-                                <i class="fas fa-user-clock fa-3x text-warning mb-3"></i>
-                                <h4 class="text-white">Request Pending</h4>
-                                <p class="text-white-50">Our admins are currently reviewing your organization details.</p>
+                                <i class="fas fa-user-clock fa-4x text-warning mb-3"></i>
+                                <h4 class="text-white">Verification Pending</h4>
+                                <p class="text-white-50">Admin is currently reviewing your profile. You will be notified once approved.</p>
                             {% elif profile.is_verified %}
-                                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
-                                <h4 class="text-success fw-bold">Verified Organizer</h4>
-                                <p class="text-white-50">Your account is fully verified. Your badge is now active.</p>
+                                <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                                <h4 class="text-success fw-bold">Successfully Verified</h4>
+                                <p class="text-white-50">Your account is fully active. You can now host events and sell tickets.</p>
                             {% endif %}
                         </div>
+                        <div class="mt-4 border-top border-secondary pt-3">
+                            <button type="button" class="btn btn-outline-secondary prev-step">Back to Payments</button>
+                        </div>
                     </div>
-                </div>
-
-                <div class="mt-4 border-top border-secondary pt-3">
-                    <button type="submit" class="btn btn-warning px-5 fw-bold shadow">Save Settings</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. Logo Preview Logic ---
+        const logoInput = document.querySelector('input[type="file"][name="organization_logo"]');
+        const logoPreview = document.getElementById('logo-preview');
+
+        if (logoInput) {
+            logoInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        logoPreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // --- 2. Tab Switching Logic ---
+        const nextBtns = document.querySelectorAll('.next-step');
+        const prevBtns = document.querySelectorAll('.prev-step');
+
+        nextBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const activeLink = document.querySelector('.nav-link.active');
+                const nextTabLink = activeLink.parentElement.nextElementSibling?.querySelector('button');
+                if (nextTabLink) {
+                    bootstrap.Tab.getOrCreateInstance(nextTabLink).show();
+                }
+            });
+        });
+
+        prevBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const activeLink = document.querySelector('.nav-link.active');
+                const prevTabLink = activeLink.parentElement.previousElementSibling?.querySelector('button');
+                if (prevTabLink) {
+                    bootstrap.Tab.getOrCreateInstance(prevTabLink).show();
+                }
+            });
+        });
+
+        // --- 3. Persistence Logic ---
+        document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(btn => {
+            btn.addEventListener('shown.bs.tab', (e) => {
+                localStorage.setItem('activeSettingsTab', e.target.getAttribute('data-bs-target'));
+            });
+        });
+
+        let savedTab = localStorage.getItem('activeSettingsTab');
+        if (savedTab) {
+            let targetEl = document.querySelector(`button[data-bs-target="${savedTab}"]`);
+            if (targetEl) {
+                bootstrap.Tab.getOrCreateInstance(targetEl).show();
+            }
+        }
+    });
+</script>
 {% endblock %}

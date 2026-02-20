@@ -247,36 +247,36 @@ class OrganizerSettingsForm(forms.ModelForm):
         # placing fields in tabs in your HTML template.
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.layout = Layout(
-            # Tab 1: General Profile
-            Div(
-                HTML("<h4 class='text-primary border-bottom pb-2 mb-3'>Organization Profile</h4>"),
-                Row(
-                    Column('organization_name', css_class='col-md-6'),
-                    Column('organization_logo', css_class='col-md-6'),
-                ),
-                Row(
-                    Column('contact_email', css_class='col-md-6'),
-                    Column('contact_phone', css_class='col-md-6'),
-                ),
-                'bio',
-                css_id='settings-general'
-            ),
-            # Tab 2: Security & Finance
-            Div(
-                HTML("<h4 class='text-primary border-bottom pb-2 mb-3 mt-4'>Gate & Finance</h4>"),
-                Row(
-                    Column(InlineRadios('enable_scanner_sound'), css_class='col-md-6'),
-                    Column(InlineRadios('auto_submit_scan'), css_class='col-md-6'),
-                ),
-                Row(
-                    Column('khalti_merchant_id', css_class='col-md-8'),
-                    Column('tax_percentage', css_class='col-md-4'),
-                ),
-                Row(
-                    Column('email_notifications', css_class='col-md-6'),
-                    Column('daily_summary_report', css_class='col-md-6'),
-                ),
-                css_id='settings-security'
-            )
-        )
+        # self.helper.layout = Layout(
+        #     # Tab 1: General Profile
+        #     Div(
+        #         HTML("<h4 class='text-primary border-bottom pb-2 mb-3'>Organization Profile</h4>"),
+        #         Row(
+        #             Column('organization_name', css_class='col-md-6'),
+        #             Column('organization_logo', css_class='col-md-6'),
+        #         ),
+        #         Row(
+        #             Column('contact_email', css_class='col-md-6'),
+        #             Column('contact_phone', css_class='col-md-6'),
+        #         ),
+        #         'bio',
+        #         css_id='settings-general'
+        #     ),
+        #     # Tab 2: Security & Finance
+        #     Div(
+        #         HTML("<h4 class='text-primary border-bottom pb-2 mb-3 mt-4'>Gate & Finance</h4>"),
+        #         Row(
+        #             Column(InlineRadios('enable_scanner_sound'), css_class='col-md-6'),
+        #             Column(InlineRadios('auto_submit_scan'), css_class='col-md-6'),
+        #         ),
+        #         Row(
+        #             Column('khalti_merchant_id', css_class='col-md-8'),
+        #             Column('tax_percentage', css_class='col-md-4'),
+        #         ),
+        #         Row(
+        #             Column('email_notifications', css_class='col-md-6'),
+        #             Column('daily_summary_report', css_class='col-md-6'),
+        #         ),
+        #         css_id='settings-security'
+        #     )
+        # )

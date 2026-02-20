@@ -674,9 +674,10 @@ def review_athlete_profile(request, pk):
 @login_required
 @user_passes_test(is_organizer_check)
 def organizer_settings(request):
-    # Get the profile or create one if it doesn't exist yet
+    # Get the profile or create one
     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
 
+    # 1. Define fields for completion calculation
     essential_fields = [
         profile.organization_name,
         profile.organization_logo,
@@ -690,12 +691,15 @@ def organizer_settings(request):
     completion_percentage = int((completed / len(essential_fields)) * 100)
 
     if request.method == 'POST':
-        # Pass request.FILES for the organization logo upload
         form = OrganizerSettingsForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Settings updated successfully!")
-            return redirect('organizer:settings')
+
+            # 2. Redirect specifically to the SUBMIT tab after saving
+            # This ensures that after 'Save & Continue', the user sees the Submit button
+            base_url = reverse('organizer:settings')
+            return redirect(f"{base_url}?tab=submit-request-tab")
     else:
         form = OrganizerSettingsForm(instance=profile)
 
@@ -705,6 +709,8 @@ def organizer_settings(request):
         'completion_percentage': completion_percentage,
         'page_title': 'Account & Organizer Settings'
     })
+
+
 
 
 @login_required
@@ -728,6 +734,7 @@ def help_feedback(request):
 
 
 @login_required
+@user_passes_test(is_organizer_check)
 def submit_verification(request):
     profile = get_object_or_404(OrganizerProfile, user=request.user)
     # If they were rejected, allow them to reset to 'none' to try again
