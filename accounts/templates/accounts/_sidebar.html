@@ -1,4 +1,4 @@
-<aside style="width: 280px; background: var(--nav-bg); padding: 2.5rem 1.5rem; border-right: 1px solid rgba(128,128,128,0.9); display: flex; flex-direction: column; min-height: 100vh; flex-shrink: 0;">
+<aside style="width: 280px;;max-width: 280px; background: var(--nav-bg); padding: 2.5rem 1.5rem; border-right: 1px solid rgba(128,128,128,0.9); display: flex; flex-direction: column; min-height: 100vh; flex-shrink: 0;">
     <div style="text-align: center; margin-bottom: 2.5rem;">
         <div style="position: relative; display: inline-block;">
             <img src="{{ request.user.profile.profile_url }}" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-color); padding: 3px; background: var(--bg-color);">
@@ -13,10 +13,10 @@
         </a>
     </div>
 
-    <nav style="display: flex; flex-direction: column; gap: 8px;">
+    <nav style="display: flex; flex-direction: column; gap: 9px;">
         <a href="{% url 'accounts:user_dashboard' %}" 
             class="nav-link {% if request.resolver_match.url_name == 'user_dashboard' %}active{% endif %}">
-            <span style="font-size: 1.1rem;">🏠</span>
+            <span style="font-size: 1.3rem;">🏠</span>
             <span> Overview</span>
         </a>
         <a href="{% url 'accounts:available_trials' %}" class="nav-link {% if request.resolver_match.url_name == 'available_trials' %}active{% endif %}">
@@ -25,12 +25,17 @@
         </a>
         <a href="{% url 'accounts:my_trials' %}" 
             class="nav-link {% if request.resolver_match.url_name == 'my_trials' %}active{% endif %}">
-                        <span style="font-size: 1.1rem;">🏅</span> 
+            <span style="font-size: 1.3rem;">🏅</span> 
             <span>My Trials</span>
         </a>
         <!-- <a href="#" class="nav-link">
             <span style="font-size: 1.1rem;">⚙️</span> 
             <span>Settings</span>
         </a> -->
+        <a href="{% url 'accounts:feedback' %}" 
+            class="nav-link {% if request.resolver_match.url_name == 'feedback' %}active{% endif %}">
+                <i class="fas fa-comment-dots me-2" style="font-size: 1.3rem;"></i>
+                <span>Review & Feedback</span>
+        </a>
     </nav>
 </aside>

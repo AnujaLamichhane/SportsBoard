@@ -1,0 +1,122 @@
+/* Container Spacing */
+.feedback-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 20px;
+}
+
+.feedback-page .stat-flebel{
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: red;
+}
+
+/* Static Card Styling */
+.feedback-card-static {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    animation: none !important; /* No pulsing */
+}
+
+.feedback-section {
+    margin-bottom: 20px;
+}
+
+/* Input Styling to match dashboard */
+.custom-input {
+    width: 100%;
+    padding: 12px 15px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    margin-top: 5px;
+    transition: border-color 0.2s;
+}
+
+.custom-input:focus {
+    outline: none;
+    border-color: #ff8c00;
+    background: #fff;
+}
+
+/* Orange Submit Button */
+.btn-submit-orange {
+    width: 100%;
+    background: #ff8c00;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-submit-orange:hover {
+    background: #e67e00;
+}
+
+/* Star Rating */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 5px;
+}
+.star-rating input { display: none; }
+.star-rating label {
+    font-size: 28px;
+    color: #cbd5e0;
+    cursor: pointer;
+}
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    color: #ff8c00;
+}
+
+/* Emergency Alert */
+.emergency-alert {
+    margin-top: 25px;
+    background: #e0f2f1;
+    color: #00695c;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Merged Header Style - Increased Sizes */
+.main-title {
+    font-size: 2rem;          /* Increased from 1.6rem */
+    font-weight: 800;            /* Extra bold for emphasis */
+    color: #1a202c;              /* Slightly darker for better contrast */
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;      /* Tighter, professional look */
+    text-align: center;
+}
+
+.subtitle {
+    color: #4a5568;              /* Darker gray for better readability */
+    font-size: 1.15rem;          /* Increased from 0.95rem */
+    line-height: 1.6;
+    max-width: 850px;            /* Slightly wider to accommodate larger text */
+    margin-top: 5px;
+    font-weight: 400;
+    text-align: center;
+}
+
+/* Ensure the card spacing stays consistent */
+.section-header-main {
+    margin-bottom: 45px;         /* Increased gap for the larger font */
+}
