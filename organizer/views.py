@@ -40,6 +40,8 @@ def organizer_dashboard(request):
     # NEW: Fetch or create organizer profile for branding/settings
     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
 
+    # Check for rejection status to trigger the alert
+    is_rejected = profile.verification_status == 'rejected'
     # --- PROFILE COMPLETION LOGIC ---
     # Define fields that you consider "essential" for a complete profile
     essential_fields = [
@@ -73,6 +75,7 @@ def organizer_dashboard(request):
     upcoming_count = organizer_events.filter(date_time__gt=now).count()
     context = {
         'profile': profile,
+        'is_rejected': is_rejected,
         'completion_percentage': completion_percentage,  # Pass this to template
         'total_revenue': total_revenue,
         'total_revenue': total_revenue,
@@ -671,24 +674,43 @@ def review_athlete_profile(request, pk):
 @login_required
 @user_passes_test(is_organizer_check)
 def organizer_settings(request):
-    # Get the profile or create one if it doesn't exist yet
+    # Get the profile or create one
     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
 
+    # 1. Define fields for completion calculation
+    essential_fields = [
+        profile.organization_name,
+        profile.organization_logo,
+        profile.contact_email,
+        profile.contact_phone,
+        profile.address,
+        profile.bio,
+        profile.certificate
+    ]
+    completed = len([f for f in essential_fields if f])
+    completion_percentage = int((completed / len(essential_fields)) * 100)
+
     if request.method == 'POST':
-        # Pass request.FILES for the organization logo upload
         form = OrganizerSettingsForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Settings updated successfully!")
-            return redirect('organizer:settings')
+
+            # 2. Redirect specifically to the SUBMIT tab after saving
+            # This ensures that after 'Save & Continue', the user sees the Submit button
+            base_url = reverse('organizer:settings')
+            return redirect(f"{base_url}?tab=submit-request-tab")
     else:
         form = OrganizerSettingsForm(instance=profile)
 
     return render(request, 'organizer/settings.html', {
         'form': form,
         'profile': profile,
+        'completion_percentage': completion_percentage,
         'page_title': 'Account & Organizer Settings'
     })
+
+
 
 
 @login_required
@@ -709,3 +731,34 @@ def help_feedback(request):
         return redirect('organizer:dashboard')
 
     return render(request, 'organizer/help_feedback.html')
+
+
+@login_required
+@user_passes_test(is_organizer_check)
+def submit_verification(request):
+    profile = get_object_or_404(OrganizerProfile, user=request.user)
+    # If they were rejected, allow them to reset to 'none' to try again
+    if profile.verification_status == 'rejected' and request.GET.get('action') == 'reset':
+        profile.verification_status = 'none'
+        profile.save()
+        messages.info(request, "Profile status reset. You can now update your details.")
+        return redirect('organizer:settings')
+    # Check if 100% complete before allowing submission
+    essential_fields = [
+        profile.organization_name, profile.organization_logo,
+        profile.contact_phone,
+        profile.contact_email,
+        profile.address,
+        profile.certificate,
+
+        profile.khalti_merchant_id, profile.bio
+    ]
+
+    if all(essential_fields):
+        profile.verification_status = 'pending'
+        profile.save()
+        messages.success(request, "Verification request sent to Admin!")
+    else:
+        messages.error(request, "Please fill all details before submitting.")
+
+    return redirect('organizer:settings')

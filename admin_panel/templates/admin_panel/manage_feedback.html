@@ -3,26 +3,120 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'admin_panel/css/adashboard.css' %}">
-    
+    <link rel="stylesheet" href="{% static 'admin_panel/css/organizer_requests.css' %}">
+    <style>
+        /* Status-specific colors to match your theme */
+        .badge-status.resolved { background-color: #d1e7dd; color: #0f5132; }
+        .badge-status.pending { background-color: #fff3cd; color: #856404; }
+        .msg-preview { display: block; font-size: 0.85rem; color: #6c757d; margin-top: 4px; line-height: 1.4; }
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid dashboard-page">
     <div class="flex-main-dwrapper" id="adminWrapper">
-        
+
         {% include 'admin_panel/components/_sidebar.html' %}
 
         <div class="dsection-right">
-            <!-- write here -->
-        </div>
+            <div class="content-container p-4">
 
+                <div class="request-header d-flex justify-content-between align-items-center mb-5">
+                    <div>
+                        <h2 class="fw-bold text-dark mb-1">Reviews & Feedback</h2>
+                        <p class="text-muted">You have <strong>{{ unresolved_count }}</strong> pending feedback items requiring attention.</p>
+                    </div>
+
+                    <div class="header-actions d-flex gap-3">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="feedbackSearch" placeholder="Search by user or subject...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+
+
+
+
+<table class="requests-table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>User Type</th>
+            <th>Category</th>
+            <th>Subject & Message</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="feedbackTableBody">
+        {% for f in feedbacks %}
+        <tr class="request-row">
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="avatar-box bg-soft-orange">{{ f.organizer.username|slice:":2"|upper }}</div>
+                    <span class="fw-bold ms-3">{{ f.organizer.username }}</span>
+                </div>
+            </td>
+            <td>
+                {% if f.organizer.organizer_profile %}
+                    <span class="bg-primary-soft">Organizer</span>
+                {% else %}
+                    <span class="bg-info-soft">Athlete</span>
+                {% endif %}
+            </td>
+            <td>
+                <span class="badge bg-light text-dark border small">
+                    {{ f.get_feedback_type_display }}
+                </span>
+            </td>
+            <td style="max-width: 400px;">
+                <span class="fw-bold d-block">{{ f.subject }}</span>
+                <span class="msg-preview text-muted">{{ f.message|truncatechars:120 }}</span>
+                <small class="text-muted italic">{{ f.created_at|date:"M d, Y" }}</small>
+            </td>
+            <td>
+                {% if f.is_resolved %}
+                    <span class="badge-status resolved">Resolved</span>
+                {% else %}
+                    <span class="badge-status pending">Pending</span>
+                {% endif %}
+            </td>
+            <td>
+                <div class="d-flex justify-content-end gap-2">
+                    {% if not f.is_resolved %}
+                    <a href="{% url 'admin_panel:resolve_feedback' f.pk %}" class="btn-action btn-check" title="Mark as Resolved">
+                        <i class="fas fa-check"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center py-5 text-muted">No feedback found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // Security Guard: Check Admin Session
-    if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
-        window.location.href = "{% url 'admin_panel:login' %}";
-    }
+    $(document).ready(function() {
+        $("#feedbackSearch").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#feedbackTableBody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
 </script>
 {% endblock %}

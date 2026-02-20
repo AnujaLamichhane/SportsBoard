@@ -29,39 +29,50 @@
                     </form>
                 </div>
 
+
                 <div class="table-wrapper">
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Email Address</th>
-                                <th>Date Joined</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in users %}
-                            <tr>
-                                <td class="username-text">{{ user.username }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>{{ user.date_joined|date:"M d, Y" }}</td>
-                                <td>
-                                    <span class="status-badge status-active">Active</span>
-                                </td>
-                                <td>
-                                    <form action="{% url 'admin_panel:delete_user' user.id %}" method="POST" onsubmit="return confirm('Delete this user forever?');">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn-delete-action">
-                                            <i class="fa-solid fa-trash-can"></i> Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>User Type</th> <th>Email Address</th>
+                <th>Date Joined</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td class="username-text">{{ user.username }}</td>
+                <td>
+                    {% if user.is_superuser or user.is_staff %}
+                        <span class="badge bg-dark text-white p-1 px-2" style="font-size: 0.75rem; border-radius: 4px;">Admin</span>
+                    {% elif user.organizer_profile %}
+                        <span class="bg-primary-soft">Organizer</span>
+                    {% else %}
+                        <span class="bg-info-soft">Athlete</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.email|default:"No Email" }}</td>
+                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    <span class="status-badge status-active">Active</span>
+                </td>
+                <td>
+                    <form action="{% url 'admin_panel:delete_user' user.id %}" method="POST" onsubmit="return confirm('Delete this user forever?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete-action">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
             </div>
 
         </div>
