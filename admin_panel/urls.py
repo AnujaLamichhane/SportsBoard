@@ -9,4 +9,6 @@ urlpatterns = [
     path('organizer-requests/', views.organizer_requests, name='organizer_requests'), # Add this
     path('manage-users/', views.manage_users, name='manage_users'),
     path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('feedback/', views.manage_feedback, name='manage_feedback'),
+
 ]

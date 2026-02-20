@@ -41,3 +41,9 @@ def delete_user(request, user_id):
         user.delete()
         messages.success(request, f"User {user.username} has been deleted.")
     return redirect('admin_panel:manage_users')
+
+from organizer.models import OrganizerFeedback
+
+def manage_feedback(request):
+    feedbacks = OrganizerFeedback.objects.all().order_by('-created_at')
+    return render(request, 'admin_panel/manage_feedback.html', {'feedbacks': feedbacks})
