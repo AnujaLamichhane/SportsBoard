@@ -1,0 +1,129 @@
+{% extends 'accounts/user_dashboard.html' %}
+{% load static %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/available_trial.css' %}">
+{% endblock %}
+{% block athlete_dashboard_content %}
+<div class="available-trials-page">
+    <header class="section-header-main mb-4">
+        <h2 class="main-title">🚀 Available Selection Trials</h2>
+        <p class="subtitle">Discover and apply for upcoming sports trials in your region.</p>
+    </header>
+
+    <div class="stats-grid mb-4">
+        <div class="stat-card">
+            <div class="stat-icon" style="color: #4a5568;"><i class="fas fa-trophy"></i></div>
+            <div class="stat-content">
+                <p class="stat-alabel">Total Trials</p>
+                <h2 class="stat-value-primary">{{ available_forms.count }}</h2>
+            </div>
+        </div>
+        <div class="stat-card">
+           <div class="stat-icon" style="color: #ff8c00;">
+            <i class="fas fa-running"></i>
+            </div>
+            <div class="stat-content">
+                <p class="stat-alabel">Available for You</p>
+                <h2 class="stat-value-secondary" style="color: #ff8c00;">{{ available_count }}</h2>
+            </div>
+            <small class="stat-meta">New opportunities</small>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="color: #e53e3e;">
+            <i class="fas fa-history"></i>
+            </div>
+            <div class="stat-content">
+                <p class="stat-alabel">Closed / Expired</p>
+                <h2 class="stat-value-primary" style="color: #e53e3e;">{{ expired_count }}</h2>
+            </div>
+            <small class="stat-meta">No longer accepting</small>
+        </div>
+    </div>
+
+    <div class="search-section-wrapper mb-4">
+        <form action="" method="GET" class="search-form-inline" style="display: flex; max-width: 500px;">
+            <input type="text" name="search" placeholder="Search by event name..." 
+                   value="{{ request.GET.search }}" 
+                   style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px 0 0 8px;">
+            <button type="submit" class="btn-search" 
+                    style="background: #ff8c00; color: white; border: none; padding: 10px 20px; border-radius: 0 8px 8px 0;">
+                Search
+            </button>
+        </form>
+    </div>
+
+    <div class="card-grid">
+        {% for trial in available_forms %}
+        <div class="stat-card trial-item-card" style="padding: 25px; border: 1px solid #eee;">
+            <div class="card-header d-flex justify-content-between">
+                <h4 style="margin: 0;">{{ trial.event_name }}</h4>
+                <span class="badge" style="background: #fff3e6; color: #ff8c00; padding: 4px 8px; border-radius: 5px; font-size: 11px;">
+                    OPEN
+                </span>
+            </div>
+            
+            <div class="card-body-meta mt-3">
+                <p><strong>Sport:</strong> {{ trial.sports }}</p>
+                <p><strong>Level:</strong> {{ trial.get_level_display }}</p>
+                <p><strong>Location:</strong> {{ trial.address|default:"Pokhara 22" }}</p>
+            </div>
+
+            <div class="card-footer-action mt-4" style="border-top: 2px solid #f1f1f1; padding-top: 25px;">
+                <a href="{% url 'organizer:selection_form_create' trial.pk %}" 
+                   style="color: #ff8c00; text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-edit"></i> Fill Application Form
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-data text-center p-5">
+            <p>No new trials available at the moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Select the input using your form's class
+    const searchInput = document.querySelector('.search-form-inline input[name="search"]');
+    // Select all the trial cards using your specific class
+    const trialCards = document.querySelectorAll('.trial-item-card');
+    // Select the "no data" message
+    const noDataMessage = document.querySelector('.no-data');
+
+    searchInput.addEventListener('input', function(e) {
+        const value = e.target.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        trialCards.forEach(card => {
+            // Get text from the H4 (Event name) and metadata (Sport/Location)
+            const cardText = card.textContent.toLowerCase();
+
+            if (cardText.includes(value)) {
+                card.style.display = "block"; 
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        // Handle the "No matches found" message visibility
+        if (noDataMessage) {
+            if (visibleCount === 0 && value !== "") {
+                noDataMessage.style.display = "block";
+                // Update the paragraph text inside no-data
+                noDataMessage.querySelector('p').textContent = `No matches found for "${value}"`;
+            } else if (visibleCount > 0) {
+                noDataMessage.style.display = "none";
+            } else if (value === "") {
+                // Restore original message if input is cleared and list was empty
+                noDataMessage.style.display = "block";
+                noDataMessage.querySelector('p').textContent = "No new trials available at the moment.";
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

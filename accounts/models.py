@@ -42,6 +42,28 @@ class Profile(models.Model):
             return self.image.url
         email_hash = hashlib.md5(self.user.email.strip().lower().encode('utf-8')).hexdigest()
         return f"https://www.gravatar.com/avatar/{email_hash}?d=identicon"
+    
+    # new 2/19
+    def get_profile_strength(self):
+        """Calculates percentage based on filled fields."""
+        # List of fields that determine a 'complete' profile
+        fields_to_check = [
+            self.bio, 
+            self.phone_number, 
+            self.citizenship_no, 
+            self.id_front,
+            self.image
+        ]
+        
+        # Count fields that are not None, not empty strings, and not default
+        filled_fields = 0
+        for f in fields_to_check:
+            if f and str(f).strip() != "" and str(f) != 'default.jpg':
+                filled_fields += 1
+                
+        if not fields_to_check:
+            return 0
+        return int((filled_fields / len(fields_to_check)) * 100)
 
 
 # Signals remain largely the same, but now ensure the profile is ready for role assignment
@@ -65,3 +87,4 @@ def manage_user_profile(sender, instance, created, **kwargs):
         # Check if profile exists before saving to prevent crashes
         if hasattr(instance, 'profile'):
             instance.profile.save()
+

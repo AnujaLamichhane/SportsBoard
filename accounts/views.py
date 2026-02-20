@@ -1,16 +1,21 @@
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponse
 from django.contrib import messages
-from .forms import CustomAuthenticationForm, CustomUserCreationForm
+from .forms import CustomAuthenticationForm, CustomUserCreationForm,UserEditForm,ProfileForm
 from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.providers.google.views import oauth2_login
-from django.contrib.auth.models import Group
 from allauth.account.utils import complete_signup
+from allauth.account.models import EmailAddress
+from django.contrib.auth.models import Group
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from organizer.models import Event, TicketSale,PlayerSelectionForm
 from accounts.models import Profile
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.shortcuts import get_object_or_404
 
 
 @csrf_protect
@@ -153,6 +158,10 @@ def user_dashboard(request):
         'available_forms': available_forms,  # New trials
         'my_submissions': my_submissions,  # Completed apps
         'applied_count': my_submissions.count(),
+        # new 2/19
+        'pending_count': my_submissions.filter(status__iexact='Pending').count(), # Case-insensitive
+        'shortlisted_count': my_submissions.filter(status__iexact='Approved').count(),
+        'profile_strength': profile.get_profile_strength(),
     }
     return render(request, 'accounts/user_dashboard.html', context)
 
@@ -172,8 +181,142 @@ def custom_google_login(request):
     request.session['login_role'] = role
     return oauth2_login(request)
 
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        # 1. Initialize forms with current instances
+        form = UserEditForm(request.POST, request.FILES, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
 
+        if form.is_valid() and profile_form.is_valid():
+            new_email = form.cleaned_data.get('email')
+            old_email = request.user.email  # The email CURRENTLY in the database
 
+            # 2. Save Profile first (Images, bio, etc.)
+            profile_form.save()
 
+            if new_email != old_email:
+                # 3. CRITICAL: Save User info (Names) but DO NOT save the new email yet
+                # We save everything EXCEPT the email field to the User model
+                user = form.save(commit=False)
+                user.email = old_email  # Force it back to the old one
+                user.save() 
 
+                # 4. Trigger Allauth to handle the new email in the background
+                # This sends the link and keeps the new email 'unverified'
+                EmailAddress.objects.add_email(
+                    request, user, new_email, confirm=True
+                )
+                
+                messages.warning(request, f"Profile updated! To change your email to {new_email}, please verify it via the link sent to your inbox.")
+            else:
+                # No email change? Just save the form as usual
+                form.save()
+                messages.success(request, "Profile updated successfully!")
+                
+            return redirect('accounts:edit_profile')
+    else:   
+        form = UserEditForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    
+    return render(request, 'accounts/edit_profile.html', {'form': form , 'profile_form': profile_form})
+@login_required
+def my_trials(request):
+    query = request.GET.get('q')
+    profile, created = Profile.objects.get_or_create(user=request.user)
 
+    applications = PlayerSelectionForm.objects.filter(
+        applicant=request.user,
+        is_published=False
+    )
+
+    if query:
+        applications = applications.filter(event_name__icontains=query)
+
+    context = {
+        'applications': applications,
+        'query': query,
+        'applied_count': applications.count(),
+        'pending_count': applications.filter(status__iexact='Pending').count(),
+        'shortlisted_count': applications.filter(status__iexact='Approved').count(),
+        'profile_strength': profile.get_profile_strength(),
+    }
+
+    return render(request, 'accounts/my_trials.html', context)
+
+def download_trial_pdf(request, pk):
+    # Fetch the specific submission based on ID and current user
+    sub = get_object_or_404(PlayerSelectionForm, pk=pk)
+    
+    template_path = 'accounts/trial_pdf_template.html'
+    context = {
+        'sub': sub,
+        'event_exists': sub.event is not None
+        }
+    
+    # Create a Django response object with PDF content type
+    response = HttpResponse(content_type='application/pdf')
+    # CHANGED: 'inline' opens it in the browser tab first
+    response['Content-Disposition'] = f'inline; filename="Trial_Application_{pk}.pdf"'
+    
+    try:
+        template = get_template(template_path)
+        html = template.render(context)
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        
+        if pisa_status.err:
+            return HttpResponse(f'PDF Error: {pisa_status.err}', status=500)
+        return response
+    except Exception as e:
+        # This will show you the exact error in the browser instead of a 500
+        return HttpResponse(f"System Error: {str(e)}", status=500)
+    
+def trial_detail_view(request, pk):
+    # Fetch the specific application
+    sub = get_object_or_404(PlayerSelectionForm, pk=pk,applicant=request.user)
+    # Render a web page that looks like the PDF preview
+    return render(request, 'accounts/trial_detail_preview.html', {
+        'sub': sub,
+        'active_tab': 'my_trials'
+    })
+
+@login_required
+def available_trials_view(request):
+    # 1. Fetch search query
+    search_query = request.GET.get('search', '')
+    total_published = PlayerSelectionForm.objects.filter(is_published=True)
+    # 2. Get names of trials the user has already applied for (is_published=False)
+    applied_event_names = PlayerSelectionForm.objects.filter(
+        applicant=request.user,
+        is_published=False
+    ).values_list('event_name', flat=True)
+    
+    # 3. FIX: Use 'is_published=True' instead of 'is_active'
+    # available_forms = PlayerSelectionForm.objects.filter(
+    #     is_published=True
+    # ).exclude(event_name__in=applied_event_names)
+    available_forms = total_published.exclude(event_name__in=applied_event_names)
+    
+    # 4. Expired/Unavailable: Published trials that are now closed
+    # We use .filter(is_published=False) excluding the user's own submissions
+    expired_count = PlayerSelectionForm.objects.filter(is_published=False).exclude(applicant=request.user).count()
+    # 4. Search logic
+    if search_query:
+        available_forms = available_forms.filter(event_name__icontains=search_query)
+
+    # 5. Get submissions for sidebar count
+    my_submissions = PlayerSelectionForm.objects.filter(
+        applicant=request.user,
+        is_published=False
+    )
+
+    context = {
+        'available_forms': available_forms,
+        'my_submissions': my_submissions,
+        'search_query': search_query,
+        'total_count': total_published.count(), # Returns '2' as seen in edit
+        'available_count': available_forms.count(),
+        'expired_count': expired_count,
+    }
+    
+    return render(request, 'accounts/available_trial.html', context)

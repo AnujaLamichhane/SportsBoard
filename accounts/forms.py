@@ -4,6 +4,9 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, HTML
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from .models import Profile
 
 User = get_user_model()
 
@@ -69,3 +72,29 @@ class CustomUserCreationForm(UserCreationForm):
         )
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # This adds the current values as placeholders and values
+            for field in self.fields:
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-input',
+                    'placeholder': f'Enter {field.replace("_", " ")}'
+                })
+
+        def clean_email(self):
+            email = self.cleaned_data.get('email')
+            # Check if email is already taken by someone else
+            if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+                raise ValidationError("This email is already registered to another account.")
+            return email
+        
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['image']
