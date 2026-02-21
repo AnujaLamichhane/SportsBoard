@@ -94,7 +94,17 @@ def login_view(request):
 
 
 def dashboard(request):
-    return render(request, 'admin_panel/adashboard.html')
+    # Fetch only the profiles that are waiting for verification
+    pending_profiles = OrganizerProfile.objects.filter(verification_status='pending').order_by('-user__date_joined')
+
+    # You might also want some stats for your dashboard cards
+    context = {
+        'profiles': pending_profiles,
+        'total_users': User.objects.count(),
+        'pending_count': pending_profiles.count(),
+    }
+    return render(request, 'admin_panel/adashboard.html', context)
+    # return render(request, 'admin_panel/adashboard.html')
 
 
 # --- USER MANAGEMENT ---
