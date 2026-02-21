@@ -17,16 +17,31 @@
             <div class="manage-users-container">
                 <div class="page-header">
                     <h2><i class="fa-solid fa-users-gear"></i> Manage Users</h2>
+                    <div class="search-sort-group">
+        <form method="GET" class="search-form" id="searchForm">
+            <input type="text" name="search" id="userSearch" 
+                   placeholder="Search by name or email..." 
+                   value="{{ query|default:'' }}" autocomplete="off">
+            
+            <a href="{% url 'admin_panel:manage_users' %}" class="btn-clear" id="clearBtn">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+
+            <input type="hidden" name="user_type" value="{{ user_type }}">
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+
+        <form method="GET" id="filterForm">
+            <input type="hidden" name="search" value="{{ query }}">
+            
+            <select name="user_type" class="sort-select" onchange="this.form.submit()">
+                <option value="">All Roles</option>
+                <option value="organizer" {% if user_type == 'organizer' %}selected{% endif %}>Organizer</option>
+                <option value="athlete" {% if user_type == 'athlete' %}selected{% endif %}>Athlete (User)</option>
+            </select>
+        </form>
+    </div>
                     
-                    <form method="GET" class="search-form">
-                        <input type="text" name="search" placeholder="Search by name or email..." value="{{ query|default:'' }}">
-                        <button type="submit" class="search-btn">Search</button>
-                        {% if query %}
-                            <a href="{% url 'admin_panel:manage_users' %}" class="btn-clear">
-                                <i class="fa-solid fa-xmark"></i> Clear
-                            </a>
-                        {% endif %}
-                    </form>
                 </div>
 
 
@@ -60,12 +75,18 @@
                     <span class="status-badge status-active">Active</span>
                 </td>
                 <td>
-                    <form action="{% url 'admin_panel:delete_user' user.id %}" method="POST" onsubmit="return confirm('Delete this user forever?');">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-delete-action">
-                            <i class="fa-solid fa-trash-can"></i> Delete
-                        </button>
-                    </form>
+                    {% if not user.is_superuser and not user.is_staff %}
+                        <form action="{% url 'admin_panel:delete_user' user.id %}" method="POST" onsubmit="return confirm('Delete this user forever?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete-action">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
+                        </form>
+                    {% else %}
+                        <span class="text-muted" style="font-size: 0.85rem;">
+                            <i class="fa-solid fa-lock"></i> Protected
+                        </span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -80,10 +101,40 @@
 </div>
 
 <script>
-    // Security Guard: Kick out if not logged in as Admin
+    document.addEventListener("DOMContentLoaded", function() {
+    // 1. Security Guard
     if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') {
         window.location.href = "{% url 'admin_panel:login' %}";
     }
+
+    // 2. Search & Clear Logic
+    const searchInput = document.getElementById("userSearch");
+    const clearBtn = document.getElementById("clearBtn");
+    const tableRows = document.querySelectorAll(".user-table tbody tr");
+
+    if (searchInput && clearBtn) {
+        searchInput.addEventListener("input", function() {
+            const value = this.value.toLowerCase();
+
+            // A. Live Table Filtering (Instant result as you type)
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(value) ? "" : "none";
+            });
+
+            // B. Toggle 'X' button visibility
+            if (value.length > 0) {
+                clearBtn.style.display = "flex";
+            } else {
+                // Only hide if the URL itself isn't currently a filtered search result
+                const params = new URLSearchParams(window.location.search);
+                if (!params.has('search') || params.get('search') === "") {
+                    clearBtn.style.display = "none";
+                }
+            }
+        });
+    }
+});
 </script>
 
 {% endblock %}

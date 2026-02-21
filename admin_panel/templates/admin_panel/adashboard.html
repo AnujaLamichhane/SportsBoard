@@ -29,9 +29,32 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 {% endblock %}
 {% block extra_js %}
+    <script>
+    // This function will overwrite anything in the external file for testing
+        function toggleSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            const wrapper = document.getElementById('adminWrapper');
 
-
+            if (sidebar) {
+                // FORCE the class toggle
+                sidebar.classList.toggle('sidebar-collapsed');
+                if (wrapper) wrapper.classList.toggle('collapsed');
+                
+                console.log("Toggle function actually fired!");
+                console.log("Sidebar classes: ", sidebar.className);
+            } else {
+                alert("STOP! The HTML ID 'adminSidebar' was not found on this page.");
+            }
+        }
+    </script>
+    <script src="{% static 'admin_panel/js/toggle.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const chartData = JSON.parse('{{ sales_data_json|default:"[]"|escapejs }}');
+        // Your chart initialization code here...
+    </script>
+    
 {% endblock %}

@@ -20,14 +20,22 @@
                         <h2 class="fw-bold text-dark mb-1">Organizer Requests</h2>
                         <p class="text-muted">Manage and verify all tournament organizer applications.</p>
                     </div>
-                    
-                    <div class="header-actions d-flex gap-3">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="requestSearch" placeholder="Search by name, email or status...">
-                        </div>
-                        <button class="btn btn-filter"><i class="fas fa-filter"></i> Filter</button>
+                    <div class="header-actions">
+                        <form method="GET" class="search-form" id="searchForm">
+                            <input type="text" name="search" id="requestSearch" 
+                                placeholder="Search by name or email..." 
+                                value="{{ query|default:'' }}" autocomplete="off">
+                            
+                            {% if query %}
+                                <a href="{% url 'admin_panel:organizer_requests' %}" class="btn-clear">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </a>
+                            {% endif %}
+
+                            <button type="submit" class="search-btn">Search</button>
+                        </form>
                     </div>
+                    
                 </div>
 
                 <div class="table-responsive">
@@ -116,13 +124,27 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-    $("#requestSearch").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#requestTableBody tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("requestSearch");
+    const clearBtn = document.querySelector(".btn-clear");
+    const tableRows = document.querySelectorAll("#requestTableBody tr");
+
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            const value = this.value.toLowerCase();
+            
+            // Live filter the table rows
+            tableRows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(value) ? "" : "none";
+            });
+
+            // Show/Hide clear button dynamically if it exists
+            if (clearBtn) {
+                clearBtn.style.display = value.length > 0 ? "flex" : "none";
+            }
         });
-    });
+    }
 });
 </script>
 {% endblock %}

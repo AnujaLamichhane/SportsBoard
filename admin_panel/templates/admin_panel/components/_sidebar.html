@@ -29,7 +29,7 @@
             </li>
 
             <li class="dnav-item">
-                <a href="#" class="dnav-link ">
+                <a href="{% url 'admin_panel:manage_sports' %}" class="dnav-link {% if request.resolver_match.url_name == 'manage_sports' %}active{% endif %}">
                     <i class="fa-solid fa-trophy"></i>
                     <span class="link-text">Sports</span>
                 </a>
@@ -49,7 +49,7 @@
                 </a>
             </li>
             <li class="dnav-item">
-                <a href="#" class="dnav-link">
+                <a href="{% url 'admin_panel:reports' %}" class="dnav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
                     <i class="fa-solid fa-chart-line"></i>
                     <span class="link-text">Reports</span>
                 </a>
@@ -73,20 +73,6 @@
         </ul>
     </div>
 </nav>
-<script>
-function toggleSidebar() {
-    const wrapper = document.getElementById('adminWrapper');
-    const sidebar = document.getElementById('adminSidebar');
-    
-    if (wrapper) {
-        // We use 'collapsed' because that is what your CSS #adminWrapper.collapsed uses
-        wrapper.classList.toggle('collapsed');
-    }
-    
-    if (sidebar) {
-        sidebar.classList.toggle('collapsed');
-    }
-}
-</script>
+
 
     

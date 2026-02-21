@@ -1,6 +1,6 @@
 /* Header and Search Styling */
 .request-header h2 {
-    font-size: 2rem;
+    font-size: 3rem;
     letter-spacing: -0.5px;
     margin-bottom: 10px;
     margin-top: 35px;
@@ -9,32 +9,60 @@
     font-size: 1.5rem;
     margin-bottom: 12px;
 }
-.search-box {
-    position: relative;
-    width: 300px;
-    margin-bottom: 5px;
-}
-
-.search-box i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #a0aec0;
-}
-
-.search-box input {
+/* Ensure the form container allows absolute positioning for the 'X' */
+.search-form {
+    position: relative; 
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 6px 10px;
+    margin-bottom: 15px;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
     width: 100%;
-    padding: 10px 15px 10px 40px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    outline: none;
-    transition: all 0.3s;
+    max-width: 450px;
+    transition: all 0.3s ease;
 }
 
-.search-box input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+/* Added padding-right (40px) so text doesn't go under the 'X' */
+.search-form input {
+    border: none;
+    outline: none;
+    padding: 8px 40px 8px 15px; 
+    width: 100%;
+    font-size: 0.95rem;
+    background: transparent;
+}
+
+/* The 'X' button inside the pill */
+.btn-clear {
+    position: absolute;
+    right: 105px; /* Adjust this based on your search button width */
+    color: #a0aec0;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.btn-clear:hover {
+    color: #ef4444; /* Turns red on hover */
+}
+
+.search-btn {
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+    white-space: nowrap;
+    z-index: 2; /* Keep button above input */
 }
 
 /* Floating Table Rows */
@@ -47,9 +75,9 @@
 .requests-table thead th {
     color: #718096;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.3rem;
     text-transform: uppercase;
-    padding: 10px 10px;
+    padding: 10px 5px;
     border: none;
 }
 

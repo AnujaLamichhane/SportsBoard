@@ -11,7 +11,7 @@
 
 main {
     padding: 0 !important;
-    margin-top: 80px;
+    margin-top: 100px;
     margin-bottom: 0;
     display: block;
     /* background-color: #f4f7f6; */
@@ -25,54 +25,114 @@ main {
     max-width: 100%;
     background-color: #f4f7f6;
 }
-.dashboard-header h2 {
-    letter-spacing: -0.5px;
-    
-}
+
+/* Ensure the wrapper handles the two-column layout correctly */
 .flex-main-dwrapper {
     display: flex;
     width: 100%;
-    min-height: calc(100vh - 55px);
-    /* background: transparent;  */
+    min-height: calc(100vh - 80px); /* Adjust based on your main margin-top */
+    overflow: hidden;
+    background-color: #f4f7f6;
 }
 
-/* SIDEBAR SECTION */
+/* Sidebar Base - Fixed height for scrolling */
 .dsection-left {
     width: var(--sidebar-full-width);
+    flex-shrink: 0;
     transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-    border-right: 2px solid #e0e0e0; 
-    overflow-x: hidden;
-    white-space: nowrap;
+    background-color: white;
+    border-right: 1px solid #e0e0e0;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
-    background-color: #f7fafc;
-    padding-right: 5px;
-    padding-left: 5px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
 }
 
-.dsidebar-header {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    font-size: 1.6rem;
-    font-weight: bolder;
-    padding: 0 18px;
-    margin-top: 50px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #ddd;
+/* Right Content Area - MUST have flex: 1 to fill space */
+.dsection-right {
+    flex: 1;
+    padding: 40px; /* Increased padding for that "airy" look */
+    overflow-y: auto;
+    min-width: 0; /* Prevents layout breaking with tables */
 }
-/* .dbrand-name {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--text-main);
+
+/* THE FIX: Toggle this class directly on the sidebar */
+
+/* Force the sidebar width and hide content */
+/* --- SIDEBAR COLLAPSE ENFORCER --- */
+
+/* 1. Shrink the width */
+#adminSidebar.sidebar-collapsed {
+    width: var(--sidebar-collapsed-width) !important; /* 55px */
+    min-width: var(--sidebar-collapsed-width) !important;
+}
+
+/* 2. Hide text and branding */
+#adminSidebar.sidebar-collapsed .link-text,
+#adminSidebar.sidebar-collapsed .dbrand-name,
+#adminSidebar.sidebar-collapsed .badge {
+    display: none !important;
+}
+
+/* 3. Re-center the Logo area */
+#adminSidebar.sidebar-collapsed .dsidebar-logo {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    justify-content: center !important;
+    border-bottom: none !important;
+}
+
+/* 4. Center the Burger Icon and Nav Icons */
+#adminSidebar.sidebar-collapsed .dmenu-toggle-btn {
+    margin-right: 0 !important;
+}
+
+#adminSidebar.sidebar-collapsed .dnav-link {
+    justify-content: center !important;
+    padding: 12px 0 !important;
+    border-left: 4px solid transparent; /* Keep it clean */
+}
+
+#adminSidebar.sidebar-collapsed .dnav-link i {
+    margin-right: 0 !important;
+}
+
+/* Header Container */
+.adashboard-header{
+    margin-top: 20px !important;
+    margin-bottom: 48px !important;
+    
+}
+.dsidebar-logo{
+
+    margin-top: 40px;
+    margin-left: 20px;
+    margin-bottom: 30px;
+    font-size: 2.3rem;
+    font-weight: 600;
+    padding-bottom: 10px;
+    padding-right: 3px;
+    border-bottom: 1px solid black;
+}
+/* Big Bold Title (Match the screenshot authority) */
+.adashboard-header h2 {
+    font-size: 2.8rem !important; /* Large scale */
+    font-weight: 800 !important;  /* Extra bold */
+    color: #1a1a1a;
+    letter-spacing: -1.2px;       /* Modern tight tracking */
+    margin-bottom: 8px;
     letter-spacing: -0.5px;
-} */
-.dsidebar-nav {
-    display: flex;
-    flex-direction: column;
-    padding-top: 10px;
 }
+
+/* Subtext Scaling (The "Total Active Sports" text) */
+.adashboard-header p, .text-muted {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
 .dmenu-toggle-btn {
     cursor: pointer;
     font-size: 1.6rem;

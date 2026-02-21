@@ -20,7 +20,12 @@
     transform: translateY(-10px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
 }
-
+.stat-card, .verification-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
 .stat-content {
     display: flex;
     justify-content: space-between;
@@ -90,3 +95,20 @@
 }
 
 
+.trend-up {
+    color: #10b981 !important; /* Green */
+    background: #ecfdf5;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.trend-down {
+    color: #ef4444 !important; /* Red */
+    background: #fef2f2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}

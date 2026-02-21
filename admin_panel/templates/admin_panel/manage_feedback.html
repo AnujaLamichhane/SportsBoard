@@ -9,7 +9,85 @@
         .badge-status.resolved { background-color: #d1e7dd; color: #0f5132; }
         .badge-status.pending { background-color: #fff3cd; color: #856404; }
         .msg-preview { display: block; font-size: 0.85rem; color: #6c757d; margin-top: 4px; line-height: 1.4; }
-    </style>
+        /* Container for the pill */
+        /* Container Fix */
+.request-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    margin-top: 20px;
+    margin-left: 5px;
+}
+
+/* The Search Pill (Styled like your Sports Page) */
+.search-form {
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    background: #fff;
+    padding: 0 10px 0 25px; /* Space for the icon on the left */
+    border-radius: 100px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    width: 100%;
+    min-width: 500px; /* Large width as requested */
+    height: 55px;      /* Professional thickness */
+    transition: all 0.3s ease;
+}
+
+/* Magnifying Glass Icon Positioning */
+.search-icon {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-right: 15px;
+}
+
+/* Input Text Styling */
+.search-form input {
+    flex: 1;
+    border: none !important;
+    outline: none !important;
+    padding: 0 !important;
+    font-size: 1.15rem;
+    background: transparent;
+    color: #2d3436;
+}
+
+/* Transparent Clear Button */
+.btn-clear {
+    background: transparent !important;
+    border: none !important;
+    color: #b2bec3;
+    padding: 0 15px;
+    text-decoration: none;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+}
+
+.btn-clear:hover {
+    color: #eb4d4b;
+}
+
+/* Search Submit Button (The blue pill at the end) */
+.search-btn {
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.search-btn:hover {
+    background: #0056b3;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -20,20 +98,33 @@
 
         <div class="dsection-right">
             <div class="content-container p-4">
-
-                <div class="request-header d-flex justify-content-between align-items-center mb-5">
-                    <div>
-                        <h2 class="fw-bold text-dark mb-1">Reviews & Feedback</h2>
-                        <p class="text-muted">You have <strong>{{ unresolved_count }}</strong> pending feedback items requiring attention.</p>
+                <div class="request-header ">
+                    <div class="header-text-group ">
+                        <h2 class="fw-bold  mb-2 " style="font-size: 3rem; font-weight: 700 !important;">Reviews & Feedback</h2>
+                        <p class="text-muted" style="font-size: 1.1rem; font-weight: 500;">
+                            You have <strong>{{ unresolved_count }}</strong> pending feedback items requiring attention.
+                        </p>
                     </div>
 
-                    <div class="header-actions d-flex gap-3">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="feedbackSearch" placeholder="Search by user or subject...">
-                        </div>
+                    <div class="header-actions">
+                        <form method="GET" class="search-form" id="searchForm">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            
+                            <input type="text" name="search" id="feedbackSearch" 
+                                placeholder="Search by user or subject..." 
+                                value="{{ query|default:'' }}" autocomplete="off">
+                            
+                            {% if query %}
+                            <a href="{% url 'admin_panel:manage_feedback' %}" class="btn-clear" id="clearFeedbackBtn">
+                                <i class="fa-solid fa-xmark"></i>
+                            </a>
+                            {% endif %}
+
+                            <button type="submit" class="search-btn">Search</button>
+                        </form>
                     </div>
                 </div>
+                
 
                 <div class="table-responsive">
 
@@ -110,13 +201,36 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $("#feedbackSearch").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#feedbackTableBody tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("feedbackSearch");
+    const clearBtn = document.getElementById("clearFeedbackBtn");
+    const tableRows = document.querySelectorAll("#feedbackTableBody tr");
+
+    // Initialize: Hide button if the input is empty on page load
+    if (searchInput && clearBtn && !searchInput.value) {
+        clearBtn.style.display = "none";
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            const value = this.value.toLowerCase();
+            
+            // 1. Live filter the table rows (Instant result)
+            tableRows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(value) ? "" : "none";
             });
+
+            // 2. Show/Hide clear button as you type
+            if (clearBtn) {
+                if (value.length > 0) {
+                    clearBtn.style.display = "flex";
+                } else {
+                    clearBtn.style.display = "none";
+                }
+            }
         });
-    });
+    }
+});
 </script>
 {% endblock %}

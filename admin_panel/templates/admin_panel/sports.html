@@ -1,0 +1,174 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/sports.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/adashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid dashboard-page">
+    <div class="flex-main-dwrapper" id="adminWrapper">
+        {% include 'admin_panel/components/_sidebar.html' %}
+
+        <div class="dsection-right">
+            <div class="sport-container p-4">
+                <div class="adashboard-header mb-5">
+                    <div class="header-main-row">
+                        
+                        <div class="header-left">
+                            <h2 class="eheader">Events and Sports</h2>
+                            <p class="text-emuted">
+                                Total Active Sports: <span class="badge bg-primary-soft">{{ sports_data|length }}</span>
+                            </p>
+                        </div>
+
+                        <div class="header-right">
+                            <div class="search-form-wrapper">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="requestSearch" placeholder="Search events, sports, or organizers...">
+                                <button type="button" class="btn-clear" id="clearBtn">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="table-card-container">
+                    <div class="table-responsive">
+                        <table class="table custom-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Sport Type</th>
+                                    <th>Event Name</th>
+                                    <th>Location</th>
+                                    <th>Organizer</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestTableBody">
+                                {% for event in sports_data %}
+                                <tr class="sport-row">
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="sport-avatar-wrapper me-3">
+                                                {% if event.photo %}
+                                                    <img src="{{ event.photo.url }}" alt="Sport">
+                                                {% else %}
+                                                    <div class="sport-icon-placeholder">
+                                                        <i class="fa-solid fa-trophy"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <span class="sport-type-label">{{ event.get_game_type_display }}</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="event-name-text">{{ event.name }}</span></td>
+                                    <td>
+                                        <div class="location-box">
+                                            <i class="fa-solid fa-location-dot me-1 text-danger"></i>
+                                            {{ event.location }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="organizer-badge">@{{ event.organizer.username }}</span>
+                                    </td>
+                                    <td>
+                                        {% now "Y-m-d" as current_date %}
+                                        
+                                        {% if event.end_date|date:"Y-m-d" < current_date %}
+                                            <span class="status-pill completed">Completed</span>
+                                        {% elif event.start_date|date:"Y-m-d" <= current_date and event.end_date|date:"Y-m-d" >= current_date %}
+                                            <span class="status-pill ongoing">Ongoing</span>
+                                        {% else %}
+                                            <span class="status-pill upcoming">Upcoming</span>
+                                        {% endif %}
+                                    </td>
+                                    <!-- <td>
+                                        <div class="action-buttons-group justify-content-center">
+                                            <button class="btn-action btn-edit" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button class="btn-action btn-delete" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </td> -->
+                                    <td class="text-center">
+                                        <a href="{% url 'organizer:event_detail' event.id %}" class="btn-view-action" title="View Full Details">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr id="noResultsRow">
+                                    <td colspan="6" class="text-center py-5 no-data">
+                                        <i class="fa-solid fa-folder-open d-block mb-3 fs-2"></i>
+                                        No events or sports found.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                <tr id="jsNoResults" style="display: none;">
+                                    <td colspan="6" class="text-center py-5">No matching sports found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("requestSearch");
+    const clearBtn = document.getElementById("clearBtn");
+    const tableBody = document.getElementById("requestTableBody");
+    const jsNoResults = document.getElementById("jsNoResults");
+
+    if (searchInput && tableBody) {
+        // 1. Live Filter Logic
+        searchInput.addEventListener("input", function() {
+            const value = this.value.toLowerCase();
+            // Select all rows EXCEPT the "Empty DB" and "JS No Results" rows
+            const rows = tableBody.querySelectorAll("tr.sport-row");
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                // row.textContent gets text from all cells (Sport, Name, Location, etc.)
+                const rowText = row.textContent.toLowerCase();
+                
+                if (rowText.includes(value)) {
+                    row.style.display = ""; // Show row
+                    visibleCount++;
+                } else {
+                    row.style.display = "none"; // Hide row
+                }
+            });
+
+            // 2. Toggle "Clear (X)" button visibility
+            if (clearBtn) {
+                clearBtn.style.display = value.length > 0 ? "flex" : "none";
+            }
+
+            // 3. Handle "No Matching Records" message
+            if (jsNoResults) {
+                // Show if user is searching but 0 results were found
+                jsNoResults.style.display = (visibleCount === 0 && value.length > 0) ? "" : "none";
+            }
+        });
+
+        // 4. "X" Button Reset Logic
+        if (clearBtn) {
+            clearBtn.addEventListener("click", function() {
+                searchInput.value = "";
+                // Re-trigger the input event to reset the table rows
+                searchInput.dispatchEvent(new Event('input'));
+                searchInput.focus();
+            });
+        }
+    } else {
+        console.warn("Search bar elements not found. Check your HTML IDs.");
+    }
+});
+</script>
+{% endblock %}
