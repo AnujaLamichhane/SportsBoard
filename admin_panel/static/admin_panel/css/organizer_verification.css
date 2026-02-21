@@ -185,3 +185,88 @@
     color: #718096;
     border: 1px solid #e2e8f0;
 }
+
+
+/* Center Alignment for Empty State */
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #edf2f7;
+    margin-top: 20px;
+}
+
+/* The Big Green Tick */
+.big-tick-icon {
+    font-size: 5rem;
+    color: #38a169; /* Matches your btn-accept color */
+    margin-bottom: 20px;
+    opacity: 0.8;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.empty-state-container h5 {
+    font-size: 1.5rem;
+    color: #2d3748;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.empty-state-container p {
+    color: #718096;
+    max-width: 400px;
+}
+
+/* Button with Icon adjustment */
+.btn-outline-primary.rounded-pill i {
+    transition: transform 0.3s ease;
+}
+
+.btn-outline-primary.rounded-pill:hover i {
+    transform: translateX(4px);
+}
+
+/* Animation for the tick */
+@keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 0.8; }
+}
+/* Premium View All Button */
+.btn-view-all-custom {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    background: #ffffff;
+    color: #3b82f6; /* Matching your primary blue */
+    border: 1.5px solid #e2e8f0;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+}
+
+.btn-view-all-custom i {
+    font-size: 0.7rem;
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.btn-view-all-custom:hover {
+    background: #3b82f6;
+    color: #ffffff;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+}
+
+.btn-view-all-custom:hover i {
+    transform: translateX(4px);
+}
+
+
+

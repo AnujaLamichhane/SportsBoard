@@ -37,7 +37,7 @@
             </div>
             {% endif %}
 
-            <form method="post" enctype="multipart/form-data" id="wizardForm">
+            <form method="post" enctype="multipart/form-data" id="wizardForm" action="{{ request.get_full_path }}">
                 {% csrf_token %}
 
                 <div class="tab-content">
@@ -47,13 +47,14 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-white">Organization Logo</label>
                                 <div class="d-flex align-items-center gap-3 logo-upload-wrapper">
-                                    <div class="logo-preview-container">
+                                    <div class="logo-preview-container" id="logo-preview-wrapper">
                                         {% if profile.organization_logo %}
-                                            <img id="logo-preview" src="{{ profile.organization_logo.url }}" alt="Logo">
+                                            <img src="{{ profile.organization_logo.url }}" class="logo-preview-img" alt="Logo">
                                         {% else %}
-                                            <img id="logo-preview" src="https://via.placeholder.com/90?text=Logo" alt="Placeholder">
+                                            <img src="https://via.placeholder.com/90?text=Logo" class="logo-preview-img" alt="Placeholder">
                                         {% endif %}
                                     </div>
+
                                     <div class="flex-grow-1 custom-file-input-container">
                                         {{ form.organization_logo|as_crispy_field }}
                                     </div>
@@ -135,6 +136,13 @@
                                 <i class="fas fa-user-clock fa-4x text-warning mb-3"></i>
                                 <h4 class="text-white">Verification Pending</h4>
                                 <p class="text-white-50">Admin is currently reviewing your profile. You will be notified once approved.</p>
+                            {% elif profile.verification_status == 'rejected' %}
+                                <div class="alert alert-danger mb-4">
+                                    <i class="fas fa-times-circle fa-2x mb-2"></i>
+                                    <h5 class="fw-bold">Request Declined</h5>
+                                    <p class="small">The administrator has rejected your verification. Please update your documents and re-apply.</p>
+                                    <a href="{% url 'organizer:submit_verification' %}?action=reset" class="btn btn-danger btn-sm fw-bold">Fix & Re-apply</a>
+                                </div>
                             {% elif profile.is_verified %}
                                 <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
                                 <h4 class="text-success fw-bold">Successfully Verified</h4>
@@ -155,17 +163,17 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. Logo Preview Logic ---
+        // --- 1. Logo Preview Logic (Targets class to avoid duplicate ID issues) ---
         const logoInput = document.querySelector('input[type="file"][name="organization_logo"]');
-        const logoPreview = document.getElementById('logo-preview');
+        const logoPreviewImg = document.querySelector('.logo-preview-img');
 
-        if (logoInput) {
+        if (logoInput && logoPreviewImg) {
             logoInput.addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        logoPreview.src = e.target.result;
+                        logoPreviewImg.src = e.target.result;
                     }
                     reader.readAsDataURL(file);
                 }
@@ -196,20 +204,30 @@
             });
         });
 
-        // --- 3. Persistence Logic ---
+        // --- 3. Persistence Logic (Checks URL first, then LocalStorage) ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+
+        if (tabParam) {
+            let targetEl = document.getElementById(`pills-${tabParam.replace('-tab', '')}-tab`);
+            if (targetEl) {
+                bootstrap.Tab.getOrCreateInstance(targetEl).show();
+            }
+        } else {
+            let savedTab = localStorage.getItem('activeSettingsTab');
+            if (savedTab) {
+                let targetEl = document.querySelector(`button[data-bs-target="${savedTab}"]`);
+                if (targetEl) {
+                    bootstrap.Tab.getOrCreateInstance(targetEl).show();
+                }
+            }
+        }
+
         document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(btn => {
             btn.addEventListener('shown.bs.tab', (e) => {
                 localStorage.setItem('activeSettingsTab', e.target.getAttribute('data-bs-target'));
             });
         });
-
-        let savedTab = localStorage.getItem('activeSettingsTab');
-        if (savedTab) {
-            let targetEl = document.querySelector(`button[data-bs-target="${savedTab}"]`);
-            if (targetEl) {
-                bootstrap.Tab.getOrCreateInstance(targetEl).show();
-            }
-        }
     });
 </script>
 {% endblock %}

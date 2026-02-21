@@ -78,7 +78,9 @@
                     <p class="text-white" style="white-space: pre-line;">{{ event.description }}</p>
 
                     <div class="mt-4 pt-3 border-top border-secondary">
-                        <p class="mb-1 text-white"><i class="fas fa-user-tie text-warning me-2"></i><strong>Organizer:</strong> {{ event.organizer.username }}</p>
+                        <p class="mb-1 text-white"><i class="fas fa-user-tie text-warning me-2"></i><strong>Organizer:</strong>
+                            {{ event.organizer.username }}
+                        </p>
                         <p class="mb-0 text-white"><i class="fas fa-clock text-warning me-2"></i><strong>Starts:</strong> {{ event.date_time|date:"F d, Y @ P" }}</p>
                     </div>
                 </div>
@@ -201,6 +203,7 @@
 <!--        </div>-->
 <!--    {% endif %}-->
 <!--</div>-->
+
 
 
             </div>

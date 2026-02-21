@@ -678,7 +678,7 @@ def organizer_settings(request):
     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
 
     # 1. Define fields for completion calculation
-    essential_fields = [
+    essential_fields_list = [
         profile.organization_name,
         profile.organization_logo,
         profile.contact_email,
@@ -687,17 +687,42 @@ def organizer_settings(request):
         profile.bio,
         profile.certificate
     ]
-    completed = len([f for f in essential_fields if f])
-    completion_percentage = int((completed / len(essential_fields)) * 100)
+    completed = len([f for f in essential_fields_list if f])
+    completion_percentage = int((completed / len(essential_fields_list)) * 100)
 
     if request.method == 'POST':
         form = OrganizerSettingsForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Settings updated successfully!")
+            # Save the profile data first
+            profile = form.save()
 
-            # 2. Redirect specifically to the SUBMIT tab after saving
-            # This ensures that after 'Save & Continue', the user sees the Submit button
+            # --- RE-APPLICATION LOGIC START ---
+            # If the user is on the final tab and clicks "Save",
+            # we check if they are eligible to move from 'rejected' or 'none' to 'pending'
+            current_tab = request.GET.get('tab')
+            if current_tab == 'submit-request-tab':
+                # Re-verify all required fields including Khalti ID which is on this tab
+                verification_check_fields = [
+                    profile.organization_name, profile.organization_logo,
+                    profile.contact_phone, profile.contact_email,
+                    profile.address, profile.certificate,
+                    profile.khalti_merchant_id, profile.bio
+                ]
+
+                if all(verification_check_fields):
+                    # Reset status to pending so Admin can see it again
+                    profile.verification_status = 'pending'
+                    profile.save()
+                    messages.success(request, "Application re-submitted for verification!")
+                    return redirect('organizer:dashboard')
+                else:
+                    messages.warning(request,
+                                     "Settings saved, but some required fields are still missing for verification.")
+            else:
+                messages.success(request, "Settings updated successfully!")
+            # --- RE-APPLICATION LOGIC END ---
+
+            # Redirect specifically to the SUBMIT tab after saving
             base_url = reverse('organizer:settings')
             return redirect(f"{base_url}?tab=submit-request-tab")
     else:
@@ -709,6 +734,48 @@ def organizer_settings(request):
         'completion_percentage': completion_percentage,
         'page_title': 'Account & Organizer Settings'
     })
+
+
+
+
+# @login_required
+# @user_passes_test(is_organizer_check)
+# def organizer_settings(request):
+#     # Get the profile or create one
+#     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
+#
+#     # 1. Define fields for completion calculation
+#     essential_fields = [
+#         profile.organization_name,
+#         profile.organization_logo,
+#         profile.contact_email,
+#         profile.contact_phone,
+#         profile.address,
+#         profile.bio,
+#         profile.certificate
+#     ]
+#     completed = len([f for f in essential_fields if f])
+#     completion_percentage = int((completed / len(essential_fields)) * 100)
+#
+#     if request.method == 'POST':
+#         form = OrganizerSettingsForm(request.POST, request.FILES, instance=profile)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, "Settings updated successfully!")
+#
+#             # 2. Redirect specifically to the SUBMIT tab after saving
+#             # This ensures that after 'Save & Continue', the user sees the Submit button
+#             base_url = reverse('organizer:settings')
+#             return redirect(f"{base_url}?tab=submit-request-tab")
+#     else:
+#         form = OrganizerSettingsForm(instance=profile)
+#
+#     return render(request, 'organizer/settings.html', {
+#         'form': form,
+#         'profile': profile,
+#         'completion_percentage': completion_percentage,
+#         'page_title': 'Account & Organizer Settings'
+#     })
 
 
 
