@@ -18,6 +18,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import SiteSettings
 from .forms import SiteSettingsForm
+from accounts.models import Feedback as UserFeedback
 # --- AUTH & DASHBOARD ---
 
 def login_view(request):
@@ -172,24 +173,64 @@ def verify_organizer(request, pk, action):
 
 # --- FEEDBACK MANAGEMENT (FIXED) ---
 
+# def manage_feedback(request):
+#     """List all feedback, showing unresolved issues first."""
+#     # FIXED: Removed the nested function 'def manage_feedback'
+#     feedbacks = OrganizerFeedback.objects.all().order_by('is_resolved', '-created_at')
+#     unresolved_count = feedbacks.filter(is_resolved=False).count()
+#
+#     return render(request, 'admin_panel/manage_feedback.html', {
+#         'feedbacks': feedbacks,
+#         'unresolved_count': unresolved_count
+#     })
+#
+# #
+# # def resolve_feedback(request, pk):
+# #     """Mark a specific feedback entry as resolved."""
+# #     feedback = get_object_or_404(OrganizerFeedback, pk=pk)
+# #     feedback.is_resolved = True
+# #     feedback.save()
+# #     messages.success(request, f"Feedback from {feedback.organizer.username} marked as resolved.")
+# #     return redirect('admin_panel:manage_feedback')
+
+# admin_panel/views.py
+
 def manage_feedback(request):
-    """List all feedback, showing unresolved issues first."""
-    # FIXED: Removed the nested function 'def manage_feedback'
-    feedbacks = OrganizerFeedback.objects.all().order_by('is_resolved', '-created_at')
-    unresolved_count = feedbacks.filter(is_resolved=False).count()
+    """List all feedback from both Organizers and Athletes."""
+    query = request.GET.get('search', '').strip()
+
+    org_feedbacks = OrganizerFeedback.objects.all().order_by('is_resolved', '-created_at')
+    user_feedbacks = UserFeedback.objects.all().order_by('is_resolved', '-created_at')
+
+    if query:
+        org_feedbacks = org_feedbacks.filter(subject__icontains=query) | org_feedbacks.filter(
+            organizer__username__icontains=query)
+        user_feedbacks = user_feedbacks.filter(subject__icontains=query) | user_feedbacks.filter(
+            user__username__icontains=query)
+
+    unresolved_count = (
+            org_feedbacks.filter(is_resolved=False).count() +
+            user_feedbacks.filter(is_resolved=False).count()
+    )
 
     return render(request, 'admin_panel/manage_feedback.html', {
-        'feedbacks': feedbacks,
-        'unresolved_count': unresolved_count
+        'org_feedbacks': org_feedbacks,
+        'user_feedbacks': user_feedbacks,
+        'unresolved_count': unresolved_count,
+        'query': query
     })
 
 
-def resolve_feedback(request, pk):
-    """Mark a specific feedback entry as resolved."""
-    feedback = get_object_or_404(OrganizerFeedback, pk=pk)
+def resolve_feedback(request, user_type, pk):
+    """Mark feedback as resolved based on user type."""
+    if user_type == 'organizer':
+        feedback = get_object_or_404(OrganizerFeedback, pk=pk)
+    else:
+        feedback = get_object_or_404(UserFeedback, pk=pk)
+
     feedback.is_resolved = True
     feedback.save()
-    messages.success(request, f"Feedback from {feedback.organizer.username} marked as resolved.")
+    messages.success(request, f"Feedback from {user_type} marked as resolved.")
     return redirect('admin_panel:manage_feedback')
 
 

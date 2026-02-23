@@ -59,115 +59,104 @@
             <th class="text-end">Actions</th>
         </tr>
     </thead>
-<!--    <tbody id="feedbackTableBody">-->
-<!--        {% for f in feedbacks %}-->
-<!--        <tr class="request-row">-->
-<!--            <td>-->
-<!--                <div class="d-flex align-items-center">-->
-<!--                    <div class="avatar-box bg-soft-orange">{{ f.organizer.username|slice:":2"|upper }}</div>-->
-<!--                    <span class="fw-bold ms-3">{{ f.organizer.username }}</span>-->
+
+
+
+
+
+<!--<tbody id="feedbackTableBody">-->
+<!--    {% for f in feedbacks %}-->
+<!--    <tr class="request-row">-->
+<!--        <td>-->
+<!--            <div class="d-flex align-items-center">-->
+<!--                <div class="avatar-box bg-soft-orange">-->
+<!--                    {{ f.organizer.username|slice:":2"|upper }}-->
 <!--                </div>-->
-<!--            </td>-->
-<!--            <td>-->
-<!--                {% if f.organizer.organizer_profile %}-->
-<!--                    <span class="bg-primary-soft">Organizer</span>-->
-<!--                {% else %}-->
-<!--                    <span class="bg-info-soft">Athlete</span>-->
-<!--                {% endif %}-->
-<!--            </td>-->
-<!--            <td>-->
-<!--                <span class="badge bg-light text-dark border small">-->
-<!--                    {{ f.get_feedback_type_display }}-->
+<!--                <div class="ms-3">-->
+<!--                    <span class="user-name-text d-block">{{ f.organizer.username }}</span>-->
+<!--                    <span class="small-date-text" style="font-size: 0.7rem;">ID: #{{ f.pk }}</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </td>-->
+
+<!--        <td>-->
+<!--            {% if f.organizer.organizer_profile %}-->
+<!--                <span class="user-type-badge bg-primary-soft">Organizer</span>-->
+<!--            {% else %}-->
+<!--                <span class="user-type-badge bg-info-soft">Athlete</span>-->
+<!--            {% endif %}-->
+<!--        </td>-->
+
+<!--        <td>-->
+<!--            <span class="badge category-pill">-->
+<!--                {{ f.get_feedback_type_display }}-->
+<!--            </span>-->
+<!--        </td>-->
+
+<!--        <td style="max-width: 450px;">-->
+<!--            <span class="subject-text d-block">{{ f.subject }}</span>-->
+<!--            <span class="message-preview-text d-block">-->
+<!--                {{ f.message|truncatechars:110 }}-->
+<!--            </span>-->
+<!--            <div class="mt-2">-->
+<!--                <span class="small-date-text">-->
+<!--                    <i class="far fa-calendar-alt me-1"></i> {{ f.created_at|date:"M d, Y" }}-->
 <!--                </span>-->
-<!--            </td>-->
-<!--&lt;!&ndash;            <td style="max-width: 400px;">&ndash;&gt;-->
-<!--&lt;!&ndash;                <span class="fw-bold d-block">{{ f.subject }}</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                <span class="msg-preview text-muted">{{ f.message|truncatechars:120 }}</span>&ndash;&gt;-->
-<!--&lt;!&ndash;                <small class="text-muted italic">{{ f.created_at|date:"M d, Y" }}</small>&ndash;&gt;-->
-<!--&lt;!&ndash;            </td>&ndash;&gt;-->
-<!--     <td style="max-width: 400px;">-->
-<!--    <span class="fw-bold d-block text-dark mb-1" style="font-size: 1.1rem; letter-spacing: -0.3px;">-->
-<!--        {{ f.subject }}-->
-<!--    </span>-->
+<!--            </div>-->
+<!--        </td>-->
 
-<!--    <span class="msg-preview text-muted mb-2">-->
-<!--        {{ f.message|truncatechars:120 }}-->
-<!--    </span>-->
+<!--        <td>-->
+<!--            {% if f.is_resolved %}-->
+<!--                <span class="badge-status resolved">RESOLVED</span>-->
+<!--            {% else %}-->
+<!--                <span class="badge-status pending">PENDING</span>-->
+<!--            {% endif %}-->
+<!--        </td>-->
 
-<!--    <div class="mt-1">-->
-<!--        <small class="small-date">-->
-<!--            <i class="far fa-calendar-alt me-1"></i> {{ f.created_at|date:"M d, Y" }}-->
-<!--        </small>-->
-<!--    </div>-->
-<!--</td>-->
-<!--            <td>-->
-<!--                {% if f.is_resolved %}-->
-<!--                    <span class="badge-status resolved">Resolved</span>-->
-<!--                {% else %}-->
-<!--                    <span class="badge-status pending">Pending</span>-->
+<!--        <td>-->
+<!--            <div class="d-flex justify-content-end gap-2">-->
+<!--                {% if not f.is_resolved %}-->
+<!--                <a href="{% url 'admin_panel:resolve_feedback' f.pk %}" class="btn-action btn-check" title="Mark as Resolved">-->
+<!--                    <i class="fas fa-check"></i>-->
+<!--                </a>-->
 <!--                {% endif %}-->
-<!--            </td>-->
-<!--            <td>-->
-<!--                <div class="d-flex justify-content-end gap-2">-->
-<!--                    {% if not f.is_resolved %}-->
-<!--                    <a href="{% url 'admin_panel:resolve_feedback' f.pk %}" class="btn-action btn-check" title="Mark as Resolved">-->
-<!--                        <i class="fas fa-check"></i>-->
-<!--                    </a>-->
-<!--                    {% endif %}-->
-<!--                </div>-->
-<!--            </td>-->
-<!--        </tr>-->
-<!--        {% empty %}-->
-<!--        <tr>-->
-<!--            <td colspan="6" class="text-center py-5 text-muted">No feedback found.</td>-->
-<!--        </tr>-->
-<!--        {% endfor %}-->
-<!--    </tbody>-->
+<!--                <button class="btn-action btn-eye" title="View Details">-->
+<!--                    <i class="fas fa-eye"></i>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    {% empty %}-->
+<!--    <tr>-->
+<!--        <td colspan="6" class="text-center py-5">-->
+<!--            <div class="text-muted">-->
+<!--                <i class="fa-solid fa-inbox fa-3x mb-3"></i>-->
+<!--                <p class="fw-bold">No feedback found.</p>-->
+<!--            </div>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    {% endfor %}-->
+<!--</tbody>-->
 
 
-
-
-<tbody id="feedbackTableBody">
-    {% for f in feedbacks %}
+    <tbody id="feedbackTableBody">
+    {% for f in org_feedbacks %}
     <tr class="request-row">
         <td>
             <div class="d-flex align-items-center">
-                <div class="avatar-box bg-soft-orange">
-                    {{ f.organizer.username|slice:":2"|upper }}
-                </div>
+                <div class="avatar-box bg-soft-orange">{{ f.organizer.username|slice:":2"|upper }}</div>
                 <div class="ms-3">
                     <span class="user-name-text d-block">{{ f.organizer.username }}</span>
-                    <span class="small-date-text" style="font-size: 0.7rem;">ID: #{{ f.pk }}</span>
+                    <span class="small-date-text" style="font-size: 0.7rem;">ID: #ORG-{{ f.pk }}</span>
                 </div>
             </div>
         </td>
-
-        <td>
-            {% if f.organizer.organizer_profile %}
-                <span class="user-type-badge bg-primary-soft">Organizer</span>
-            {% else %}
-                <span class="user-type-badge bg-info-soft">Athlete</span>
-            {% endif %}
-        </td>
-
-        <td>
-            <span class="badge category-pill">
-                {{ f.get_feedback_type_display }}
-            </span>
-        </td>
-
+        <td><span class="user-type-badge bg-primary-soft text-primary">Organizer</span></td>
+        <td><span class="badge category-pill text-dark border">{{ f.get_feedback_type_display }}</span></td>
         <td style="max-width: 450px;">
-            <span class="subject-text d-block">{{ f.subject }}</span>
-            <span class="message-preview-text d-block">
-                {{ f.message|truncatechars:110 }}
-            </span>
-            <div class="mt-2">
-                <span class="small-date-text">
-                    <i class="far fa-calendar-alt me-1"></i> {{ f.created_at|date:"M d, Y" }}
-                </span>
-            </div>
+            <span class="subject-text d-block fw-bold">{{ f.subject }}</span>
+            <span class="message-preview-text text-muted">{{ f.message|truncatechars:110 }}</span>
         </td>
-
         <td>
             {% if f.is_resolved %}
                 <span class="badge-status resolved">RESOLVED</span>
@@ -175,31 +164,62 @@
                 <span class="badge-status pending">PENDING</span>
             {% endif %}
         </td>
-
         <td>
             <div class="d-flex justify-content-end gap-2">
                 {% if not f.is_resolved %}
-                <a href="{% url 'admin_panel:resolve_feedback' f.pk %}" class="btn-action btn-check" title="Mark as Resolved">
-                    <i class="fas fa-check"></i>
-                </a>
+<!--                <a href="{% url 'admin_panel:resolve_feedback' f.pk %}" class="btn-action btn-check"><i class="fas fa-check"></i></a>-->
+     <a href="{% url 'admin_panel:resolve_feedback' 'organizer' f.pk %}" class="btn-action btn-check">
+    <i class="fas fa-check"></i>
+</a>
                 {% endif %}
-                <button class="btn-action btn-eye" title="View Details">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </div>
-        </td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="6" class="text-center py-5">
-            <div class="text-muted">
-                <i class="fa-solid fa-inbox fa-3x mb-3"></i>
-                <p class="fw-bold">No feedback found.</p>
             </div>
         </td>
     </tr>
     {% endfor %}
+
+    {% for f in user_feedbacks %}
+    <tr class="request-row">
+        <td>
+            <div class="d-flex align-items-center">
+                <div class="avatar-box bg-soft-blue" style="background: #e0f2fe; color: #0369a1;">{{ f.user.username|slice:":2"|upper }}</div>
+                <div class="ms-3">
+                    <span class="user-name-text d-block">{{ f.user.username }}</span>
+                    <span class="small-date-text" style="font-size: 0.7rem;">ID: #USR-{{ f.pk }}</span>
+                </div>
+            </div>
+        </td>
+        <td><span class="user-type-badge bg-info-soft text-info">Athlete</span></td>
+        <td><span class="badge category-pill text-dark border">General</span></td>
+        <td style="max-width: 450px;">
+            <span class="subject-text d-block fw-bold">{{ f.subject }}</span>
+            <span class="message-preview-text text-muted">{{ f.message|truncatechars:110 }}</span>
+        </td>
+        <td>
+            {% if f.is_resolved %}
+                <span class="badge-status resolved">RESOLVED</span>
+            {% else %}
+                <span class="badge-status pending">PENDING</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="d-flex justify-content-end gap-2">
+                {% if not f.is_resolved %}
+
+               <a href="{% url 'admin_panel:resolve_feedback' 'athlete' f.pk %}" class="btn-action btn-check">
+    <i class="fas fa-check"></i>
+</a>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+
+    {% if not org_feedbacks and not user_feedbacks %}
+    <tr><td colspan="6" class="text-center py-5 text-muted">No feedback found.</td></tr>
+    {% endif %}
 </tbody>
+
+
 
 
 
