@@ -14,6 +14,6 @@ urlpatterns = [
     # path('verify-organizer/<int:pk>/<str:action>/', views.verify_organizer, name='verify_organizer'),
     path('sports/', views.manage_sports, name='manage_sports'),
     path('reports/', views.reports_view, name='reports'),
-
+path('settings/', views.settings_view, name='settings'),
 path('verify/<int:pk>/<str:action>/', views.verify_organizer, name='verify_organizer'),
 ]

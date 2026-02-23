@@ -14,7 +14,10 @@ from django.contrib.contenttypes.models import ContentType
 # from django.contrib.admin.models import LogEntry
 # Import your transaction model (e.g., KhaltiTransaction)
 from organizer.models import KhaltiTransaction ,OrganizerProfile
-
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import SiteSettings
+from .forms import SiteSettingsForm
 # --- AUTH & DASHBOARD ---
 
 def login_view(request):
@@ -256,3 +259,23 @@ def reports_view(request):
         'recent_activities': recent_activities,
     }
     return render(request, 'admin_panel/reports.html', context)
+
+
+def settings_view(request):
+
+    settings = SiteSettings.load()
+
+    if request.method == "POST":
+        form = SiteSettingsForm(request.POST, instance=settings)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Settings updated successfully!")
+            return redirect("admin_panel:settings")
+
+    else:
+        form = SiteSettingsForm(instance=settings)
+
+    return render(request,
+                  "admin_panel/settings.html",
+                  {"form": form})
