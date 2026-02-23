@@ -11,7 +11,7 @@
 }
 /* Ensure the form container allows absolute positioning for the 'X' */
 .search-form {
-    position: relative; 
+    position: relative;
     display: flex;
     align-items: center;
     background: #fff;
@@ -29,7 +29,7 @@
 .search-form input {
     border: none;
     outline: none;
-    padding: 8px 40px 8px 15px; 
+    padding: 8px 40px 8px 15px;
     width: 100%;
     font-size: 0.95rem;
     background: transparent;
@@ -102,15 +102,14 @@
 .request-row td:first-child { border-left: 1px solid #f1f5f9; border-radius: 12px 0 0 12px; }
 .request-row td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 12px 12px 0; }
 
-/* Status Badges */
-.badge-status {
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
 
-.badge-status.pending { background: #fff7ed; color: #c2410c; }
+
+/* Pending: Vibrant Red */
+.badge-status.pending {
+    background-color: #fee2e2 !important;
+    color: #b91c1c !important;
+    border-color: #fecaca !important;
+}
 
 /* Action Buttons */
 .btn-action {
@@ -144,12 +143,15 @@
 }
 /* Badge Colors based on verification_status */
 .badge-status {
-    padding: 5px 12px;
-    border-radius: 20px;
+    padding: 6px 14px;
+    border-radius: 50px;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 800; /* Extra bold for visibility */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    border: 1px solid transparent;
 }
-
 .status-pending { background: #fff3e0; color: #ef6c00; }  /* Orange */
 .status-verified { background: #e8f5e9; color: #2e7d32; } /* Green */
 .status-rejected { background: #ffebee; color: #c62828; } /* Red */
@@ -160,8 +162,30 @@
 .btn-cross:hover { background-color: #dc3545 !important; color: white !important; }
 .btn-eye:hover { background-color: #0dcaf0 !important; color: white !important; }
 
+.badge-status.resolved {
+    background-color: #dcfce7 !important;
+    color: #15803d !important;
+    border-color: #bbf7d0 !important;
+}
 
+/* --- TYPOGRAPHY & DATE --- */
+/* Smaller, Muted Date */
+.small-date {
+    font-size: 0.75rem !important; /* Smaller text */
+    color: #94a3b8 !important;   /* Soft slate gray */
+    font-weight: 400;
+}
 
+/* User Type Badges Boldness */
+.bg-primary-soft, .bg-info-soft {
+    font-weight: 700 !important;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.bg-primary-soft { background: #e0f2fe; color: #0369a1; }
+.bg-info-soft { background: #f0fdfa; color: #0d9488; }
 
 
 

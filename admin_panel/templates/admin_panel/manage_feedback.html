@@ -163,11 +163,26 @@
                     {{ f.get_feedback_type_display }}
                 </span>
             </td>
-            <td style="max-width: 400px;">
-                <span class="fw-bold d-block">{{ f.subject }}</span>
-                <span class="msg-preview text-muted">{{ f.message|truncatechars:120 }}</span>
-                <small class="text-muted italic">{{ f.created_at|date:"M d, Y" }}</small>
-            </td>
+<!--            <td style="max-width: 400px;">-->
+<!--                <span class="fw-bold d-block">{{ f.subject }}</span>-->
+<!--                <span class="msg-preview text-muted">{{ f.message|truncatechars:120 }}</span>-->
+<!--                <small class="text-muted italic">{{ f.created_at|date:"M d, Y" }}</small>-->
+<!--            </td>-->
+     <td style="max-width: 400px;">
+    <span class="fw-bold d-block text-dark mb-1" style="font-size: 1.1rem; letter-spacing: -0.3px;">
+        {{ f.subject }}
+    </span>
+
+    <span class="msg-preview text-muted mb-2">
+        {{ f.message|truncatechars:120 }}
+    </span>
+
+    <div class="mt-1">
+        <small class="small-date">
+            <i class="far fa-calendar-alt me-1"></i> {{ f.created_at|date:"M d, Y" }}
+        </small>
+    </div>
+</td>
             <td>
                 {% if f.is_resolved %}
                     <span class="badge-status resolved">Resolved</span>

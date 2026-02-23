@@ -76,23 +76,35 @@
                                     <td>
                                         <span class="organizer-badge">@{{ event.organizer.username }}</span>
                                     </td>
-                                    <td>
-                                        {% now "Y-m-d" as current_date %}
-                                        
-                                        {% if event.end_date|date:"Y-m-d" < current_date %}
-                                            <span class="status-pill completed">Completed</span>
-                                        {% elif event.start_date|date:"Y-m-d" <= current_date and event.end_date|date:"Y-m-d" >= current_date %}
-                                            <span class="status-pill ongoing">Ongoing</span>
-                                        {% else %}
-                                            <span class="status-pill upcoming">Upcoming</span>
-                                        {% endif %}
-                                    </td>
+<!--                                    <td>-->
+<!--                                        {% now "Y-m-d" as current_date %}-->
+<!--                                        -->
+<!--                                        {% if event.end_date|date:"Y-m-d" < current_date %}-->
+<!--                                            <span class="status-pill completed">Completed</span>-->
+<!--                                        {% elif event.start_date|date:"Y-m-d" <= current_date and event.end_date|date:"Y-m-d" >= current_date %}-->
+<!--                                            <span class="status-pill ongoing">Ongoing</span>-->
+<!--                                        {% else %}-->
+<!--                                            <span class="status-pill upcoming">Upcoming</span>-->
+<!--                                        {% endif %}-->
+<!--                                    </td>-->
                                     <!-- <td>
                                         <div class="action-buttons-group justify-content-center">
                                             <button class="btn-action btn-edit" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
                                             <button class="btn-action btn-delete" title="Delete"><i class="fa-solid fa-trash"></i></button>
                                         </div>
                                     </td> -->
+
+                                    <td>
+    {% if event.calculated_status == 'completed' %}
+        <span class="status-pill completed">Completed</span>
+    {% elif event.calculated_status == 'ongoing' %}
+        <span class="status-pill ongoing">Ongoing</span>
+    {% else %}
+        <span class="status-pill upcoming">Upcoming</span>
+    {% endif %}
+</td>
+
+
                                     <td class="text-center">
                                         <a href="{% url 'organizer:event_detail' event.id %}" class="btn-view-action" title="View Full Details">
                                             <i class="fa-solid fa-eye"></i>
