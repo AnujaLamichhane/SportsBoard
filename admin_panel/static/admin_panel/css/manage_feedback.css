@@ -1,0 +1,141 @@
+        /* Status-specific colors to match your theme */
+        .badge-status.resolved { background-color: #d1e7dd; color: #0f5132; }
+        .badge-status.pending { background-color: #fff3cd; color: #856404; }
+        .msg-preview { display: block; font-size: 0.85rem; color: #6c757d; margin-top: 4px; line-height: 1.4; }
+        /* Container for the pill */
+        /* Container Fix */
+.request-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-left: 5px;
+}
+
+/* The Search Pill (Styled like your Sports Page) */
+.search-form {
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    background: #fff;
+    padding: 0 10px 0 25px; /* Space for the icon on the left */
+    border-radius: 100px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    width: 100%;
+    min-width: 500px; /* Large width as requested */
+    height: 55px;      /* Professional thickness */
+    transition: all 0.3s ease;
+}
+
+/* Magnifying Glass Icon Positioning */
+.search-icon {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-right: 15px;
+}
+
+/* Input Text Styling */
+.search-form input {
+    flex: 1;
+    border: none !important;
+    outline: none !important;
+    padding: 0 !important;
+    font-size: 1.15rem;
+    background: transparent;
+    color: #2d3436;
+}
+
+/* Transparent Clear Button */
+.btn-clear {
+    background: transparent !important;
+    border: none !important;
+    color: #b2bec3;
+    padding: 0 15px;
+    text-decoration: none;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+}
+
+.btn-clear:hover {
+    color: #eb4d4b;
+}
+
+/* Search Submit Button (The blue pill at the end) */
+.search-btn {
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.search-btn:hover {
+    background: #0056b3;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+
+/* --- Typographic Hierarchy for Feedback Data --- */
+.user-name-text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b; /* Deep Slate */
+    letter-spacing: -0.01em;
+}
+
+.user-type-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.subject-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.message-preview-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #64748b; /* Muted Slate */
+    line-height: 1.5;
+}
+
+.small-date-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+/* Category Badge Styling */
+.category-pill {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    padding: 4px 10px !important;
+}
+
+
+
+/* Badge Backgrounds for User Types */
+.bg-primary-soft { background-color: #e0f2fe !important; color: #0369a1 !important; }
+.bg-info-soft { background-color: #f0fdfa !important; color: #0d9488 !important; }
+
+/* Vertically center table data for a cleaner look */
+.requests-table td {
+    vertical-align: middle !important;
+}

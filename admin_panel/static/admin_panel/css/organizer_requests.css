@@ -124,11 +124,23 @@
     transition: 0.2s;
 }
 
-.btn-check { background: #10b981; }
-.btn-eye { background: #3b82f6; }
-.btn-cross { background: #ef4444; }
+.btn-check { background: #10b981 !important; /* Emerald Green */
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.1); }
+.btn-eye {
+ background: #6366f1 !important; /* Indigo Blue */
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1);}
 
-.btn-action:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.btn-cross {
+    background: #ef4444 !important; /* Modern Red */
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.1);
+}
+
+
+
+.btn-action {
+    transition: all 0.2s ease-in-out;
+    border: none;
+}
 
 /* Avatar Style */
 .avatar-box {
@@ -158,9 +170,21 @@
 .status-none { background: #f5f5f5; color: #757575; }     /* Gray */
 
 /* Action Button Hover States */
-.btn-check:hover { background-color: #28a745 !important; color: white !important; }
-.btn-cross:hover { background-color: #dc3545 !important; color: white !important; }
-.btn-eye:hover { background-color: #0dcaf0 !important; color: white !important; }
+.btn-check:hover {
+    background: #059669 !important;
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+    transform: translateY(-2px);
+}
+
+btn-cross:hover {
+    background: #dc2626 !important;
+    box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+    transform: translateY(-2px);
+}
+.btn-eye:hover {
+    background: #4f46e5 !important;
+    transform: translateY(-2px);
+}
 
 .badge-status.resolved {
     background-color: #dcfce7 !important;
@@ -186,6 +210,48 @@
 
 .bg-primary-soft { background: #e0f2fe; color: #0369a1; }
 .bg-info-soft { background: #f0fdfa; color: #0d9488; }
+
+
+/* --- Primary Table Data (The 'Hero' text) --- */
+.org-name-text {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b; /* Deep slate - much cleaner than pure black */
+    letter-spacing: -0.01em;
+}
+
+/* --- Secondary Table Data (The 'Muted' text) --- */
+.sub-data-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #64748b; /* Medium slate gray */
+    margin-top: 2px;
+    display: block;
+}
+
+/* --- Contact & Email Text --- */
+.contact-main-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* --- Document Link Font --- */
+.doc-link-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4f46e5; /* Modern Indigo */
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.doc-link-text:hover {
+    color: #3730a3;
+}
 
 
 
