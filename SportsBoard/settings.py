@@ -73,7 +73,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SITE_ID = 2 # Required for django.contrib.sites (for allauth)
+SITE_ID = 4 # Required for django.contrib.sites (for allauth)
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
