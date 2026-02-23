@@ -1,26 +1,16 @@
-
-document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('click', function() {
-        // Remove active class from all items
-        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-        
-        // Add active class to the clicked item
-        this.classList.add('active');
-    });
-});
-
-
-
 function toggleSidebar() {
-            const sidebar = document.getElementById('geminiSidebar');
-            const mainContent = document.querySelector('.main-content');
-            // This toggles the class we defined in CSS
-            sidebar.classList.toggle('sidebar-collapsed');
-            if (mainContent) {
-                mainContent.classList.toggle('sidebar-collapsed');
-            
-        }
-        }
-        const chartData = JSON.parse('{{ sales_data_json|default:"[]"|escapejs }}');
-
-//        const chartData = JSON.parse('{{ sales_data_json|safe }}');
+    const sidebar = document.getElementById('geminiSidebar');
+    // Find the parent container (the <aside> tag)
+    const container = document.querySelector('.sidebar-container');
+    
+    if (sidebar && container) {
+        sidebar.classList.toggle('sidebar-collapsed');
+        container.classList.toggle('collapsed-parent');
+        
+        // Save state so it stays collapsed on refresh
+        const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+        localStorage.setItem('sidebarStatus', isCollapsed ? 'collapsed' : 'expanded');
+    } else {
+        console.error("Sidebar elements not found. Check your IDs and Classes.");
+    }
+}

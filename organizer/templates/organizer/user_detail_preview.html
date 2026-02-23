@@ -1,0 +1,120 @@
+{% extends "homepage/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'organizer/css/sidebar.css' %}">
+    <style>
+        /* Essential layout for side-by-side view */
+        .dashboard-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: stretch;
+        }
+
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0; /* Prevents sidebar from shrinking */
+            background-color: #f7fafc;
+            border-right: 1px solid rgba(128, 128, 128, 0.2);
+        }
+
+        .main-content {
+            flex: 1; /* Takes up all remaining space */
+            padding: 2rem 3rem;
+            background-color: #f4f7f6;
+            min-width: 0; /* Fixes potential flexbox overflow issues */
+        }
+
+        /* Document Styling */
+        .preview-container { 
+            background: white; 
+            padding: 20px; 
+            border-top: 4px solid #ff8c00; 
+            max-width: 900px; /* Limits document width for better readability */
+            margin: 0 auto;  /* Centers the document in the right pane */
+            font-size: 25px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .info-header { background: #fff3e6; padding: 8px; border-left: 5px solid #ff8c00; font-weight: bold; margin-top: 20px;font-size: 20px; }
+        .preview-table { width: 100%; margin-bottom: 25px; }
+        .preview-table td { padding: 8px; border-bottom: 1px solid #eee; }
+        .label { font-weight: bold; width: 30%; color: #555; }
+        .footer {
+            
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            color: #000000;
+            border-top: 1px solid #ddd;
+            padding-top: 3px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="sidebar">
+         {% include "organizer/sidebar.html" %}
+    </div>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-center align-items-center mb-4">
+            <h2 style="color: #ff8c00;">Application Preview</h2>
+            <a href="{% url 'accounts:download_trial_pdf' sub.id %}" class="btn" style="background: #ff8c00; color: white;">
+                <i class="fas fa-file-pdf"></i> Save as PDF
+            </a>
+        </div>
+
+        <div class="preview-container shadow-sm">
+            <div class="text-center mb-4">
+                <h4 class="mb-0,">SELECTION TRIAL APPLICATION</h4>
+                <small class="text-muted">Application ID: #{{ sub.id }} | Date: {{ sub.created_at|date:"M d, Y" }}</small>
+            </div>
+
+            <!-- <div class="info-header">Event Information</div>
+            <table class="preview-table">
+                <tr><td class="label">Event Name:</td><td>{{ sub.event_name }}</td></tr>
+                <tr><td class="label">Sport:</td><td>{{ sub.sports }}</td></tr>
+                <tr><td class="label">Event Address:</td><td>{{ sub.event_venue_address|default:"Not Provided" }}</td></tr>
+            </table> -->
+
+            <div class="info-header">Personal Information</div>
+            <table class="preview-table">
+                <tr><td class="label">Full Name:</td><td>{{ sub.full_name }}</td></tr>
+                <tr><td class="label">Gender:</td><td>{{ sub.gender }}</td></tr>
+                <tr><td class="label">Date of Birth:</td><td>{{ sub.dob|default:"N/A" }}</td></tr>
+                <tr><td class="label">Email:</td><td>{{ sub.email|default:"N/A" }}</td></tr>
+                <tr><td class="label">Phone:</td><td>{{ sub.phone|default:"N/A" }}</td></tr>
+                <tr><td class="label">Temporary Address:</td><td>{{ sub.temporary_address|default:"Not Provided" }}</td></tr>
+                <tr><td class="label">Permanent Address:</td><td>{{ sub.permanent_address|default:"Not Provided" }}</td></tr>
+            </table>
+            <div class="info-header">Verification & Documents</div>
+            <table class="preview-table">
+                <tr><td class="label">Citizenship Number:</td><td>{{ sub.citizenship_number|default:"N/A" }}</td></tr>
+                <tr><td class="label">Citizenship File:</td><td>{% if sub.citizenship %}Uploaded{% else %}Not Provided{% endif %}</td></tr>
+                <tr><td class="label">Certificates:</td><td>{% if sub.certificates %}Uploaded{% else %}Not Provided{% endif %}</td></tr>
+            </table>
+            <div class="info-header">Guardian Details</div>
+            <table class="preview-table">
+                <tr><td class="label">Guardian Name:</td><td>{{ sub.guardian_name }}</td></tr>
+                <tr><td class="label">Phone:</td><td>{{ sub.guardian_phone }}</td></tr>
+                <tr><td class="label">Relation:</td><td>{{ sub.guardian_relation }}</td></tr>
+            </table>
+            <div class="info-header">Experience & Medical</div>
+            <table class="preview-table">
+                <tr><td class="label">Experience Level:</td><td>{{ sub.experience_level|default:"N/A" }}</td></tr>
+                <tr><td class="label">Medical Conditions:</td><td>{{ sub.medical_conditions|yesno:"Yes,No" }}</td></tr>
+                <tr><td class="label">Medical Details:</td><td>{{ sub.medical_details|default:"None" }}</td></tr>
+            </table>
+            <div class="footer">
+                This is an official document preview generated by SportsBoard.
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,215 +1,232 @@
-/* organizer/static/organizer/css/player_selection.css */
+/* --- 1. Main Layout Structure --- */
+.dashboard-main-wrapper {
+            display: flex;          /* Places children side-by-side */
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            overflow-x: hidden;
+            margin-top: 0px;
+            padding-top: 0px;
+            
+        }
 
-/* 1. Reset the container to a clean, light 'Fillout' look */
+        .sidebar-container {
+            width: 300px;
+            flex-shrink: 0;         /* Prevents sidebar from squashing */
+            position: sticky;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 0;
+            height: auto;
+            overflow: hidden;
+            border-right: 1px solid black;
+            background-color: white;
+            
+            padding-left: 0;
+        }
+
+.main-content-column {
+    flex-grow: 1; /* Takes up all remaining space on the right */
+    padding: 40px;
+    display: flex;
+    justify-content: center; /* Centers the card within the right space */
+    align-items: center;
+}
+
+/* --- 2. The Selection Card --- */
+.selection-container {
+    width: 100%;
+    max-width: 900px;
+    /* margin-top: 70px; */
+}
+.form-main-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #333;       /* Dark navy to match your theme */
+    margin-bottom: 25px;  /* Space between title and the white card */
+    letter-spacing: -1px;
+    text-align: center;     /* Aligns with the sidebar/card edge */
+}
 .selection-card {
-    color: white!important;
-    background: #2b2b2b important;
+    background: #ffffff !important;
     border-radius: 12px !important;
-    border: 1px solid #e2e8f0!important;
-    padding: 0!important; /* Header will handle padding */
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     overflow: hidden;
-    margin-top: 0;
-    /* margin-bottom: 20px; */
-    /* margin: 0 auto 40px auto; */
-    width: 80%;
-    max-width: 1200px;
-}
-.card-body {
-    background: #1e1e1e !important;
-    color: #f8f9fa !important; /* Off-white text */
-    padding: 3rem !important;
-}
-.row{
-    display: flex !important;
-    flex-wrap: wrap !important;
-    margin-bottom: 0 !important;
-}
-/* reduce vertical gaps between fields */
-.mb-2, .mb3{
-    margin-bottom: 0.5rem;
 }
 
-/* 2. Professional Header */
+/* --- 3. Header & Legend Styling --- */
 .card-header-custom {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+    background: #1e293b !important; /* Dark navy header */
     color: #ffffff !important;
-    padding: 10px 5px !important;
+    padding: 50px !important;
     text-align: center;
-    border-bottom: 2px solid #ffc107;
+    border-bottom: 4px solid #ffc107; /* Yellow accent */
+}
+.card-header-custom p{
+    margin: 0;
+    font-weight: 500;
+    font-size: 1.3rem;
+    justify-content: center;
 }
 
-/* 3. Fieldset Styling (The 'Sections') */
+
+.card-body-content {
+    padding: 20px !important;
+    
+    
+}
+
 fieldset {
     border: none !important;
-    border-top: 1px solid #cbd5e1 !important;
-    margin-top: 20px !important;
-    padding-top: 15px !important;
+    padding: 0!important;
+    margin-bottom: 30px !important;
+    /* Grid for 2 columns inside the form */
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+    margin-top: 0;
 }
 
 legend {
-    width: auto !important;
+    grid-column: span 2; /* Header for the fieldset spans full width */
+    width: fit-content !important;
     float: none !important;
-    padding: 5px 20px !important;
+    margin: 0 auto 20px auto;
+    padding: 8px 20px !important;
     font-size: 1.3rem !important;
-    font-weight: bold!important;
-    color: #1a1a1a !important;
+    font-weight: 700 !important;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    background: #f8f9fa !important;
-    border: 1px solid #ffc107 !important;
-    border-radius: 20px !important;
+    border: 1.5px solid #ffc107 !important;
+    border-radius: 50px !important;
+    background: #fff !important;
+    text-align: center;
+    
 }
 
-/* 4. Labels and Inputs */
-label {
-    color: white !important;
-    font-weight: bold !important;
+
+.custom-form-layout {
+    display: grid;
+    grid-template-columns: 18fr 1fr; /* Corrected to equal columns */
+    column-gap: 35px; /* Spacing between left and right fields */
+    row-gap: 25px;
+}
+
+/* Force the centered elements to take up both columns so they don't shift left */
+
+.card-body-content p,
+.form-actions {
+    grid-column: span 2;
+    text-align: center;
+    margin-bottom: 5px !important; /* Spacing between header and fields */
+    color: #64748b;
+    font-size: 1.1rem;
+}
+/* --- 4. Inputs, Labels, and Fixes --- */
+
+
+.custom-form-layout label {
+    display: block !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
     margin-bottom: 10px !important;
-    font-size: 1.2rem !important;
+    margin-top: 20px;
+    margin-left: 20px;
+    font-size: 1.4rem;
+    
 }
 
-.form-control, .form-select {
-    border: 1.5px solid #e2e8f0 !important;
-    border-radius: 8px !important;
+.form-control, .form-select, input, select {
+    width: 100% !important;
     padding: 12px !important;
-    background-color: #f8f8f8!important;
-    color: black!important;
-    transition: all 0.3s ease;
-    margin: 0 0 10px 0;
+    margin-left: 20px;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    background-color: #ffffff !important;
+    color: #000 !important;
+    box-sizing: border-box !important;
 }
 
 .form-control:focus {
-    border-color: black !important;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2) !important;
+    outline: none;
 }
 
-/* Style for disabled/locked fields (Organizer details) */
-.form-control:disabled, .form-select:disabled {
-    background-color: #f7fafc !important;
-    color: #a0aec0 !important;
-    cursor: not-allowed !important;
+/* Make help text smaller */
+.form-text {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-left: 20px;
+    margin-top: 2px;
 }
 
-/* 5. Same Address Checkbox Box */
-.form-check {
-    /* background: #ebf8ff; */
-    padding: 15px 15px 15px 35px !important;
-    border-radius: 8px;
-    /* border: 1px solid #bee3f8; */
-    margin:5px !important;
-}
-.form-check-inline {
-    margin-right: 20px;
-    display: inline-block;
-    padding: 8px 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    transition: all 0.2s;
-    background: #fff;
-    cursor: pointer;
-    color: #000;
+/* --- 5. Button Styling --- */
+.form-actions {
+    grid-column: span 2; /* Button row spans both columns */
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
 }
 
-.form-check-inline:hover {
-    border-color: #3182ce;
-    background: #f7fafc;
-}
-.form-check-input{
-  color: black;
-}
-/* Hide the default circle if you want a 'button' look, 
-   or keep it and just style the label */
-.form-check-input:checked + .form-check-label {
-    color:black!important;
-    font-weight: bold;
-}
-
-.form-check-input {
-    cursor: pointer;
-}
-
-/* .custom-checkbox-container {
-    background: #f1f5f9;
-    color: black;
-    padding: 15px;
-    border-radius: 10px;
-    border-left: 4px solid #0d6efd;
-    margin: 15px 0;
-} */
-.custom-gender-row .form-check {
-    display: inline-flex !important;
-    padding: 10px 12px !important;
-    border: 1px solid #ced4da !important;
-    border-radius: 4px !important;
-    margin-right: 5px !important;
-    margin-left: 5px;
-    background:#f8f8f8;
-    color: black;
-    min-width: 100px;
-    justify-content: center;
-}
-/* Position the dot correctly */
-.custom-gender-row .form-check-input {
-    margin: 0 8px 0 0 !important; /* Space between dot and label */
-    cursor: pointer;
-}
-.custom-gender-row .form-check-label,
-.form-check-inline .form-check-label {
-    color: #1a202c !important; /* Deep charcoal/black */
-    display: inline-block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    font-weight: 600 !important;
-    padding-left: 5px !important;
-}
-
-.input-group-text {
-    /* background-color: white!important; */
-    color: black !important;
-    /* border: 1px solid #ced4da !important; */
-    font-size: 0.9rem !important;
-}
-
-.selection-card .row {
-    align-items: flex; /* Align inputs and checkbox at the bottom */
-}
-
-/* File Upload Buttons */
-
-input[type="file"] {
-
-    background: #bbbbbb;
-
-    padding: 8px;
-
-}
-
-
-
-
-/* Mandatory Field Indicators */
-
-label.requiredField span.asteriskField {
-
-    color: #e53e3e;
-
-    font-weight: bold;
-
-}
-
-/* 6. The Submit Button */
 .btn-submit {
-    background-color: #3182ce !important;
-    color: #ffffff !important;
+    background-color: #ffc107 !important;
+    color: #000 !important;
     border: none !important;
-    padding: 16px !important;
-    border-radius: 10px !important;
+    padding: 15px 40px !important;
+    margin-bottom: 10px;
+    margin-right: 30px;
+    border-radius: 8px !important;
     font-weight: 700 !important;
-    font-size: 1.1rem !important;
-    transition: background 0.3s ease !important;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
 }
 
 .btn-submit:hover {
-    background-color: #2b6cb0 !important;
-    cursor: pointer;
+    background-color: #eab308 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(234, 179, 8, 0.4);
+}
+/* --- 6. Mandatory Asterisk Styling --- */
+.asteriskField {
+    color: #ff0000 !important; /* Bright Red */
+    font-weight: 900 !important;
+    font-size: 1.2rem !important;
+    margin-left: 4px;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.4); /* Subtle Red Glow */
+    transition: all 0.3s ease;
+}
+
+/* Optional: Make the asterisk pulse slightly to draw attention */
+label:hover .asteriskField {
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    transform: scale(1.2);
+    display: inline-block;
+}
+
+/* If the field is invalid (after clicking Next), make the asterisk glow brighter */
+.is-invalid ~ label .asteriskField,
+.invalid-label .asteriskField {
+    color: #ff0000 !important;
+    animation: asterisk-glow 1.5s infinite alternate;
+}
+
+@keyframes asterisk-glow {
+    from {
+        text-shadow: 0 0 2px rgba(255, 0, 0, 0.5);
+    }
+    to {
+        text-shadow: 0 0 12px rgba(255, 0, 0, 1), 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+}
+/* Responsive: Stack columns on mobile */
+@media (max-width: 768px) {
+    fieldset {
+        grid-template-columns: 1fr;
+    }
+    .main-content-column {
+        padding: 20px;
+    }
 }

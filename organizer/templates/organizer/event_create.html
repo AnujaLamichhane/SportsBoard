@@ -1,216 +1,172 @@
-{% extends "organizer/sidebar.html" %}
+{% extends "homepage/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block extra_head %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.12.0/dist/geosearch.css" />
-
-<style>
-    .form-control, input, select, textarea {
-        background-color: #2b2b2b !important;
-        color: #ffffff !important;
-        border: 1px solid #444 !important;
-    }
-    .stepper-header { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
-    .stepper-item { text-align: center; flex: 1; z-index: 2; color: #888; }
-    .step-counter {
-        width: 35px; height: 35px; display: block; background: #444;
-        color: white; border-radius: 50%; margin: 0 auto 5px;
-        line-height: 35px; font-weight: bold;
-    }
-    .stepper-item.active { color: #ffc107; font-weight: bold; }
-    .stepper-item.active .step-counter { background: #ffc107; color: #000; }
-    .stepper-item.completed .step-counter { background: #198754; color: white; }
-    .form-step { display: none; }
-    .form-step.active { display: block; animation: fadeIn 0.3s ease-in; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .position-relative { position: relative; }
-
-    /* Free Location Search Dropdown Styling */
-    #geo-results-list {
-    display: none; /* Hide by default */
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        z-index: 9999 !important;
-        background: #333;
-        border: 1px solid #444 ;
-        max-height: 250px;
-        overflow-y: auto;
-    }
-
-    /* Show the box only if it has content inside */
-#geo-results-list:not(:empty){
-    display: block;
-}
-
-.form-control.is-invalid {
-    border: 2px solid #dc3545 !important; /* Red border for errors */
-    background-color: #3d1a1d !important; /* Subtle red tint for dark mode */
-}
-    .geo-item {
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #444;
-        color: #ffffff !important; /* Force text to be white */
-    background-color: transparent;
-    }
-    .geo-item:hover { background-color: #ffc107; color: #000; }
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'organizer/css/sidebar.css' %}">
+<link rel="stylesheet" href="{% static 'organizer/css/event_wizard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.12.0/dist/geosearch.css" />
+    <style>
+        
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card bg-dark text-white p-4 shadow-lg border-secondary">
+<div class="dashboard-main-wrapper">
+    <div class="sidebar-container">
+         {% include "organizer/sidebar.html" %}
+    </div>
 
-                <div class="stepper-header border-bottom pb-3">
-                    <div class="stepper-item active" id="step-i-1"><span class="step-counter">1</span><small>Identity</small></div>
-                    <div class="stepper-item" id="step-i-2"><span class="step-counter">2</span><small>Logistics</small></div>
-                    <div class="stepper-item" id="step-i-3"><span class="step-counter">3</span><small>Matches</small></div>
-                    <div class="stepper-item" id="step-i-4"><span class="step-counter">4</span><small>Tickets</small></div>
+    <div class="main-content-column">
+        <div class="wizard-header-container">
+            <h2 class="form-main-title"> Create Sports Event</h2>
+            
+            <div class="stepper-header-centered">
+                <div class="stepper-item active" id="step-i-1">
+                    <span class="step-counter">1</span><small>Identity</small>
+                </div>
+                <div class="step-connector"></div>
+                <div class="stepper-item" id="step-i-2">
+                    <span class="step-counter">2</span><small>Logistics</small>
+                </div>
+                <div class="step-connector"></div>
+                <div class="stepper-item" id="step-i-3">
+                    <span class="step-counter">3</span><small>Matches</small>
+                </div>
+                <div class="step-connector"></div>
+                <div class="stepper-item" id="step-i-4">
+                    <span class="step-counter">4</span><small>Tickets</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card-main">
+            <form method="post" enctype="multipart/form-data" id="event-form" novalidate>
+                {% csrf_token %}
+
+                <div class="form-step active" id="step-1">
+                    <h4 class="step-title"><i class="fas fa-id-card"></i> Event Identity</h4>
+                    <div class="grid-layout-2">
+                        <div class="input-group">{{ form.name|as_crispy_field }}</div>
+                        <div class="input-group">{{ form.game_type|as_crispy_field }}</div>
+                    </div>
+                    <div class="input-full">{{ form.game_type_other|as_crispy_field }}</div>
+                    <div class="input-full">{{ form.description|as_crispy_field }}</div>
+                    <div class="input-full">{{ form.photo|as_crispy_field }}</div>
                 </div>
 
-                <form method="post" enctype="multipart/form-data" id="event-form" novalidate>
-                    {% csrf_token %}
-
-                    <div class="form-step active" id="step-1">
-                        <h4 class="text-warning mb-4"><i class="fas fa-id-card"></i> Event Identity</h4>
-                        <div class="row">
-                            <div class="col-md-6">{{ form.name|as_crispy_field }}</div>
-                            <div class="col-md-6">{{ form.game_type|as_crispy_field }}</div>
+                <div class="form-step" id="step-2">
+                    <h4 class="step-title"><i class="fas fa-map-marker-alt"></i> Date & Location</h4>
+                    <div class="grid-layout-2">
+                        <div class="input-group">{{ form.date_time|as_crispy_field }}</div>
+                        <div class="input-group relative-pos">
+                            {{ form.location|as_crispy_field }}
+                            <div id="geo-results-list"></div>
                         </div>
-                        {{ form.game_type_other|as_crispy_field }}
-                        {{ form.description|as_crispy_field }}
-                        {{ form.photo|as_crispy_field }}
                     </div>
-
-                    <div class="form-step" id="step-2">
-                        <h4 class="text-warning mb-4"><i class="fas fa-map-marker-alt"></i> Date & Location</h4>
-                        <div class="row">
-                            <div class="col-md-6">{{ form.date_time|as_crispy_field }}</div>
-                            <div class="col-md-6 position-relative">
-                                {{ form.location|as_crispy_field }}
-                                <div id="geo-results-list"></div>
-                            </div>
-                        </div>
-                        <div style="pointer-events: none; opacity: 0.9;">
+                    <div class="input-full" id="status-wrapper">
                         {{ form.status|as_crispy_field }}
                     </div>
-                    </div>
+                </div>
 
-                    <div class="form-step" id="step-3">
-                        <h4 class="text-warning mb-3"><i class="fas fa-calendar-alt"></i> Match Schedule</h4>
-                        {{ match_formset.management_form }}
-                        <div id="match-formset-container">
-                            {% for m_form in match_formset %}
-                                <div class="mb-3 p-3 border border-secondary rounded bg-dark">
-                                    {{ m_form|crispy }}
+                <div class="form-step" id="step-3">
+                    <h4 class="step-title"><i class="fa-solid fa-calendar-alt"></i> Match Schedule</h4>
+                    {{ match_formset.management_form }}
+                    <div id="match-formset-container">
+                        {% for m_form in match_formset %}
+                            <div class="formset-item-card">
+                                {{ m_form|crispy }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn-add" id="add-match">+ Add Match</button>
+                </div>
+
+                <div class="form-step" id="step-4">
+                    <div class="flex-between-header">
+                        <h4 class="step-title"><i class="fas fa-ticket-alt"></i> Tickets & Pricing</h4>
+                        <div class="custom-switch">
+                            <input type="checkbox" id="isFreeEvent" name="isFreeEvent">
+                            <label for="isFreeEvent">Free Event</label>
+                        </div>
+                    </div>
+                    {{ formset.management_form }}
+                    <div id="ticket-logic-container">
+                        <div id="ticket-formset-container">
+                            {% for t_form in formset %}
+                                <div class="formset-item-card">
+                                    {{ t_form|crispy }}
                                 </div>
                             {% endfor %}
                         </div>
-                        <button type="button" class="btn btn-outline-info btn-sm mt-2" id="add-match">
-                            <i class="fas fa-plus"></i> Add Match
-                        </button>
+                        <button type="button" class="btn-add-success" id="add-ticket-tier">+ Add Tier</button>
                     </div>
+                </div>
 
-                    <div class="form-step" id="step-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="text-warning mb-0"><i class="fas fa-ticket-alt"></i> Tickets & Pricing</h4>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="isFreeEvent" name="isFreeEvent">
-                                <label class="form-check-label" for="isFreeEvent">This is a Free Event</label>
-                            </div>
-                        </div>
-                        {{ formset.management_form }}
-                        <div id="ticket-logic-container">
-<!--                            {{ formset.management_form }}-->
-                            <div id="ticket-formset-container">
-                                {% for t_form in formset %}
-                                    <div class="mb-3 p-3 border border-secondary rounded bg-dark">
-                                        {{ t_form|crispy }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            <button type="button" class="btn btn-outline-warning btn-sm mt-2" id="add-ticket-tier">
-                                <i class="fas fa-plus"></i> Add Tier
-                            </button>
-                        </div>
+                <div class="wizard-footer-nav">
+                    <button type="button" class="btn-back" id="prevBtn" disabled onclick="changeStep(-1)">Back</button>
+                    <div class="footer-right">
+                        <a href="{% url 'organizer:dashboard' %}" class="btn-cancel">Cancel</a>
+                        <button type="button" class="btn-next" id="nextBtn" onclick="changeStep(1)">Next Step</button>
+                        <button type="submit" class="btn-submit d-none" id="submitBtn">Create Event</button>
                     </div>
-
-                    <div class="d-flex justify-content-between mt-5 pt-4 border-top">
-                        <button type="button" class="btn btn-secondary px-4" id="prevBtn" disabled onclick="changeStep(-1)">
-                            <i class="fas fa-arrow-left me-2"></i>Back
-                        </button>
-                        <div>
-                            <a href="{% url 'organizer:dashboard' %}" class="btn btn-link text-white-50 me-2">Cancel</a>
-                            <button type="button" class="btn btn-warning px-5 fw-bold" id="nextBtn" onclick="changeStep(1)">
-                                Next Step <i class="fas fa-arrow-right ms-2"></i>
-                            </button>
-                            <button type="submit" class="btn btn-success px-5 fw-bold d-none" id="submitBtn">
-                                Create Sports Week <i class="fas fa-check-circle ms-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!--<template id="empty-match-template">-->
-<!--    <div class="mb-3 p-3 border border-secondary rounded match-form-item bg-dark">-->
-<!--        {{ match_formset.empty_form|crispy }}-->
-<!--    </div>-->
-<!--</template>-->
-<template id="empty-match-template">
-    <div class="mb-3 p-3 border border-secondary rounded match-form-item bg-dark">
-        {{ match_formset.empty_form.game_type|as_crispy_field }}
-        {{ match_formset.empty_form.team_a|as_crispy_field }}
-        {{ match_formset.empty_form.team_b|as_crispy_field }}
-        {{ match_formset.empty_form.match_time|as_crispy_field }}
-
-        <div class="position-relative venue-search-wrapper">
-            {{ match_formset.empty_form.venue|as_crispy_field }}
-            <div class="geo-results-list venue-results"></div>
-        </div>
-
-        {{ match_formset.empty_form.DELETE|as_crispy_field }}
+<script type="text/template" id="empty-match-template">
+    <div class="formset-item-card">
+        {{ match_formset.empty_form|crispy }}
     </div>
-</template>
-<template id="empty-ticket-tier-template">
-    <div class="mb-3 p-2 border border-secondary rounded ticket-formset-item">
+</script>
+
+<script type="text/template" id="empty-ticket-tier-template">
+    <div class="formset-item-card">
         {{ formset.empty_form|crispy }}
     </div>
-</template>
-{% endblock %}
-
-{% block extra_js %}
-<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
-<!--<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>-->
-<!--<script src="https://unpkg.com/leaflet-geosearch@3.12.0/dist/bundle.min.js"></script>-->
-<!--<script src="{% static 'organizer/js/event_wizard.js' %}"></script>-->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geosearch/3.11.0/bundle.min.js"></script>
-
-    <script src="{% static 'organizer/js/event_wizard.js' %}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Fix JSON parsing for chartData
-    const chartData = JSON.parse('{{ sales_data_json|default:"[]"|escapejs }}');
-        {% if match_formset.errors %}
-            changeStep(2);
-        {% elif formset.errors %}
-            changeStep(3);
-        {% endif %}
-    });
 </script>
+
+{% endblock %}
+{% block extra_js %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geosearch/3.11.0/bundle.min.js"></script>
+    
+    <script src="{% static 'organizer/js/event_wizard.js' %}"></script>
+    
+    <script>
+        document.addEventListener('change', function(e) {
+            // Check if the changed element is a "DELETE" checkbox
+            if (e.target && e.target.name && e.target.name.includes('-DELETE')) {
+                const formCard = e.target.closest('.formset-item-card');
+                
+                if (e.target.checked) {
+                    // Add a fade-out effect and then hide it
+                    formCard.style.opacity = '0.5';
+                    formCard.style.transition = '0.3s';
+                    // Optional: formCard.style.display = 'none'; 
+                    // Note: Keeping it visible but faded is safer so users can uncheck if they made a mistake
+                } else {
+                    formCard.style.opacity = '1';
+                }
+            }
+        });
+        $(document).ready(function() {
+            // Check if there are server-side errors to jump to the right step
+            {% if match_formset.errors %}
+                changeStep(2); // Go to Matches
+            {% elif formset.errors %}
+                changeStep(3); // Go to Tickets
+            {% endif %}
+            
+            // Fix for JSON data if needed for your charts
+            try {
+                const chartData = JSON.parse('{{ sales_data_json|default:"[]"|escapejs }}');
+            } catch(e) { console.error("Chart data error"); }
+        });
+    </script>
 {% endblock %}

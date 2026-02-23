@@ -1,100 +1,223 @@
-{% extends "organizer/sidebar.html" %}
+{% extends "homepage/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'organizer/css/athlete_applications.css' %}">
+    <link rel="stylesheet" href="{% static 'organizer/css/sidebar.css' %}">
+    <style>
+        .dashboard-main-wrapper {
+            display: flex;          /* Places children side-by-side */
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            overflow-x: hidden;
+            margin-top: 0px;
+            padding-top: 0px;
+            
+        }
+
+        .sidebar-container {
+            width: 300px;
+            flex-shrink: 0;         /* Prevents sidebar from squashing */
+            position: sticky;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 0;
+            /* height: 100vh; */
+            overflow: hidden;
+            border-right: 1px solid black;
+            background-color: white;
+            
+            padding-left: 0;
+        }
+
+.main-content-column {
+    flex-grow: 1; /* Takes up remaining space without overlapping */
+    /* padding: 40px; */
+    margin-top: 50px; /* Starts below your navbar */
+    min-width: 0; /* Prevents overflow issues */
+    /* margin-left: 60px; */
+    margin-right: 30px;
+}
+        /* Highlight the sorting button when active */
+        #sortBtn.active {
+            background-color: #00aeef;
+            color: white;
+            border-color: #00aeef;
+        }
+
+        /* Ensure the table rows have a transition for smooth sorting (optional) */
+        .athlete-row {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-white">Athlete Trial Applications</h2>
-        <span class="badge bg-info">{{ applications.count }} Total Submissions</span>
-    </div>
+<div class="dashboard-main-wrapper">
+    <aside class="sidebar-container">
+         {% include "organizer/sidebar.html" %}
+    </aside>
 
-    <div class="card bg-dark border-secondary shadow">
-        <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0">
-                <thead>
-                    <tr class="border-secondary">
-                        <th>Athlete Name</th>
-                        <th>Event/Trial</th>
-                        <th>Sports</th>
-                        <th>Status</th>
-                        <th>Applied On</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for app in applications %}
-                    <tr class="align-middle border-secondary">
-                        <td>
-                            <div class="fw-bold">{{ app.full_name }}</div>
-                            <small class="text-muted">{{ app.email }}</small>
-                        </td>
-                        <td>{{ app.event_name }}</td>
-                        <td><span class="badge bg-secondary">{{ app.sports }}</span></td>
-                        <td>
-                            {% if app.status == 'PENDING' %}
-                                <span class="badge bg-warning text-dark">Pending</span>
-                            {% elif app.status == 'APPROVED' %}
-                                <span class="badge bg-success">Approved</span>
-                            {% else %}
-                                <span class="badge bg-danger">Rejected</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ app.created_at|date:"M d, Y" }}</td>
+    <main class="main-content-column">
+        
+            <header class="admin-header">
+                <div class="header-main-line">
+                    <h1 class="giant-headline">Athlete Trial Applications</h1>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="sort-wrapper" style="display: flex; align-items: center; gap: 9px;">
+                            <label for="statusSort" style="font-size: 1.3rem; font-weight: 700; color: black;">SORT BY:</label>
+                            <select id="statusSort" onchange="sortBySpecificStatus()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #e0e0e0; background: white; color: #2c3e50; font-weight: 600; cursor: pointer; outline: none;">
+                                <option value="DEFAULT">Original Order</option>
+                                <option value="PENDING">Pending First</option>
+                                <option value="APPROVED">Approved First</option>
+                                <option value="REJECTED">Rejected First</option>
+                            </select>
+                        </div>
+                        <div class="count-chip">{{ applications.count }} Total Submissions</div>
+                    </div>
+                </div>
+                <p class="helper-text">Review and manage trial requests from athletes across all events.</p>
+            </header>
+            
 
-                        <td class="text-center">
-    <div class="d-flex justify-content-center gap-2">
-        <a href="{% url 'organizer:review_athlete_profile' app.pk %}"
-           class="btn btn-sm btn-outline-info px-3"
-           title="Open Full Review Page">
-            <i class="fas fa-id-card me-1"></i> Profile
-        </a>
-
-        <a href="mailto:{{ app.email }}"
-           class="btn btn-sm btn-outline-light"
-           title="Direct Email to Athlete">
-            <i class="fas fa-envelope"></i>
-        </a>
-
-
-    </div>
-</td>
-
-       </tr>
-                    <tr class="collapse" id="details-{{ app.pk }}">
-                        <td colspan="6" class="bg-black p-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h6>Personal Info</h6>
-                                    <p class="small text-muted mb-1">DOB: {{ app.dob }}</p>
-                                    <p class="small text-muted mb-1">Phone: {{ app.phone }}</p>
-                                    <p class="small text-muted mb-0">Gender: {{ app.gender|title }}</p>
+            <div class="table-scroll-area">
+                <table class="floating-table">
+                    <thead>
+                        <tr>
+                            <th>ATHLETE NAME</th>
+                            <th>EVENT / TRIAL</th>
+                            <th>SPORT</th>
+                            <th class="centered">STATUS</th>
+                            <th class="centered">APPLIED ON</th>
+                            <th class="aligned-right">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr class="clickable-row" onclick="toggleExpansion('details-{{ app.pk }}')">
+                            <td>
+                                <div class="athlete-identity">
+                                    <span class="name-bold">{{ app.full_name }}</span>
+                                    <span class="email-muted">{{ app.email }}</span>
                                 </div>
-                                <div class="col-md-4 border-start border-secondary">
-                                    <h6>Guardian Details</h6>
-                                    <p class="small text-muted mb-1">Name: {{ app.guardian_name }}</p>
-                                    <p class="small text-muted mb-0">Phone: {{ app.guardian_phone }}</p>
+                            </td>
+                            <td><span class="event-text">{{ app.event_name }}</span></td>
+                            <td><span class="sport-label">{{ app.sports }}</span></td>
+                            <td class="centered">
+                                <span class="status-indicator {{ app.status|lower }}">
+                                    {{ app.status|title }}
+                                </span>
+                            </td>
+                            <td class="centered"><span class="date-stamp">{{ app.created_at|date:"M d, Y" }}</span></td>
+                            <td class="aligned-right">
+                                <div class="action-cluster">
+                                    <a href="{% url 'organizer:review_athlete_profile' app.pk %}" class="btn-profile">
+                                        <i class="fas fa-id-card"></i> Profile
+                                    </a>
+                                    <a href="mailto:{{ app.email }}" class="btn-mail">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
                                 </div>
-                                <div class="col-md-4 border-start border-secondary">
-                                    <h6>Documents</h6>
-                                    {% if app.citizenship %}
-                                        <a href="{{ app.citizenship.url }}" target="_blank" class="btn btn-xs btn-warning py-0 px-2" style="font-size: 0.7rem;">View Citizenship</a>
-                                    {% else %}
-                                        <span class="text-danger small">No Document Uploaded</span>
-                                    {% endif %}
+                            </td>
+                        </tr>
+
+                        <tr id="details-{{ app.pk }}" class="expansion-row" style="display: none;">
+                            <td colspan="6">
+                                <div class="details-grid">
+                                    <div class="details-section">
+                                        <h6 class="section-title">Personal Info</h6>
+                                        <div class="data-point"><strong>DOB:</strong> {{ app.dob }}</div>
+                                        <div class="data-point"><strong>Phone:</strong> {{ app.phone }}</div>
+                                        <div class="data-point"><strong>Gender:</strong> {{ app.gender|title }}</div>
+                                    </div>
+                                    <div class="details-section v-border">
+                                        <h6 class="section-title">Guardian Details</h6>
+                                        <div class="data-point"><strong>Name:</strong> {{ app.guardian_name }}</div>
+                                        <div class="data-point"><strong>Phone:</strong> {{ app.guardian_phone }}</div>
+                                    </div>
+                                    <div class="details-section v-border">
+                                        <h6 class="section-title">Documents</h6>
+                                        {% if app.citizenship %}
+                                            <a href="{{ app.citizenship.url }}" target="_blank" class="document-link">
+                                                <i class="fas fa-file-pdf"></i> View Citizenship
+                                            </a>
+                                        {% else %}
+                                            <span class="missing-alert">No Document Uploaded</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                            No applications found.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty-placeholder">
+                                No applications currently available.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        
+    </main>
 </div>
+
+<script>
+    function toggleExpansion(id) {
+        const target = document.getElementById(id);
+        const isOpen = target.style.display === "table-row";
+        
+        // Close all other expansions
+        document.querySelectorAll('.expansion-row').forEach(row => row.style.display = 'none');
+        
+        // Toggle current
+        target.style.display = isOpen ? 'none' : 'table-row';
+    }
+   
+    function sortBySpecificStatus() {
+        const tableBody = document.querySelector('.floating-table tbody');
+        const selectedStatus = document.getElementById('statusSort').value;
+        
+        // 1. Get all main athlete rows
+        const mainRows = Array.from(tableBody.querySelectorAll('tr.clickable-row'));
+
+        // 2. Sorting Logic
+        mainRows.sort((a, b) => {
+            if (selectedStatus === 'DEFAULT') return 0; // Keep original order
+
+            const statusA = a.querySelector('.status-indicator').innerText.trim().toUpperCase();
+            const statusB = b.querySelector('.status-indicator').innerText.trim().toUpperCase();
+
+            // If row A matches the selected status and B doesn't, A comes first
+            if (statusA === selectedStatus && statusB !== selectedStatus) return -1;
+            // If row B matches the selected status and A doesn't, B comes first
+            if (statusA !== selectedStatus && statusB === selectedStatus) return 1;
+            
+            return 0; // Otherwise keep their relative position
+        });
+
+        // 3. Re-append rows to the Table
+        mainRows.forEach(row => {
+            // Append the main athlete row
+            tableBody.appendChild(row);
+            
+            // Find and append the associated detail row (details-{{ app.pk }})
+            // We extract the ID from the onclick="toggleExpansion('...') attribute
+            const clickAttr = row.getAttribute('onclick');
+            if (clickAttr) {
+                const match = clickAttr.match(/'([^']+)'/);
+                if (match) {
+                    const detailsId = match[1];
+                    const detailsRow = document.getElementById(detailsId);
+                    if (detailsRow) {
+                        tableBody.appendChild(detailsRow);
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
 {% endblock %}

@@ -2,117 +2,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --sb-bg: black;
-    --sb-width: 290px;
-    --sb-collapsed: 80px;
-    --accent-orange: #ff9900;
+    --bg-color: white;
+    --text-main: #000000;
     --accent-blue: #0dcaf0;
-    --text-gray: #b0b0b0;
-    --hover-bg: #1e1e1e;
-    --bg-color: #121212;
-    --dark-input: #2b2b2b;
+    --accent-orange: #ff9900;
 }
 
 /* --- Base Styling --- */
 body {
     font-family: "Poppins", sans-serif !important;
     background-color: var(--bg-color);
+    margin: 0;
 }
 
-/* --- Layout & Sidebar --- */
-.gemini-sidebar {
-    width: var(--sb-width);
-    height: 100vh;
-    background-color: var(--sb-bg);
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-right: 1px solid #222;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.main-content {
-    margin-left: 260px;
-    width: calc(100% - 260px);
+/* Main Layout Wrapper */
+.main-content-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
     padding: 2rem;
+    min-height: 100vh;
+    color: var(--text-main);
+    background-color: var(--bg-color);
+}
+
+/* If you are using a Flex container to hold sidebar + content */
+.dashboard-container {
+    display: flex;
     min-height: 100vh;
 }
 
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    height: 70px;
-    padding: 0 15px;
-}
-
-.brand-name {
-    color: white;
-    font-weight: 700;
-    font-size: 1.15rem;
-    margin-left: 10px;
-    letter-spacing: 0.5px;
-}
-
-.menu-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    text-decoration: none !important;
-    color: var(--text-gray);
-    border-radius: 12px;
-    margin-bottom: 8px;
-    transition: all 0.2s ease;
-}
-
-.menu-item:hover {
-    background-color: var(--hover-bg);
-    color: white;
-}
-
-.menu-item.active {
-    background-color: rgba(255, 153, 0, 0.1);
-    color: var(--accent-orange);
-}
-
-/* --- Forms & Inputs --- */
-.form-control, .form-select {
-    font-family: 'Segoe UI', sans-serif;
-    color: #fff;
-    background-color: var(--dark-input) !important;
-    border: 1px solid #444;
-    border-radius: 4px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.form-control:focus, .form-select:focus {
-    color: #fff;
-    background-color: #333 !important;
-    border-color: var(--accent-orange);
-    box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25);
-}
-
-label, .control-label, .form-label {
-    color: #ffffff !important;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.form-text, .help-block, .text-muted {
-    color: #aaaaaa !important;
-    font-size: 0.85rem;
-}
-
-/* --- UI Components (Cards/Buttons) --- */
-.bg-dark-card {
-    background: #1b1b1b !important;
-    border: 1px solid #333;
-    color: white;
-    border-radius: 15px !important;
-}
-
+/* --- Dashboard Components --- */
 .stat-card {
     min-height: 140px;
     border-radius: 15px;
@@ -120,9 +39,29 @@ label, .control-label, .form-label {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: #1e1e1e;
+    background: #ffffff !important;
+    border: 1px solid #dee2e6;
+    color: #212529 !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
+.stat-card h4, .stat-card h6, .stat-card p {
+    color: #212529 !important;
+}
+
+/* --- Status Badges --- */
+.status-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+.status-live { background-color: #dc3545; color: white; }
+.status-upcoming { background-color: var(--accent-orange); color: white; }
+.status-completed { background-color: #28a745; color: white; }
+
+/* --- Buttons --- */
 .btn-warning {
     background-color: var(--accent-orange) !important;
     border-color: var(--accent-orange) !important;
@@ -136,29 +75,7 @@ label, .control-label, .form-label {
     border: none;
 }
 
-/* --- Status Badges --- */
-.status-tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-.status-live { background-color: #dc3545; }
-.status-upcoming { background-color: var(--accent-orange); }
-.status-completed { background-color: #28a745; }
-
-/* --- Settings Circular Preview Section --- */
-
-/* 1. Hide messy Django default FileField labels & Clear checkboxes */
-.logo-upload-wrapper .clearablefileinput label,
-.logo-upload-wrapper .clearablefileinput a,
-.logo-upload-wrapper .form-check,
-.logo-upload-wrapper br {
-    display: none !important;
-}
-
-/* 2. Style the circular preview container */
+/* --- Settings/Upload Previews --- */
 .logo-preview-container {
     width: 90px;
     height: 90px;
@@ -177,22 +94,3 @@ label, .control-label, .form-label {
     height: 100%;
     object-fit: cover;
 }
-
-/* 3. Hide the extra asterisk on the logo field */
-.logo-upload-wrapper .asteriskField {
-    display: none;
-}
-
-/* 4. Ensure the actual input sits clean inside the wrapper */
-.custom-file-input-container label {
-    display: none !important;
-}
-
-/* --- Helper Classes --- */
-.sidebar-divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, #333, transparent);
-    margin: 20px 0;
-}
-
-

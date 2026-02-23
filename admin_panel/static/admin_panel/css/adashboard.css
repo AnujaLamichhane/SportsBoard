@@ -223,11 +223,11 @@ main {
 }
 
 /* RIGHT CONTENT SECTION */
-.dsection-right {
+/* .dsection-right {
     flex: 1;
     padding: 30px;
     background-color: #f4f7f6;
-}
+} */
 .dleft-content {
     height: 60px;
     display: flex;

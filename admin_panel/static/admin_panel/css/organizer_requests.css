@@ -1,6 +1,12 @@
 /* Header and Search Styling */
+
+
+.request-header{
+    width: 100%;
+}
+
 .request-header h2 {
-    font-size: 3rem;
+    font-size: 2rem;
     letter-spacing: -0.5px;
     margin-bottom: 10px;
     margin-top: 35px;
@@ -9,60 +15,72 @@
     font-size: 1.5rem;
     margin-bottom: 12px;
 }
-/* Ensure the form container allows absolute positioning for the 'X' */
-.search-form {
-    position: relative; 
-    display: flex;
-    align-items: center;
-    background: #fff;
-    padding: 6px 10px;
-    margin-bottom: 15px;
-    border-radius: 50px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e0e0e0;
+
+/* Container to ensure horizontal alignment */
+.request-header {
     width: 100%;
-    max-width: 450px;
-    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Added padding-right (40px) so text doesn't go under the 'X' */
+/* The Search Pill Container */
+.search-form {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 6px 10px;
+    border-radius: 50px; /* Rounded pill shape */
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    min-width: 400px; /* Adjust this to control how long the bar is */
+}
+
+.search-input-group {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    padding-left: 12px;
+}
+
+.search-input-group i {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
 .search-form input {
     border: none;
     outline: none;
-    padding: 8px 40px 8px 15px; 
     width: 100%;
+    padding: 8px 12px;
     font-size: 0.95rem;
     background: transparent;
 }
 
-/* The 'X' button inside the pill */
+/* Blue Search Button */
+.search-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.search-btn:hover {
+    background-color: #0056b3;
+}
+
 .btn-clear {
-    position: absolute;
-    right: 105px; /* Adjust this based on your search button width */
-    color: #a0aec0;
+    color: #94a3b8;
+    margin-right: 10px;
     text-decoration: none;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s;
 }
 
 .btn-clear:hover {
-    color: #ef4444; /* Turns red on hover */
-}
-
-.search-btn {
-    background: #0d6efd;
-    color: #fff;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.2s;
-    white-space: nowrap;
-    z-index: 2; /* Keep button above input */
+    color: #ef4444;
 }
 
 /* Floating Table Rows */
@@ -75,9 +93,9 @@
 .requests-table thead th {
     color: #718096;
     font-weight: 600;
-    font-size: 1.3rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    padding: 10px 5px;
+    padding: 10px 10px;
     border: none;
 }
 

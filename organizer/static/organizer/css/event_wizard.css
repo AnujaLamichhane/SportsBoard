@@ -1,0 +1,481 @@
+
+:root {
+    --sb-width: 300px;
+    --sb-bg: #f7fafc;
+    --sidebar-border: black;
+    --accent-orange: #ff9900;
+    --hover-bg: #e9ecef;
+    --text-gray: #64748b; /* Added for menu-item default state */
+}
+.dashboard-main-wrapper {
+            display: flex;          /* Places children side-by-side */
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            overflow-x: hidden;
+            margin-top: 0px;
+            padding-top: 0px;
+            
+        }
+
+        .sidebar-container {
+            width: 300px;
+            flex-shrink: 0;         /* Prevents sidebar from squashing */
+            position: sticky;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 0;
+            height: auto;
+            overflow: hidden;
+            border-right: 1px solid black;
+            background-color: white;
+            
+            padding-left: 0;
+        }
+
+.main-content-column {
+    flex-grow: 1; /* Takes up remaining space without overlapping */
+    padding: 40px;
+    margin-top: 10px; 
+    min-width: 0; /* Prevents overflow issues */
+    align-items: center;
+}
+
+
+
+/* Specifically remove padding from the sidebar header */
+.sidebar-header {
+    
+    border-bottom: 1px solid black;
+    display: flex;
+    align-items: center;
+    height: 70px;
+    padding-top: 35px !important;
+    padding-bottom: 25px !important;
+    padding-left: 15px;
+    padding-right:5px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.gemini-sidebar {
+    /* width: 100%; */
+    width: 300px;
+    /* height: 100%; */
+    background-color: white;
+    border-right: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    /* height: 100vh; Changed to 100vh for sticky behavior */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding-top: 10px;
+}
+
+
+
+.brand-name {
+    color: #000;
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-left: 10px;
+    letter-spacing: 0.5px;
+   
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px;
+    flex-grow: 1;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none !important;
+    color: #000000 !important; /* Pure black text for weight */
+    font-size: 1.1rem;         /* Matching font size */
+    font-weight: 600;          /* Matching font weight */
+    border-radius: 12px;
+    margin-bottom: 10px;
+    position: relative;        /* Necessary for the orange bar */
+    transition: all 0.2s ease;
+}
+.menu-item.active {
+    background-color: #fff5e6 !important; /* Soft orange/tan background */
+    color: #ff8c00 !important;           /* Deep orange text color */
+}
+
+/* The vertical orange bar on the left */
+.menu-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 80%;               /* Height of the accent bar */
+    background-color: #ff8c00;
+    border-radius: 0 5px 5px 0;
+}
+.menu-item i {
+   
+    font-size: 1.3rem;
+    margin-right: 15px;
+    width: 25px;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--accent-orange);
+}
+
+
+
+.sidebar-divider {
+    height: 2px;
+    background: black;
+    margin: 15px 20px;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-bottom: 20px;
+}
+
+.menu-toggle-btn {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+
+/* Base Sidebar Transition */
+#geminiSidebar {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+/* Collapsed State Styles */
+#geminiSidebar.sidebar-collapsed {
+    width: 80px !important; /* Shrunk width showing only icons */
+}
+
+/* Hide labels and brand name when collapsed */
+#geminiSidebar.sidebar-collapsed .menu-label,
+#geminiSidebar.sidebar-collapsed .brand-name,
+#geminiSidebar.sidebar-collapsed .badge {
+    display: none !important;
+}
+
+/* Center icons in collapsed mode */
+#geminiSidebar.sidebar-collapsed .menu-item {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+#geminiSidebar.sidebar-collapsed .menu-item i {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+/* Adjust the sidebar container width in the main layout if necessary */
+.sidebar-container:has(#geminiSidebar.sidebar-collapsed) {
+    width: 80px !important;
+}
+
+
+
+
+.wizard-header-container {
+    text-align: center;
+    margin-bottom: 40px;
+    margin-top: 0;
+}
+
+.form-main-title { color: #333; font-weight: 700; margin-bottom: 30px;font-size: 3rem;margin-top: 0; }
+
+.stepper-header-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.stepper-item { display: flex; flex-direction: column; align-items: center; }
+.step-counter {
+    width: 35px; height: 35px; border-radius: 50%;
+    background: #ddd; color: #666; font-weight: bold; font-size: 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 5px;
+}
+.step-connector { width: 50px; height: 2px; background: #ddd; margin-bottom: 20px; }
+
+.stepper-item.active .step-counter { background: #ffc107; color: #000; }
+.stepper-item.active small { color: #000; font-weight: bold; }
+
+/* --- Form Card --- */
+.form-card-main {
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    max-width: 950px;
+    margin: 0 auto;
+    width: 800px;
+}
+
+.form-step { display: none; }
+.form-step.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* --- Grid & Input Styling --- */
+.grid-layout-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.step-title { color: #ffc107; margin-bottom: 25px; font-weight: 600; }
+.step-title i {
+    color: #000000 !important;
+    font-weight: 900 !important; /* Ensures the 'Solid' icon style is used */
+    display: inline-block !important;
+    opacity: 1 !important;
+}
+/* --- Global Input Styling --- */
+.form-control, 
+.form-select,
+input[type="text"], 
+input[type="email"], 
+input[type="number"], 
+input[type="date"], 
+input[type="datetime-local"], 
+select,
+input, 
+textarea {
+    background-color:white !important; /* Dark background */
+    color: black !important;           /* White text by default */
+    border: 1px solid #444 !important;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+}
+
+/* 1. PLACEHOLDER COLOR: Set to White */
+::placeholder {
+    color: #ffffff !important;
+    opacity: 0.8; /* Slight transparency for a cleaner look */
+}
+
+/* Support for different browsers */
+:-ms-input-placeholder { color: #ffffff !important; }
+::-ms-input-placeholder { color: #ffffff !important; }
+
+/* 2. SELECTED/FOCUS COLOR: Background White, Text Black */
+.form-control:focus, 
+input:focus, 
+select:focus, 
+textarea:focus {
+    background-color: #ffffff !important; /* White background on click */
+    color: #000000 !important;           /* BLACK TEXT when selected */
+    border-color: #ffc107 !important;    /* Yellow border highlight */
+    outline: none;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+/* Fix for dark-themed Date/Time icons */
+input::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Makes the calendar icon white */
+}
+
+/* --- Base State for Dropdowns --- */
+select.form-control, 
+select {
+    background-color: #2b2b2b !important; /* Matches your dark inputs */
+    color: #ffffff !important;           /* FORCES THE SELECTED/PLACEHOLDER TEXT TO WHITE */
+    border: 1px solid #444 !important;
+    appearance: none;                    /* Removes default browser styling */
+    
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e") !important;
+   
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px;
+    padding-right: 35px !important;
+}
+select:invalid,
+select option[value=""] {
+    background: white;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+/* --- The Options Menu (Inside the dropdown) --- */
+select option {
+    background-color: white !important; /* Dark background for the list */
+    color: black !important;           /* White text for the list items */
+}
+
+/* --- Focus State (When you click to select) --- */
+select:focus {
+    background-color: #ffffff !important; 
+    color: #000000 !important;           /* Black text when active */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    border-color: #ffc107 !important;
+}
+
+/* Fix for some browsers that force white backgrounds on options */
+select:focus option {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+option area{
+    background: white;
+}
+/* --- Label Styling --- */
+.form-label, 
+label {
+    color: #000000 !important; /* Forces Label text to BLACK */
+    font-weight: 600;           /* Makes them slightly bold for better structure */
+    margin-bottom: 8px;
+    margin-top: 10px;
+    display: inline-block;
+    font-size: 0.95rem;
+}
+
+/* --- Required Field Asterisk --- */
+/* This ensures the '*' remains red and visible next to the black label */
+.asteriskField {
+    color: #d9534f !important; 
+    font-weight: bold;
+    margin-left: 3px;
+}
+
+/* --- Optional: Section Headers --- */
+/* If you want those 'Step 1: Event Identity' headers to also be black/dark */
+.step-title, 
+h4.text-primary {
+    color: #212529 !important; /* Dark charcoal/Black */
+    border-bottom: 2px solid #ffc107; /* Keeping your yellow accent line */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* --- Buttons --- */
+.wizard-footer-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 1px solid #eee;
+}
+
+.btn-back { padding: 10px 25px; background: #6c757d; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.btn-next { padding: 10px 40px; background: #ffc107; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-submit { padding: 10px 40px; background: #198754; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-cancel { text-decoration: none; color: #888; margin-right: 20px; font-size: 0.9rem; }
+
+.btn-add { width: 100%; padding: 10px; background: transparent; border: 1px dashed #0dcaf0; color: #0dcaf0; border-radius: 6px; cursor: pointer; }
+.btn-add-success { width: 100%; padding: 10px; background: transparent; border: 1px dashed #198754; color: #198754; border-radius: 6px; cursor: pointer; }
+
+/* --- Utility --- */
+.relative-pos { position: relative; }
+.d-none { display: none !important; }
+.status-disabled { pointer-events: none; opacity: 0.7; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+.status-disabled {
+    pointer-events: none; /* Disables manual clicking */
+    opacity: 0.8;
+}
+
+.status-disabled select {
+    background-color: #f8f9fa !important;
+    color: #333 !important;
+}
+
+#geo-results-list {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.geo-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.geo-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Hide the "Other" field by default */
+#div_id_game_type_other {
+    display: none;
+}
+
+/* The Glow Effect */
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+    transition: all 0.3s ease;
+    animation: shake 0.4s ease-in-out;
+}
+
+/* Red Asterisk Pulse */
+.invalid-label .asteriskField {
+    color: #ff0000 !important;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+    font-size: 1.2em;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+/* Align 'Free Event' in the header */
+.custom-switch {
+    display: flex !important;
+    align-items: center !important; /* Perfect vertical alignment */
+    gap: 8px;
+    margin-top: 10px;
+}
+
+/* Align 'Delete' inside the formset cards */
+.formset-item-card .form-check {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+    padding-left: 0;
+    margin-top: 15px;
+}
+
+/* Size the checkboxes and remove default top margins */
+.custom-switch input[type="checkbox"],
+.formset-item-card .form-check-input {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important; /* Resets Crispy's default top margin */
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.custom-switch label,
+.formset-item-card .form-check-label {
+    margin: 0 !important;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+}

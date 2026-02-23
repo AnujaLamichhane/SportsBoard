@@ -34,5 +34,6 @@ path('applications/review/<int:pk>/', views.review_athlete_profile, name='review
     path('payment/verify/', views.verify_payment, name='verify_payment'),             # Required for Khalti callback
     path('booking/success/<int:sale_id>/', views.booking_success, name='booking_success'),
     path('verify-ticket/', views.verify_ticket_gate, name='verify_ticket_gate'),
+    path('applications/pdf/<int:pk>/', views.athlete_pdf_view, name='athlete_pdf_detail'),
 
 ]

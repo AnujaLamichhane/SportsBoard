@@ -1,252 +1,74 @@
-{% extends "organizer/sidebar.html" %}
+{% extends 'homepage/base.html' %}
+{% load static %}
 
-        {% block content %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'organizer/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'organizer/css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'organizer/css/all_dash.css' %}">
+    <style>
+        /* This is the magic fix */
+        .dashboard-main-wrapper {
+            display: flex;          /* Places children side-by-side */
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            overflow-x: hidden;
+            margin-top: 0px;
+            padding-top: 0px;
+            
+        }
 
+        .sidebar-container {
+            width: 300px;       /* Set your desired width */
+            min-width: 300px;
+            flex-shrink: 0;     /* Prevents content from squishing the sidebar */
+            background: #ffffff;
+            border-right: 1px solid #ddd;
+            height: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            top: 0;
+            z-index: 100;
+        }
 
+        .content-right-area {
+            flex-grow: 1;           /* Tells this part to take the remaining width */
+            min-width: 0;           /* Crucial for preventing horizontal scroll */
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+    </style>
+{% endblock %}
 
-<div class="container-fluid">
+{% block content %}
+<div class="dashboard-main-wrapper">
+    <aside class="sidebar-container">
+        {% include 'organizer/sidebar.html' %}
+    </aside>
 
-    {% if is_rejected %}
-    <div class="alert alert-danger border-0 shadow-lg d-flex align-items-center mb-4 py-3"
-         style="background: linear-gradient(90deg, #3d0808 0%, #1a1a1a 100%); border-left: 5px solid #dc3545 !important;">
-        <div class="me-4 ms-2">
-            <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
-        </div>
-        <div class="flex-grow-1">
-            <h5 class="text-white mb-1 fw-bold">Verification Request Declined</h5>
-            <p class="text-light mb-0 opacity-75">
-                The administrator has rejected your verification request. This usually happens due to unclear certificates or mismatched organization details.
-            </p>
-        </div>
-        <div class="ms-3">
-            <a href="{% url 'organizer:settings' %}?action=reset" class="btn btn-danger px-4 fw-bold shadow-sm">
-                Fix & Re-apply
-            </a>
-        </div>
-    </div>
-    {% endif %}
+    <main class="content-right-area">
+        <!-- <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px;">
+             <span>Hello, <strong>{{ user.username }}</strong></span>
+             <i class="fas fa-user-circle fa-2x" style="margin-left: 10px; color: #ccc;"></i>
+        </div> -->
 
-    {% if completion_percentage < 100 and not is_rejected %}
-    <div class="card bg-dark-card border-secondary mb-4 shadow-sm" style="border-left: 4px solid #ffc107;">
-        <div class="card-body p-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                    <h6 class="text-white mb-0">
-                        <i class="fas fa-rocket text-warning me-2"></i>Complete Your Setup
-                    </h6>
-                    <small class="text-muted">Fill in your organization details to go live.</small>
-                </div>
-                <span class="badge bg-warning text-dark fw-bold">{{ completion_percentage }}%</span>
-            </div>
-            <div class="progress bg-dark" style="height: 10px; border-radius: 5px;">
-                <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated"
-                     role="progressbar"
-                     style="width: {{ completion_percentage }}%;"
-                     aria-valuenow="{{ completion_percentage }}"
-                     aria-valuemin="0"
-                     aria-valuemax="100">
-                </div>
-            </div>
-            <div class="mt-3 d-flex gap-3">
-                {% if not profile.khalti_merchant_id %}
-                    <small class="text-info"><i class="fas fa-exclamation-circle me-1"></i> Missing Khalti ID</small>
-                {% endif %}
-                {% if not profile.organization_logo %}
-                    <small class="text-info"><i class="fas fa-image me-1"></i> No Logo Uploaded</small>
-                {% endif %}
-                <a href="{% url 'organizer:settings' %}" class="ms-auto btn btn-sm btn-outline-warning py-0">Finish Now</a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-
-
-<!--{% if completion_percentage < 100 %}-->
-<!--<div class="card bg-dark-card border-secondary mb-4 shadow-sm" style="border-left: 4px solid #ffc107;">-->
-<!--    <div class="card-body p-3">-->
-<!--        <div class="d-flex justify-content-between align-items-center mb-2">-->
-<!--            <div>-->
-<!--                <h6 class="text-white mb-0">-->
-<!--                    <i class="fas fa-rocket text-warning me-2"></i>Complete Your Setup-->
-<!--                </h6>-->
-<!--                <small class="text-muted">Fill in your organization details to go live.</small>-->
-<!--            </div>-->
-<!--            <span class="badge bg-warning text-dark fw-bold">{{ completion_percentage }}%</span>-->
-<!--        </div>-->
-
-<!--        <div class="progress bg-dark" style="height: 10px; border-radius: 5px;">-->
-<!--            <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated"-->
-<!--                 role="progressbar"-->
-<!--                 style="width: {{ completion_percentage }}%;"-->
-<!--                 aria-valuenow="{{ completion_percentage }}"-->
-<!--                 aria-valuemin="0"-->
-<!--                 aria-valuemax="100">-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <div class="mt-3 d-flex gap-3">-->
-<!--            {% if not profile.khalti_merchant_id %}-->
-<!--                <small class="text-info"><i class="fas fa-exclamation-circle me-1"></i> Missing Khalti ID</small>-->
-<!--            {% endif %}-->
-<!--            {% if not profile.organization_logo %}-->
-<!--                <small class="text-info"><i class="fas fa-image me-1"></i> No Logo Uploaded</small>-->
-<!--            {% endif %}-->
-<!--            <a href="{% url 'organizer:settings' %}" class="ms-auto btn btn-sm btn-outline-warning py-0">Finish Now</a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--{% endif %}-->
-
-
-        <div class="flex-grow-1 dashboard-container p-4" style="overflow-y: auto; height: 100vh;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="text-white mb-0">Overview</h2>
-                <!-- <div class="d-flex align-items-center text-white">
-                    <span class="me-3">Hello, {{ user.username }}</span>
-                    <i class="fas fa-user-circle fa-2x text-light"></i>
-                </div> -->
-            </div>
-
-            <div class="row g-4 mb-5">
-                <div class="col-md-4 col-lg-2">
-                    <div class="stat-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6>Total Revenue</h6>
-                            <i class="fa-solid fa-money-bill-wave text-warning"></i>
-                        </div>
-                        <h4>{{ total_revenue|floatformat:2 }}</h4>
-                    </div>
-                </div>
-
-                <div class="col-md-4 col-lg-2">
-                    <div class="stat-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6>Total Events</h6>
-                            <i class="fa-solid fa-trophy text-secondary"></i>
-                        </div>
-                        <h4>{{ total_events }}</h4>
-                    </div>
-                </div>
-
-                <div class="col-md-4 col-lg-2">
-                    <div class="stat-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6>Upcoming</h6>
-                            <i class="fa-solid fa-calendar-days text-info"></i>
-                        </div>
-                        <h4>{{ upcoming_count }}</h4>
-                    </div>
-                </div>
-
-                <div class="col-md-4 col-lg-2">
-                    <div class="stat-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6>Pending App.</h6>
-                            <i class="fa-solid fa-user-check text-danger"></i>
-                        </div>
-                        <h4>{{ pending_applications }}</h4>
-                    </div>
-                </div>
-
-                <div class="col-md-4 col-lg-2">
-<!--                    <div class="stat-card">-->
-<!--                        <div class="d-flex justify-content-between align-items-center">-->
-<!--                            <h6>Tickets Sold</h6>-->
-<!--                            <i class="fa-solid fa-ticket text-success"></i>-->
-<!--                        </div>-->
-<!--                        <h4>{{ tickets_sold }}</h4>-->
-<!--                    </div>-->
-
-                    <div class="stat-card" onclick="location.href='{% url 'organizer:verify_ticket_gate' %}'" style="cursor: pointer;">
-                        <p>Tickets Sold</p>
-                        <h2>{{ tickets_sold }}</h2>
-                        <small class="text-info">Tap to start scanning ➔</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" id="recent-events">
-                <div class="col-lg-7">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="text-white">Recent Events</h3>
-<!--                        <div class="d-flex gap-2">-->
-<!--                            <a href="{% url 'organizer:selection_form_create' %}" class="btn btn-info btn-sm">Create Form</a>-->
-<!--                            <a href="{% url 'organizer:event_create' %}" class="btn btn-warning btn-sm">New Event</a>-->
-<!--                        </div>-->
-
-
-                      <div class="d-flex gap-2">
-    <a href="{% url 'organizer:published_forms' %}" class="btn btn-outline-info btn-sm">
-        <i class="fas fa-list-check me-1"></i> My Forms
-    </a>
-    <a href="{% url 'organizer:selection_form_create' %}" class="btn btn-info btn-sm">Create Form</a>
-    <a href="{% url 'organizer:event_create' %}" class="btn btn-warning btn-sm">New Event</a>
+        {% include 'organizer/all_dash.html' %}
+    </main>
 </div>
-
-                    </div>
-                    <div class="card bg-dark-card p-3 mb-4">
-                        <ul class="list-group list-group-flush">
-                            {% for event in recent_events %}
-                            <li class="list-group-item d-flex align-items-center bg-dark-card text-white border-secondary mb-2 rounded p-3">
-                                <div class="event-image me-3 position-relative" style="width: 80px; height: 60px;">
-                                    {% if event.photo %}
-                                        <img src="{{ event.photo.url }}" class="rounded shadow-sm w-100 h-100" style="object-fit: cover;">
-                                    {% endif %}
-                                    <span class="status-tag status-{{ event.status|lower }} position-absolute top-0 start-0 m-1" style="font-size: 0.5rem; padding: 2px 5px;">
-                                        {{ event.status }}
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1">{{ event.name }}</h5>
-                                    <small class="text-muted"><i class="fas fa-calendar-day"></i> {{ event.date_time|date:"M d, Y" }}</small>
-                                </div>
-                                <div class="btn-group">
-                                    <a href="{% url 'organizer:event_edit' event.pk %}" class="btn btn-sm btn-outline-light"><i class="fas fa-edit"></i></a>
-                                    <a href="{% url 'organizer:event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Event"><i class="fas fa-trash-alt"></i></a>
-                                    <a href="{% url 'organizer:event_detail' event.pk %}" class="btn btn-sm btn-outline-info">View</a>
-                                </div>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                </div>
-
-                <div class="col-lg-5">
-                    <h3 class="text-white mb-3">Recent Sales</h3>
-                    <div class="card bg-dark-card p-3 mb-4">
-                        <ul class="list-group list-group-flush">
-                           {% for sale in recent_sales %}
-
-
-
-<li class="list-group-item d-flex justify-content-between align-items-center bg-dark-card text-white border-secondary mb-1 rounded">
-    <div>
-        <p class="mb-0 fw-bold">{{ sale.transaction.ticket_type.event.name }}</p>
-        <small class="text-info">{{ sale.transaction.ticket_type.name }} Tier</small>
-        <br>
-        <small class="text-muted" style="font-size: 0.75rem;">Code: {{ sale.ticket_code }}</small>
-    </div>
-    <div class="text-end">
-        <span class="badge bg-success d-block mb-1">
-            {{ sale.transaction.status }}
-        </span>
-        <small class="text-success">NPR {{ sale.transaction.amount }}</small>
-    </div>
-</li>
-
-{% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 {% block extra_js %}
+    <script src="{% static 'organizer/js/slidebar.js' %}"></script>
+    <script src="{% static 'organizer/js/charts.js' %}"></script>
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script>
+        function toggleSidebar() {
+            document.getElementById('geminiSidebar').classList.toggle('sidebar-collapsed');
+        }
+    </script> -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('geminiSidebar');
@@ -254,5 +76,6 @@
         }
         const chartData = JSON.parse('{{ sales_data_json|safe }}');
     </script>
-    
+
+
 {% endblock %}

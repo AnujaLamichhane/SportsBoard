@@ -15,28 +15,30 @@
         <div class="dsection-right">
             <div class="content-container p-4">
                 
-                <div class="request-header d-flex justify-content-between align-items-center mb-5">
-                    <div>
-                        <h2 class="fw-bold text-dark mb-1">Organizer Requests</h2>
-                        <p class="text-muted">Manage and verify all tournament organizer applications.</p>
-                    </div>
-                    <div class="header-actions">
-                        <form method="GET" class="search-form" id="searchForm">
-                            <input type="text" name="search" id="requestSearch" 
-                                placeholder="Search by name or email..." 
-                                value="{{ query|default:'' }}" autocomplete="off">
-                            
-                            {% if query %}
-                                <a href="{% url 'admin_panel:organizer_requests' %}" class="btn-clear">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </a>
-                            {% endif %}
-
-                            <button type="submit" class="search-btn">Search</button>
-                        </form>
-                    </div>
-                    
-                </div>
+               <div class="request-header d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">Organizer Requests</h2>
+        <p class="text-muted">Manage and verify all tournament organizer applications.</p>
+    </div>
+    
+    <div class="header-actions">
+        <form method="GET" class="search-form" id="searchForm">
+            <div class="search-input-group">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="search" id="requestSearch" 
+                       placeholder="Search by name or email..." 
+                       value="{{ query|default:'' }}" autocomplete="off">
+                
+                {% if query %}
+                    <a href="{% url 'admin_panel:organizer_requests' %}" class="btn-clear">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                {% endif %}
+            </div>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+</div>
 
                 <div class="table-responsive">
                     <table class="requests-table">

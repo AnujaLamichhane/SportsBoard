@@ -1,44 +1,155 @@
 {% load static %}
 
-
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Confirm Delete</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="{% static 'organizer/css/dashboard.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Delete | {{ event.name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #f4f7f6;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger-red: #ef4444;
+            --danger-bg: #fef2f2;
+            --accent-yellow: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .delete-container {
+            width: 100%;
+            max-width: 550px;
+            padding: 20px;
+        }
+
+        .delete-card {
+            background: var(--bg-white);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .delete-title {
+            color: var(--danger-red);
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 0 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg-body);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .event-name-display {
+            color: var(--text-main);
+            background: #fffbeb;
+            border-left: 4px solid var(--accent-yellow);
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .warning-alert {
+            background-color: var(--danger-bg);
+            border: 1px solid #fee2e2;
+            color: #991b1b;
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+        }
+
+        .btn-cancel:hover {
+            background-color: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+    </style>
 </head>
-<body class="bg-dark">
+<body>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card bg-dark-card text-white p-4 shadow-lg">
-                <h2 class="text-danger border-bottom pb-2 mb-4">Confirm Deletion</h2>
+<div class="delete-container">
+    <div class="delete-card">
+        <h2 class="delete-title">
+            <i class="fas fa-trash-can"></i> Confirm Deletion
+        </h2>
 
-                <p>Are you sure you want to delete the event:</p>
-                <h3 class="text-warning mb-4">{{ event.name }} ?</h3>
-
-                <div class="alert alert-danger" role="alert">
-                    <strong>Warning:</strong> This action cannot be undone. All associated ticket sales, applications, and ticket tiers will also be deleted.
-                </div>
-
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        <a href="{% url 'organizer:dashboard' %}" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i> Confirm Delete
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <p style="color: var(--text-muted); margin-bottom: 5px;">You are about to delete the following event:</p>
+        <div class="event-name-display">
+            {{ event.name }}
         </div>
+
+        <div class="warning-alert">
+            <i class="fas fa-circle-exclamation" style="margin-right: 5px;"></i>
+            <strong>Action Required:</strong> Please note that this process is irreversible. All related match data, ticket configurations, and sales records will be destroyed.
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="button-group">
+                <a href="{% url 'organizer:all_events' %}" class="btn btn-cancel">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Delete Event Permanently
+                </button>
+            </div>
+        </form>
     </div>
 </div>
-
 
 </body>
 </html>

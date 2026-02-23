@@ -1,83 +1,92 @@
-{% extends 'organizer/organizer_dashboard.html' %} {# Make sure this points to your sidebar layout file #}
-
-{% block content %}
-<div class="ms-4 overview-header">
-    <h2 class="text-white">All Events</h2>
-    <div class="search-container">
-        <form method="GET" id="searchForm" class="mb-3 search-form">
-            <div class="input-group position-relative" style="width: 300px;">
-                <span class="input-group-text bg-dark-card border-secondary text-secondary border-end-0">
-                    <i class="fas fa-search"></i>
-                </span>
-            
-                <input type="text" name="search" id="searchInput" 
-                    class="form-control bg-dark-card border-secondary text-white border-start-0 pe-5"  
-                    placeholder="Search events..." value="{{ search_query|default:'' }}">
-            
-                {% if search_query %}
-                <a href="{% url 'organizer:all_events' %}" class="position-absolute end-0 top-50 translate-middle-y me-3 text-secondary clear-search">
-                    <i class="fas fa-times-circle"></i>
-                </a>
-                {% endif %}
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="ms-4 events-container">
-    <div class="recent-events-card" style="background: #1a1a1a; padding: 20px; border-radius: 15px;">
-        {% for event in events %}
-            <div class="event-item d-flex align-items-center justify-content-between mb-3" style="background: #252525; padding: 15px; border-radius: 10px;">
-                <div class="d-flex align-items-center">
-                    {% if event.photo %}
-                        <img src="{{ event.photo.url }}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;" class="me-3">
-                    {% else %}
-                        <div style="width: 60px; height: 60px; background: #333; border-radius: 8px;" class="me-3"></div>
-                    {% endif %}
-                    <div>
-                        <h5 class="text-white mb-0">{{ event.name }}
-
-
-                            {% if event.status == 'COMPLETED' %}
-            <span class="badge bg-secondary ms-2" style="font-size: 0.6rem; vertical-align: middle;">FINISHED</span>
-        {% elif event.status == 'LIVE' %}
-            <span class="badge bg-danger ms-2 pulse" style="font-size: 0.6rem; vertical-align: middle;">LIVE</span>
-        {% endif %}
-
-                        </h5>
-                        <small class="text-muted">{{ event.date_time|date:"M d, Y" }} • {{ event.location }}</small>
-                    </div>
-                </div>
-                <div class="event-actions">
-                    <a href="{% url 'organizer:event_edit' event.pk %}" class="btn btn-sm btn-outline-light"><i class="fas fa-edit"></i></a>
-                    <a href="{% url 'organizer:event_delete' event.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Event"><i class="fas fa-trash-alt"></i></a>
-                    <a href="{% url 'organizer:event_detail' event.id %}" class="btn btn-sm btn-info">View</a>
-                    
-                </div>
-            </div>
-        {% empty %}
-        <div class="text-center p-4 g-4">
-        {% if search_query %}
-            <p class="text-light fs-5">No events found matching "<strong>{{ search_query }}</strong>"</p>
-            <a href="{% url 'organizer:all_events' %}" class="btn btn-sm btn-outline-secondary">Clear Search</a>
-        {% else %}
-            <p class="text-light fs-5">You haven't created any events yet.</p>
-            <a href="{% url 'organizer:event_create' %}" class="btn btn-sm btn-warning">Create Your First Event</a>
-        {% endif %}
-    </div>
-            <!-- <p class="text-muted">No events found.</p> -->
-<!--            <div class="text-center p-4 g-4">-->
-<!--                <p class="text-light fs-5">No events found matching {{ search_query }}</p>-->
-<!--            </div>-->
-        {% endfor %}
-    </div>
-</div>
+{% extends "homepage/base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'organizer/css/all_events.css' %}">
+    <link rel="stylesheet" href="{% static 'organizer/css/sidebar.css' %}">
 {% endblock %}
+{% block content %}
+<div class="dashboard-main-wrapper">
+
+    <div class="sidebar-container">
+         {% include "organizer/sidebar.html" %}
+    </div>
+
+    <div class="main-content-column">
+        <div class="overview-header">
+            <h2 class="text-dark"><i class="fas fa-history"></i> All Events</h2>
+            <div class="search-container">
+                <form method="GET" id="searchForm" class="mb-3 search-form">
+                    <div class="input-group-custom">
+                        <span class="search-addon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    
+                        <input type="text" name="search" id="searchInput" 
+                            class="search-input-field"  
+                            placeholder="Search events..." value="{{ search_query|default:'' }}">
+                    
+                        {% if search_query %}
+                        <a href="{% url 'organizer:all_events' %}" class="clear-search-link">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="events-container">
+            <div class="recent-events-card-white">
+                {% for event in events %}
+                    <div class="event-item-row">
+                        <div class="event-info-group">
+                            {% if event.photo %}
+                                <img src="{{ event.photo.url }}" class="event-thumb-img">
+                            {% else %}
+                                <div class="event-thumb-placeholder"></div>
+                            {% endif %}
+                            <div class="event-details-text">
+                                <h5 class="event-name-heading">
+                                    {{ event.name }}
+                                    {% if event.status == 'COMPLETED' %}
+                                        <span class="badge-status badge-finished">COMPLETED</span>
+                                    {% elif event.status == 'LIVE' %}
+                                        <span class="badge-status badge-live pulse">LIVE</span>
+                                    {% elif event.status == 'UPCOMING' %}
+                                        <span class="badge-status badge-upcoming">UPCOMING</span>
+                                    {% endif %}
+                                </h5>
+                                <small class="event-meta-info">{{ event.date_time|date:"M d, Y" }} • {{ event.location }}</small>
+                            </div>
+                        </div>
+                        <div class="event-actions-group">
+                            <a href="{% url 'organizer:event_edit' event.pk %}" class="btn-action edit"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'organizer:event_delete' event.pk %}" class="btn-action delete" title="Delete Event"><i class="fas fa-trash-alt"></i></a>
+                            <a href="{% url 'organizer:event_detail' event.id %}" class="btn-view-custom">View</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-results">
+                        {% if search_query %}
+                            <p class="empty-text">No events found matching "<strong>{{ search_query }}</strong>"</p>
+                            <a href="{% url 'organizer:all_events' %}" class="btn-clear">Clear Search</a>
+                        {% else %}
+                            <p class="empty-text">You haven't created any events yet.</p>
+                            <a href="{% url 'organizer:event_create' %}" class="btn-create">Create Your First Event</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.getElementById('searchInput').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Prevent default if necessary
-            document.getElementById('searchForm').submit(); // Force the form to send
+            e.preventDefault();
+            document.getElementById('searchForm').submit();
         }
     });
 </script>
+{% endblock %}

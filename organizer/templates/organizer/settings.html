@@ -1,160 +1,321 @@
-{% extends "organizer/sidebar.html" %}
+{% extends "homepage/base.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 
+{% block extra_css %}
+    <!-- <link rel="stylesheet" href="{% static 'organizer/css/all_events.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'organizer/css/sidebar.css' %}">
+    <style>
+        /* 1. LAYOUT & VARIABLES */
+        :root {
+            --bg-body: #f4f7f6;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary-blue: #3b82f6;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --warning-amber: #f59e0b;
+        }
+
+        .dashboard-main-wrapper {
+            display: flex;          /* Places children side-by-side */
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            overflow-x: hidden;
+            margin-top: 0px;
+            padding-top: 0px;
+            
+        }
+
+        .sidebar-container {
+            width: 300px;
+            flex-shrink: 0;         /* Prevents sidebar from squashing */
+            position: sticky;
+            top: 0;
+            height: auto;
+            /* overflow: hidden; */
+            overflow-y: auto;
+            border-right: 1px solid black;
+            background-color: white;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            padding-left: 0;
+        }
+
+        .main-content-column {
+            flex-grow: 1; /* Takes up remaining space without overlapping */
+            /* padding: 40px; */
+            /* margin-top: 50px;  */
+            min-width: 0; /* Prevents overflow issues */
+            margin-left: 60px;
+            margin-right: 30px;
+        }
+
+        .content-width-limiter {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* 2. FORM STYLING - THE "BIG" LOOK */
+        h2 {
+            font-size: 2.5rem !important;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 35px;
+        }
+
+        label {
+            font-weight: 700 !important;
+            color: var(--text-main) !important;
+            font-size: 1.4rem !important; /* Increased font size */
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Target crispy form inputs specifically */
+        .controls input, 
+        .controls textarea, 
+        .controls select,
+        .form-control,
+        .select {
+            width: 100%;
+            padding: 16px 20px !important; /* Larger padding */
+            border: 2px solid var(--border-color) !important;
+            border-radius: 12px !important;
+            font-size: 1.2rem !important; /* Larger text inside */
+            color: var(--text-main);
+            min-height: 55px; /* Taller fields */
+            transition: border-color 0.2s;
+        }
+
+        .controls input:focus {
+            border-color: var(--primary-blue) !important;
+            outline: none;
+        }
+
+        .controls textarea { min-height: 150px; }
+
+        .asteriskField { color: var(--danger-red); }
+
+        /* 3. GRID & TABS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px; /* More breathing room */
+            margin-bottom: 25px;
+        }
+
+        .settings-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .tab-nav-wrapper {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 15px 10px 15px;
+            gap: 10px;
+        }
+
+        .tab-nav-wrapper .tab-btn {
+            padding: 15px 25px;
+            border: 1px solid transparent;
+            background: none;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 10px 10px 0 0;
+            transition: 0.2s;
+            font-size: 1.3rem; /* Larger Tab Text */
+        }
+
+        .tab-btn.active {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-bottom-color: var(--bg-white);
+            color: var(--primary-blue);
+            margin-bottom: -1px;
+        }
+
+        .tab-pane {
+            display: none;
+            padding: 40px;
+        }
+
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* 4. COMPONENTS */
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 20px;
+            background: #fcfcfc;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+        }
+
+        .preview-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-base {
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary { background: var(--primary-blue); color: white; border: none; }
+        .btn-outline { background: white; border: 2px solid var(--border-color); color: var(--text-muted); }
+        .btn-warning { background: var(--warning-amber); color: #000; border: none; }
+
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <h2 class="text-white mb-4">Account Settings</h2>
+<div class="dashboard-main-wrapper">
+    <div class="sidebar-container">
+        {% include "organizer/sidebar.html" %}
+    </div>
 
-    <div class="card bg-dark-card border-secondary shadow-lg">
-        <div class="card-header border-secondary bg-transparent">
-            <ul class="nav nav-pills card-header-pills" id="settingsTab" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active text-white" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#profile-tab" type="button">1. Organization Profile</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link text-white" id="pills-security-tab" data-bs-toggle="pill" data-bs-target="#security-tab" type="button">2. Gate Security</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link text-white" id="pills-payment-tab" data-bs-toggle="pill" data-bs-target="#payment-tab" type="button">3. Payments & Docs</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link text-white" id="pills-submit-tab" data-bs-toggle="pill" data-bs-target="#submit-request-tab" type="button">4. Final Submission</button>
-                </li>
-            </ul>
-        </div>
+    <div class="main-content-column">
+        <div class="content-width-limiter">
+            <h2>Account Settings</h2>
 
-        <div class="card-body">
-            {% if form.errors %}
-            <div class="alert alert-danger bg-danger bg-opacity-10 border-danger text-danger border-start border-4 mb-4">
-                <h6 class="fw-bold"><i class="fas fa-exclamation-circle me-2"></i>Please fix the following:</h6>
-                <ul class="mb-0 small">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
+            <div class="settings-card">
+                <div class="tab-nav-wrapper">
+                    <button class="tab-btn active" data-target="profile-tab">1. Organization Profile</button>
+                    <button class="tab-btn" data-target="security-tab">2. Gate Security</button>
+                    <button class="tab-btn" data-target="payment-tab">3. Payments & Docs</button>
+                    <button class="tab-btn" data-target="submit-tab">4. Final Submission</button>
+                </div>
 
-            <form method="post" enctype="multipart/form-data" id="wizardForm" action="{{ request.get_full_path }}">
-                {% csrf_token %}
+                <div class="card-body">
+                    {% if form.errors %}
+                    <div style="padding: 20px 40px 0;">
+                        <div class="alert-error" style="padding:15px; border-radius:8px; border-left: 5px solid var(--danger-red); background:#fef2f2;">
+                            <h6 style="margin:0 0 5px 0; font-weight:700; color:#991b1b;">Please correct the following:</h6>
+                            <ul style="margin:0; padding-left:20px; color:#991b1b;">
+                                {% for field in form %}{% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}{% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
 
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="profile-tab">
-                        <div class="row">
-                            <div class="col-md-6">{{ form.organization_name|as_crispy_field }}</div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-white">Organization Logo</label>
-                                <div class="d-flex align-items-center gap-3 logo-upload-wrapper">
-                                    <div class="logo-preview-container" id="logo-preview-wrapper">
-                                        {% if profile.organization_logo %}
-                                            <img src="{{ profile.organization_logo.url }}" class="logo-preview-img" alt="Logo">
-                                        {% else %}
-                                            <img src="https://via.placeholder.com/90?text=Logo" class="logo-preview-img" alt="Placeholder">
-                                        {% endif %}
-                                    </div>
+                    <form method="post" enctype="multipart/form-data" id="wizardForm">
+                        {% csrf_token %}
 
-                                    <div class="flex-grow-1 custom-file-input-container">
-                                        {{ form.organization_logo|as_crispy_field }}
+                        <div class="tab-pane active" id="profile-tab">
+                            <div class="form-grid">
+                                <div>{{ form.organization_name|as_crispy_field }}</div>
+                                <div>
+                                    <label>Organization Logo</label>
+                                    <div class="logo-box">
+                                        <img src="{% if profile.organization_logo %}{{ profile.organization_logo.url }}{% else %}https://via.placeholder.com/100{% endif %}" 
+                                             class="preview-img" id="logo-preview">
+                                        <div style="flex-grow:1;">{{ form.organization_logo|as_crispy_field }}</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-6">{{ form.contact_email|as_crispy_field }}</div>
-                            <div class="col-md-6">{{ form.contact_phone|as_crispy_field }}</div>
-                        </div>
-                        {{ form.address|as_crispy_field }}
-                        {{ form.bio|as_crispy_field }}
+                            <div class="form-grid">
+                                <div>{{ form.contact_email|as_crispy_field }}</div>
+                                <div>{{ form.contact_phone|as_crispy_field }}</div>
+                            </div>
+                            <div style="margin-bottom: 25px;">{{ form.address|as_crispy_field }}</div>
+                            <div style="margin-bottom: 25px;">{{ form.bio|as_crispy_field }}</div>
 
-                        <div class="mt-4 border-top border-secondary pt-3 text-end">
-                            <button type="button" class="btn btn-info px-4 fw-bold next-step">
-                                Next: Security <i class="fas fa-arrow-right ms-2"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="security-tab">
-                        <div class="alert alert-info bg-info bg-opacity-10 border-info text-info small mb-4">
-                            <i class="fas fa-info-circle me-1"></i> These settings affect your live event QR scanning.
-                        </div>
-                        {{ form.enable_scanner_sound|as_crispy_field }}
-                        {{ form.auto_submit_scan|as_crispy_field }}
-
-                        <div class="mt-4 border-top border-secondary pt-3 d-flex justify-content-between">
-                            <button type="button" class="btn btn-outline-secondary prev-step">Back</button>
-                            <button type="button" class="btn btn-info px-4 fw-bold next-step">
-                                Next: Payments <i class="fas fa-arrow-right ms-2"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="payment-tab">
-                        <div class="row">
-                            <div class="col-md-8">{{ form.khalti_merchant_id|as_crispy_field }}</div>
-                            <div class="col-md-4">{{ form.tax_percentage|as_crispy_field }}</div>
+                            <div class="footer-actions" style="justify-content: flex-end;">
+                                <button type="button" class="btn-base btn-primary next-step">Next: Security <i class="fas fa-chevron-right"></i></button>
+                            </div>
                         </div>
 
-                        <div class="mt-4 p-3 border border-secondary rounded bg-dark">
-                            <h5 class="text-info small fw-bold mb-2">Legal Verification</h5>
-                            <p class="text-white-50 small mb-3">Upload your registration certificate or citizenship for Admin review.</p>
-                            {{ form.certificate|as_crispy_field }}
+                        <div class="tab-pane" id="security-tab">
+                            <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 5px solid var(--primary-blue);">
+                                <i class="fas fa-info-circle"></i> Adjust how your QR scanners behave at event gates.
+                            </div>
+                            <div style="font-size: 1.2rem;">
+                                {{ form.enable_scanner_sound|as_crispy_field }}
+                                {{ form.auto_submit_scan|as_crispy_field }}
+                            </div>
+
+                            <div class="footer-actions">
+                                <button type="button" class="btn-base btn-outline prev-step">Back</button>
+                                <button type="button" class="btn-base btn-primary next-step">Next: Payments</button>
+                            </div>
                         </div>
 
-                        <div class="mt-4 border-top border-secondary pt-3 d-flex justify-content-between">
-                            <button type="button" class="btn btn-outline-secondary prev-step">Back</button>
-                            <button type="submit" class="btn btn-warning px-5 fw-bold shadow">
-                                <i class="fas fa-save me-2"></i> Save & Continue
-                            </button>
-                        </div>
-                    </div>
+                        <div class="tab-pane" id="payment-tab">
+                            <div class="form-grid">
+                                <div>{{ form.khalti_merchant_id|as_crispy_field }}</div>
+                                <div>{{ form.tax_percentage|as_crispy_field }}</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 30px; border: 2px dashed var(--border-color); border-radius: 12px; margin-top: 20px;">
+                                <h3 style="margin-top:0; color: var(--primary-blue); font-size: 1.5rem;">Legal Verification</h3>
+                                {{ form.certificate|as_crispy_field }}
+                            </div>
 
-                    <div class="tab-pane fade" id="submit-request-tab">
-                        <div class="text-center py-5">
-                            {% if profile.verification_status == 'none' %}
-                                {% if completion_percentage == 100 %}
-                                    <div class="animate__animated animate__pulse animate__infinite">
-                                        <i class="fas fa-file-signature fa-4x text-info mb-3"></i>
-                                    </div>
-                                    <h4 class="text-white">Profile 100% Complete!</h4>
-                                    <p class="text-white-50 mb-4">Your details are saved. Click below to send your profile for Admin verification.</p>
-                                    <button type="button"
-                                            onclick="window.location.href='{% url 'organizer:submit_verification' %}'"
-                                            class="btn btn-info btn-lg px-5 fw-bold text-dark shadow-lg">
-                                        SUBMIT FOR VERIFICATION
-                                    </button>
+                            <div class="footer-actions">
+                                <button type="button" class="btn-base btn-outline prev-step">Back</button>
+                                <button type="submit" class="btn-base btn-warning" style="box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">SAVE CHANGES</button>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="submit-tab">
+                            <div style="text-align: center; padding: 60px 0;">
+                                {% if profile.is_verified %}
+                                    <i class="fas fa-check-circle fa-5x" style="color: var(--success-green);"></i>
+                                    <h2 style="margin-top:20px;">Account Verified</h2>
                                 {% else %}
-                                    <i class="fas fa-lock fa-3x text-secondary mb-3"></i>
-                                    <h4 class="text-white">Profile Incomplete</h4>
-                                    <p class="text-white-50">You are at {{ completion_percentage }}%. Please complete all steps to unlock the submission button.</p>
-                                    <div class="progress bg-dark mb-4" style="height: 12px; max-width: 400px; margin: 0 auto; border: 1px solid #444;">
-                                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" style="width: {{ completion_percentage }}%"></div>
+                                    <h2 style="margin-bottom:15px;">Profile Completion: {{ completion_percentage }}%</h2>
+                                    <div style="width: 100%; max-width: 500px; height: 16px; background: #e2e8f0; border-radius: 10px; margin: 0 auto 30px; overflow: hidden;">
+                                        <div style="width: {{ completion_percentage }}%; height: 100%; background: var(--primary-blue);"></div>
                                     </div>
+                                    {% if completion_percentage == 100 %}
+                                        <button type="button" onclick="location.href='{% url 'organizer:submit_verification' %}'" class="btn-base btn-primary">SUBMIT FOR REVIEW</button>
+                                    {% endif %}
                                 {% endif %}
-                            {% elif profile.verification_status == 'pending' %}
-                                <i class="fas fa-user-clock fa-4x text-warning mb-3"></i>
-                                <h4 class="text-white">Verification Pending</h4>
-                                <p class="text-white-50">Admin is currently reviewing your profile. You will be notified once approved.</p>
-                            {% elif profile.verification_status == 'rejected' %}
-                                <div class="alert alert-danger mb-4">
-                                    <i class="fas fa-times-circle fa-2x mb-2"></i>
-                                    <h5 class="fw-bold">Request Declined</h5>
-                                    <p class="small">The administrator has rejected your verification. Please update your documents and re-apply.</p>
-                                    <a href="{% url 'organizer:submit_verification' %}?action=reset" class="btn btn-danger btn-sm fw-bold">Fix & Re-apply</a>
-                                </div>
-                            {% elif profile.is_verified %}
-                                <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
-                                <h4 class="text-success fw-bold">Successfully Verified</h4>
-                                <p class="text-white-50">Your account is fully active. You can now host events and sell tickets.</p>
-                            {% endif %}
+                            </div>
+                            <div class="footer-actions">
+                                <button type="button" class="btn-base btn-outline prev-step">Back</button>
+                            </div>
                         </div>
-                        <div class="mt-4 border-top border-secondary pt-3">
-                            <button type="button" class="btn btn-outline-secondary prev-step">Back to Payments</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -162,72 +323,48 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. Logo Preview Logic (Targets class to avoid duplicate ID issues) ---
-        const logoInput = document.querySelector('input[type="file"][name="organization_logo"]');
-        const logoPreviewImg = document.querySelector('.logo-preview-img');
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
 
-        if (logoInput && logoPreviewImg) {
-            logoInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        logoPreviewImg.src = e.target.result;
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
+    function activateTab(targetId) {
+        const cleanId = targetId.replace('#', '');
+        tabs.forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-target') === cleanId));
+        panes.forEach(pane => pane.classList.toggle('active', pane.id === cleanId));
+        localStorage.setItem('organizer_active_tab', cleanId);
+    }
 
-        // --- 2. Tab Switching Logic ---
-        const nextBtns = document.querySelectorAll('.next-step');
-        const prevBtns = document.querySelectorAll('.prev-step');
+    tabs.forEach(btn => btn.addEventListener('click', () => activateTab(btn.getAttribute('data-target'))));
 
-        nextBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const activeLink = document.querySelector('.nav-link.active');
-                const nextTabLink = activeLink.parentElement.nextElementSibling?.querySelector('button');
-                if (nextTabLink) {
-                    bootstrap.Tab.getOrCreateInstance(nextTabLink).show();
-                }
-            });
-        });
-
-        prevBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const activeLink = document.querySelector('.nav-link.active');
-                const prevTabLink = activeLink.parentElement.previousElementSibling?.querySelector('button');
-                if (prevTabLink) {
-                    bootstrap.Tab.getOrCreateInstance(prevTabLink).show();
-                }
-            });
-        });
-
-        // --- 3. Persistence Logic (Checks URL first, then LocalStorage) ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const tabParam = urlParams.get('tab');
-
-        if (tabParam) {
-            let targetEl = document.getElementById(`pills-${tabParam.replace('-tab', '')}-tab`);
-            if (targetEl) {
-                bootstrap.Tab.getOrCreateInstance(targetEl).show();
-            }
-        } else {
-            let savedTab = localStorage.getItem('activeSettingsTab');
-            if (savedTab) {
-                let targetEl = document.querySelector(`button[data-bs-target="${savedTab}"]`);
-                if (targetEl) {
-                    bootstrap.Tab.getOrCreateInstance(targetEl).show();
-                }
-            }
-        }
-
-        document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(btn => {
-            btn.addEventListener('shown.bs.tab', (e) => {
-                localStorage.setItem('activeSettingsTab', e.target.getAttribute('data-bs-target'));
-            });
+    document.querySelectorAll('.next-step').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const current = btn.closest('.tab-pane');
+            const next = current.nextElementSibling;
+            if(next && next.classList.contains('tab-pane')) activateTab(next.id);
         });
     });
+
+    document.querySelectorAll('.prev-step').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const current = btn.closest('.tab-pane');
+            const prev = current.previousElementSibling;
+            if(prev && prev.classList.contains('tab-pane')) activateTab(prev.id);
+        });
+    });
+
+    const logoInput = document.querySelector('input[type="file"][name="organization_logo"]');
+    if (logoInput) {
+        logoInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => document.getElementById('logo-preview').src = e.target.result;
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    const saved = localStorage.getItem('organizer_active_tab');
+    if (saved) activateTab(saved);
+});
 </script>
 {% endblock %}

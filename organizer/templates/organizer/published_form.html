@@ -1,66 +1,413 @@
-{% extends "organizer/sidebar.html" %}
+{% extends "homepage/base.html" %}
 {% load static %}
+
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'organizer/css/organizer_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'organizer/css/player_selection.css' %}">
+        <link rel="stylesheet" href="{% static 'organizer/css/sidebar.css' %}">
+    <style>
+        .dashboard-main-wrapper {
+            display: flex;          /* Places children side-by-side */
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            overflow-x: hidden;
+            margin-top: 0px;
+            padding-top: 0px;
+            
+        }
+
+        .sidebar-container {
+            width: 300px;
+            flex-shrink: 0;         /* Prevents sidebar from squashing */
+            position: sticky;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 0;
+            height: auto;
+            overflow: hidden;
+            border-right: 1px solid black;
+            background-color: white;
+            
+            padding-left: 0;
+        }
+
+    .main-content-column {
+        flex-grow: 1; 
+        padding: 40px;
+        display: flex;
+        /* Changed from center to flex-start to move content left */
+        justify-content: flex-start !important; 
+        /* Optional: add a specific gap from the sidebar if needed */
+        padding-left: 60px !important; 
+    }
+
+.header-flex-row {
+    display: flex;
+    justify-content: space-between; /* Pushes items to opposite ends */
+    align-items: flex-end;         /* Aligns bottom of search with bottom of title */
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.title-stack {
+    flex: 1; /* Allows title to take available space */
+}
+/* --- Search Bar Styling --- */
+.search-section {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: right;
+    margin-top: 0;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    align-items: flex-end;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 50px; 
+    padding: 5px 20px;
+    width: 100%;
+    max-width: 450px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.search-container:focus-within {
+    border-color: #0ea5e9;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1);
+}
+
+.search-icon {
+    color: #94a3b8;
+    margin-right: 12px;
+    font-size: 0.9rem;
+}
+
+.search-container input {
+    border: none !important;
+    outline: none !important;
+    padding: 10px 0 !important;
+    font-size: 0.95rem;
+    font-weight: 500;
+    width: 100%;
+    background: transparent;
+}
+
+.clear-search-btn {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: none; /* Controlled by JS */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    margin-left: 10px;
+    transition: background 0.2s;
+}
+
+.clear-search-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+/* --- Updated Event Name & Sport Scaling --- */
+.main-event-name {
+    font-weight: 800;          /* Heavier weight for more impact */
+    color: #1e293b;
+    font-size: 1.6rem;         /* Increased from 1.05rem */
+    display: block;
+    margin-bottom: 2px;
+}
+
+.sub-event-sport {
+    color: #0ea5e9;            /* Kept the sky blue sport name */
+    font-size: 1.1rem;         /* Increased from 0.8rem */
+    font-weight: 700;
+    text-transform: uppercase; /* Makes the sport name look more professional */
+    letter-spacing: 0.05em;
+}
+
+/* Adjust the cell padding if the larger text feels cramped */
+.event-cell {
+    padding: 25px 25px !important; 
+}
+/* --- Selection Container Adjustments --- */
+.selection-container {
+    width: 95%;
+    max-width: 1200px; /* Increased slightly for more room */
+    margin-left: 0 !important; /* Ensures it doesn't auto-center */
+    margin-right: auto;
+}
+        /* --- 1. Page Header Styling --- */
+.page-header-plain {
+    margin-bottom: 40px;
+    text-align: left;
+    background: transparent;
+}
+
+.giant-title {
+    font-size: 3.3rem !important; /* As requested */
+    font-weight: 700 !important;   /* As requested */
+    color: #333 !important;    /* Black text */
+    margin: 0 0 10px 0;
+    letter-spacing: -1px;
+}
+
+.subtitle-text {
+    font-size: 1.1rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* --- 2. Floating Row Table Styling (Mimicking Image 4) --- */
+.modern-table-wrapper {
+    width: 100%;
+}
+
+.floating-row-table {
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0 15px; /* Creates the gap between rows */
+}
+
+.floating-row-table th {
+    color: #000000 !important;   /* Changed to solid black */
+    font-size: 1.5rem !important; /* Increased from 0.7rem for better visibility */
+    font-weight: 700 !important;   /* Extra bold to match the giant title style */
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 10px 25px 5px 25px;   /* Adjusted padding */
+    border: none;
+    text-align: center;
+}
+
+.modern-data-row {
+    background-color: #ffffff;
+    transition: transform 0.2s ease;
+    
+}
+
+.modern-data-row td {
+    padding: 20px 25px;
+    background-color: #ffffff; /* Row background */
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    
+}
+
+
+/* Rounding corners of each row block */
+.modern-data-row td:first-child {
+    border-left: 1px solid #f1f5f9;
+    border-radius: 12px 0 0 12px;
+}
+
+.modern-data-row td:last-child {
+    border-right: 1px solid #f1f5f9;
+    border-radius: 0 12px 12px 0;
+}
+
+.modern-data-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* --- 1. Expand the Form Container --- */
+.details-grid {
+    display: grid;
+    /* Keeps 2 columns but makes them wider */
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px; /* Increased gap between the two columns */
+    margin-top: 30px;
+    width: 100%;
+}
+
+/* --- 2. Scale Up the Labels --- */
+.detail-item label {
+    font-size: 1rem !important; /* Increased from 0.85rem */
+    color: #000000; /* Matching your black header style */
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+/* --- 3. Increase the Data Value Boxes --- */
+.detail-value {
+    background: #f8fafc;
+    /* Significant increase in padding for a larger "input" look */
+    padding: 18px 25px !important; 
+    border-radius: 12px; /* Smoother, larger corners */
+    font-size: 1.1rem !important; /* Larger text for the actual data */
+    font-weight: 600;
+    color: #1e293b;
+    border: 1.5px solid #e2e8f0;
+    min-height: 60px; /* Ensures a consistent, tall height */
+    display: flex;
+    align-items: center;
+}
+
+/* --- 4. Section Divider Scaling --- */
+.divider-label {
+    padding: 10px 30px !important; /* Larger pill for the section title */
+    font-size: 1rem !important;
+    font-weight: 800;
+}
+
+.section-divider {
+    margin-bottom: 40px; /* More breathing room below the divider */
+}
+/* --- 3. Internal Content Styling --- */
+.event-info-stack {
+    display: flex;
+    flex-direction: column;
+}
+
+.main-event-name {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.05rem;
+}
+
+.sub-event-sport {
+    color: #0ea5e9; /* Sky blue sport name */
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.pill-badge {
+    background: #f1f5f9; /* Light grey pill from Image 4 */
+    color: #64748b;
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid #e2e8f0;
+}
+
+/* --- 4. Action Buttons (Flexbox) --- */
+.action-flex-container {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.btn-custom {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-yellow {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+}
+
+.btn-yellow:hover {
+    background-color: #eab308;
+}
+
+.btn-outline-blue {
+    border: 2px solid #0ea5e9;
+    color: #0ea5e9;
+    background: transparent;
+}
+
+.btn-outline-blue:hover {
+    background-color: #0ea5e9;
+    color: #fff;
+}
+
+/* Alignment Utils */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+</style>
 {% endblock %}
+
 {% block content %}
-<div class="dashboard-body">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="h4 mb-0 text-white">Published Forms</h2>
+<div class="dashboard-main-wrapper">
+    <div class="sidebar-container">
+         {% include "organizer/sidebar.html" %}
     </div>
 
-    <div class="card bg-dark-card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0">
-                    <thead class="text-secondary border-secondary">
+    <div class="main-content-column">
+        <div class="selection-container">
+            
+            <header class="page-header-plain">
+                <div class="header-flex-row"> <div class="title-stack">
+                        <h1 class="giant-title">Published Forms</h1>
+                        <p class="subtitle-text">Manage your active trial templates and view athlete submissions.</p>
+                    </div>
+                    
+                    <div class="search-section">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="eventSearch" placeholder="Search by event name..." autocomplete="off">
+                            <button id="clearBtn" class="clear-search-btn" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="modern-table-wrapper">
+                <table class="floating-row-table">
+                    <thead>
                         <tr>
-                            <th class="ps-4">Event Name</th>
-                            <th>Category</th>
-                            <th>Published Date</th>
-                            <th class="text-end pe-4">Action</th>
+                            <th class="text-left">EVENT NAME & SPORT</th>
+                            <th class="text-center">LEVEL</th>
+                            <th class="text-center">PUBLISHED DATE</th>
+                            <th class="text-center">ACTIONS</th>
                         </tr>
                     </thead>
-                    <tbody class="border-0">
+                    <tbody>
                         {% for form in forms %}
-                        <tr>
-                            <td class="ps-4">
-<!--                                <span class="fw-bold text-white">{{ form.event_name }}</span>-->
-<!--                            </td>-->
-<!--                            <td><span class="badge bg-secondary">{{ form.event_type }}</span></td>-->
-<!--                            <td>{{ form.created_at|date:"M d, Y" }}</td>-->
-<!--                            <td class="text-end pe-4">-->
-<!--                                <a href="{% url 'organizer:published_form_detail' form.pk %}" class="btn btn-sm btn-outline-info">-->
-<!--                                    <i class="fas fa-eye"></i> View Detail-->
-<!--                                </a>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-
-                                <div class="d-flex flex-column">
-            <span class="fw-bold text-white">{{ form.event_name }}</span>
-            <small class="text-info" style="font-size: 0.75rem;">{{ form.sports }}</small>
-        </div>
-    </td>
-    <td><span class="badge bg-secondary">{{ form.level }}</span></td>
-    <td>{{ form.created_at|date:"M d, Y" }}</td>
-    <td class="text-end pe-4">
-        <div class="btn-group">
-            <a href="{% url 'organizer:form_preview' form.pk %}" class="btn btn-sm btn-info text-white" title="Preview Athlete Experience">
-                <i class="fas fa-play-circle"></i> Preview
-            </a>
-
-            <a href="{% url 'organizer:published_form_detail' form.pk %}" class="btn btn-sm btn-outline-info">
-                <i class="fas fa-users"></i> Submissions
-            </a>
-        </div>
-    </td>
-</tr>
-
+                        <tr class="modern-data-row">
+                            <td class="event-cell">
+                                <div class="event-info-stack">
+                                    <span class="main-event-name">{{ form.event_name }}</span>
+                                    <span class="sub-event-sport">{{ form.sports }}</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="pill-badge">{{ form.level|default:"none" }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="date-display">{{ form.created_at|date:"M d, Y" }}</span>
+                            </td>
+                            <td class="text-right">
+                                <div class="action-flex-container">
+                                    <a href="{% url 'organizer:form_preview' form.pk %}" class="btn-custom btn-yellow">
+                                        <i class="fas fa-play-circle"></i> Preview
+                                    </a>
+                                    <a href="{% url 'organizer:published_form_detail' form.pk %}" class="btn-custom btn-outline-blue">
+                                        <i class="fas fa-users"></i> Submissions
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center py-5 text-secondary">
-                                No published forms found.
-                            </td>
+                            <td colspan="4" class="empty-state-msg">No published forms found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -69,4 +416,41 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("eventSearch");
+    const clearBtn = document.getElementById("clearBtn");
+    const tableRows = document.querySelectorAll(".modern-data-row");
+
+    if (searchInput && clearBtn) {
+        searchInput.addEventListener("input", function() {
+            const value = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                // Target the specific event name span for cleaner searching
+                const eventName = row.querySelector(".main-event-name").textContent.toLowerCase();
+                const sportName = row.querySelector(".sub-event-sport").textContent.toLowerCase();
+                
+                // If the value is found in the event name OR sport name, show it
+                if (eventName.includes(value) || sportName.includes(value)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            // Toggle 'X' button visibility
+            clearBtn.style.display = value.length > 0 ? "flex" : "none";
+        });
+
+        // Clear button functionality
+        clearBtn.addEventListener("click", function() {
+            searchInput.value = "";
+            this.style.display = "none";
+            tableRows.forEach(row => row.style.display = "");
+            searchInput.focus();
+        });
+    }
+});
+</script>
 {% endblock %}

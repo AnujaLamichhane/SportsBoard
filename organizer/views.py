@@ -10,8 +10,13 @@ from django.core.mail import send_mail
 import uuid
 import requests
 import json
+import os
 from decimal import Decimal
 from django.utils import timezone
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 
 # Consolidated Model Imports (Removed 'Application')
 from .models import Event, TicketSale, TicketType, PlayerSelectionForm,KhaltiTransaction,Match,OrganizerProfile,OrganizerFeedback
@@ -829,3 +834,29 @@ def submit_verification(request):
         messages.error(request, "Please fill all details before submitting.")
 
     return redirect('organizer:settings')
+
+from django.utils import timezone # Add this import
+
+def athlete_pdf_view(request, pk):
+    application = get_object_or_404(PlayerSelectionForm, pk=pk)
+    template_path = 'organizer/athlete_detail_pdf.html'
+    
+    # Add 'today' to the context
+    context = {
+        'application': application,
+        'today': timezone.now() 
+    }
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="athlete_{application.full_name}.pdf"'
+    
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # Note: If you want to show the Profile Photo in the PDF, 
+    # you MUST use the link_callback we discussed earlier.
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    
+    if pisa_status.err:
+       return HttpResponse('Error generating PDF')
+    return response

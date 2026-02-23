@@ -1,0 +1,121 @@
+<div class="dash-wrapper">
+    {% if is_rejected %}
+    <div class="dash-alert alert-error">
+        <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="alert-content">
+            <h4>Verification Request Declined</h4>
+            <p>The administrator has rejected your request. Please fix details in settings.</p>
+        </div>
+        <a href="{% url 'organizer:settings' %}?action=reset" class="btn-fix">Fix & Re-apply</a>
+    </div>
+    {% endif %}
+
+    {% if completion_percentage < 100 and not is_rejected %}
+    <div class="completion-card">
+        <div class="comp-top">
+            <div class="comp-title">
+                <i class="fas fa-rocket text-yellow"></i>
+                <span>Complete Your Setup</span>
+                <small>Fill in details to go live</small>
+            </div>
+            <span class="pct-badge">{{ completion_percentage }}%</span>
+        </div>
+        <div class="comp-progress-bar">
+            <div class="comp-fill" style="width: {{ completion_percentage }}%;"></div>
+        </div>
+        <div class="comp-bottom">
+            <div class="missing-tags">
+                {% if not profile.khalti_merchant_id %}<span class="tag"><i class="fas fa-info-circle"></i> Missing Khalti ID</span>{% endif %}
+                {% if not profile.organization_logo %}<span class="tag"><i class="fas fa-image"></i> No Logo</span>{% endif %}
+            </div>
+            <a href="{% url 'organizer:settings' %}" class="btn-finish">Finish Now</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="dash-header">
+        <h2>Overview</h2>
+    </div>
+
+    
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-head"><span>Total Revenue</span><i class="fas fa-money-bill-wave text-yellow"></i></div>
+            <div class="stat-value">NPR {{ total_revenue|floatformat:2 }}</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-head"><span>Total Events</span><i class="fas fa-trophy text-grey"></i></div>
+            <div class="stat-value">{{ total_events }}</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-head"><span>Upcoming</span><i class="fas fa-calendar-alt text-cyan"></i></div>
+            <div class="stat-value">{{ upcoming_count }}</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-head"><span>Pending App.</span><i class="fas fa-user-check text-red"></i></div>
+            <div class="stat-value">{{ pending_applications }}</div>
+        </div>
+        <div class="stat-box clickable" onclick="location.href='{% url 'organizer:verify_ticket_gate' %}'">
+            <div class="stat-head"><span>Tickets Sold</span><i class="fas fa-ticket-alt text-green"></i></div>
+            <div class="stat-value">{{ tickets_sold }}</div>
+            <span class="stat-hint">Tap to scan ➔</span>
+        </div>
+    </div>
+    <div class="section-divider"></div>
+    <div class="data-section">
+        <div class="data-left">
+            <div class="section-head">
+                <h3>Recent Events</h3>
+                <div class="btn-group">
+                    <a href="{% url 'organizer:published_forms' %}" class="btn-outline-cyan"><i class="fas fa-list"></i> My Forms</a>
+                    <a href="{% url 'organizer:selection_form_create' %}" class="btn-cyan">Create Form</a>
+                    <a href="{% url 'organizer:event_create' %}" class="btn-orange">New Event</a>
+                </div>
+            </div>
+            <div class="white-card">
+                {% for event in recent_events %}
+                <div class="event-row">
+                    <div class="img-wrap">
+                        {% if event.photo %}<img src="{{ event.photo.url }}">{% endif %}
+                        <span class="badge {{ event.status|lower }}">{{ event.status }}</span>
+                    </div>
+                    <div class="info-wrap">
+                        <strong>{{ event.name }}</strong>
+                        <small><i class="fas fa-calendar-day"></i> {{ event.date_time|date:"M d, Y" }}</small>
+                    </div>
+                    <div class="action-wrap">
+                        <a href="{% url 'organizer:event_edit' event.pk %}" class="btn-icon"><i class="fas fa-edit"></i></a>
+                        <a href="{% url 'organizer:event_delete' event.pk %}" class="btn-icon red"><i class="fas fa-trash-alt"></i></a>
+                        <a href="{% url 'organizer:event_detail' event.pk %}" class="btn-view">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="data-right">
+            <div class="section-head">
+                <h3>Recent Sales</h3>
+            </div>
+            <div class="white-card">
+                {% for sale in recent_sales %}
+                <div class="sale-row">
+                    <div class="info-wrap">
+                        <strong>{{ sale.transaction.ticket_type.event.name }}</strong>
+                        <div class="sale-details">
+                            <span class="tier">{{ sale.transaction.ticket_type.name }} Tier</span>
+                            <code class="code">#{{ sale.ticket_code }}</code>
+                        </div>
+                    </div>
+                    <div class="sale-meta">
+                        <span class="badge-success">{{ sale.transaction.status }}</span>
+                        <div class="stat-value" style="font-size: 1.1rem; margin-top: 5px;">
+                            NPR {{ sale.transaction.amount }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

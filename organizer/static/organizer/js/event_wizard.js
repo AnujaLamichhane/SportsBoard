@@ -1,82 +1,132 @@
+// === GLOBAL STATE ===
 let currentStep = 1;
 const totalSteps = 4;
-let debounceTimer; // Timer for API rate-limiting
+let debounceTimer; 
 
-
-
+// === 1. NAVIGATION LOGIC ===
 function changeStep(n) {
+    console.log("Attempting to change step by:", n);
     const steps = document.getElementsByClassName("form-step");
     const indicators = document.getElementsByClassName("stepper-item");
 
-    // VALIDATION: Only check when moving forward
+    // Validation check when moving forward
     if (n > 0) {
-        if (!validateCurrentStep()) {
-            return; // Stop here if fields are missing
+        const isStepValid = validateCurrentStep();
+        console.log("Step validation result:", isStepValid);
+        if (!isStepValid) {
+            console.warn("Validation failed. Check for red fields.");
+            return; 
         }
+    }
+
+    // Safety check: Ensure the step exists
+    if (!steps[currentStep + n - 1]) {
+        console.error("Target step does not exist in HTML.");
+        return;
     }
 
     // Hide current step
     steps[currentStep - 1].classList.remove("active");
-    indicators[currentStep - 1].classList.remove("active");
+    if(indicators[currentStep - 1]) {
+        indicators[currentStep - 1].classList.remove("active");
+        if (n > 0) indicators[currentStep - 1].classList.add("completed");
+    }
 
-    if (n > 0) indicators[currentStep - 1].classList.add("completed");
-
+    // Update Counter
     currentStep += n;
 
     // Show new step
     steps[currentStep - 1].classList.add("active");
-    indicators[currentStep - 1].classList.add("active");
-
-    if (currentStep === 2) initOSMAutocomplete();
-
-    document.getElementById("prevBtn").disabled = (currentStep === 1);
-
-    if (currentStep === totalSteps) {
-        document.getElementById("nextBtn").classList.add("d-none");
-        document.getElementById("submitBtn").classList.remove("d-none");
-    } else {
-        document.getElementById("nextBtn").classList.remove("d-none");
-        document.getElementById("submitBtn").classList.add("d-none");
+    if(indicators[currentStep - 1]) {
+        indicators[currentStep - 1].classList.add("active");
     }
 
+    // Initialize map if we enter step 2
+    if (currentStep === 2) initOSMAutocomplete();
+
+    // Update Button Visibility
+    updateNavButtons();
+
+    // Smooth scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// === OPENSTREETMAP AUTOCOMPLETE WITH DEBOUNCE ===
-function initOSMAutocomplete() {
-    const input = document.getElementById('id_location');
-    const resultsList = document.getElementById('geo-results-list');
-    if (!input || input.dataset.initialized) return;
+function updateNavButtons() {
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
 
-    if (!window.GeoSearch) {
-        console.error("GeoSearch library not loaded!");
+    if (!prevBtn || !nextBtn || !submitBtn) {
+        console.error("Navigation buttons not found in DOM!");
         return;
     }
 
+    prevBtn.disabled = (currentStep === 1);
+
+    if (currentStep === totalSteps) {
+        nextBtn.classList.add("d-none");
+        submitBtn.classList.remove("d-none");
+    } else {
+        nextBtn.classList.remove("d-none");
+        submitBtn.classList.add("d-none");
+    }
+    console.log("Navigation buttons updated. Now on step:", currentStep);
+}
+
+// === 2. VALIDATION ===
+function validateCurrentStep() {
+    const activeStep = document.querySelector(".form-step.active");
+    if (!activeStep) return true;
+
+    const requiredFields = activeStep.querySelectorAll("[required]");
+    let isValid = true;
+
+    requiredFields.forEach(field => {
+        const wrapper = field.closest('.input-group') || field.closest('.mb-3') || field.parentElement;
+        const label = wrapper ? wrapper.querySelector('label') : null;
+
+        // Reset previous states
+        field.classList.remove("is-invalid");
+        if (label) label.classList.remove("invalid-label");
+        
+        // Only validate if visible
+        const isVisible = !!(field.offsetWidth || field.offsetHeight || field.getClientRects().length);
+
+        if (isVisible && !field.value.trim()) {
+            isValid = false;
+            field.classList.add("is-invalid");
+            if (label) {
+                label.classList.add("invalid-label");
+            }
+            
+            console.log("Required field empty:", field.name);
+        }
+    });
+
+    return isValid;
+}
+
+// === 3. LOCATION AUTOCOMPLETE ===
+function initOSMAutocomplete() {
+    const input = document.getElementById('id_location');
+    const resultsList = document.getElementById('geo-results-list');
+    
+    if (!input || input.dataset.initialized || !window.GeoSearch) return;
+
     const provider = new window.GeoSearch.OpenStreetMapProvider({
-        params: { countrycodes: 'np', limit: 6 } // Restricts to Nepal
+        params: { countrycodes: 'np', limit: 6 } 
     });
 
     input.addEventListener('input', function() {
         const query = this.value.trim();
-
-        // Clear existing timer to reset the wait period
         clearTimeout(debounceTimer);
         resultsList.innerHTML = '';
-
         if (query.length < 3) return;
 
-        // Wait 500ms after last keystroke before fetching
         debounceTimer = setTimeout(async () => {
             try {
                 const results = await provider.search({ query });
                 resultsList.innerHTML = '';
-
-                if (!results.length) {
-                    resultsList.innerHTML = '<div class="geo-item text-muted">No locations found</div>';
-                    return;
-                }
-
                 results.forEach(place => {
                     const item = document.createElement('div');
                     item.className = 'geo-item';
@@ -87,121 +137,23 @@ function initOSMAutocomplete() {
                     });
                     resultsList.appendChild(item);
                 });
-            } catch (err) {
-                console.error("OSM search error:", err);
-                // Handle 429 or network errors gracefully
-                resultsList.innerHTML = '<div class="geo-item text-danger">Search temporarily unavailable.</div>';
-            }
+            } catch (err) { console.error("OSM error:", err); }
         }, 500);
-    });
-
-    document.addEventListener('click', function(e) {
-        if (!resultsList.contains(e.target) && e.target !== input) {
-            resultsList.innerHTML = '';
-        }
     });
 
     input.dataset.initialized = "true";
 }
 
-$(document).ready(function() {
-
-// 1. Set current time on load
-    setCurrentDateTime();
-
-    // 2. Watch for manual changes to date_time
-    $('#id_date_time').on('change', function() {
-        updateStatus();
-    });
-
-    if (currentStep === 2) initOSMAutocomplete();
-
-    const $gameType = $('#id_game_type');
-    const $otherDiv = $('#div_id_game_type_other');
-    function toggleOther() { $gameType.val() === 'OTHER' ? $otherDiv.show() : $otherDiv.hide(); }
-    $gameType.change(toggleOther);
-    toggleOther();
-
-//    $('#isFreeEvent').on('change', function() {
-//        const $container = $('#ticket-logic-container');
-//        if (this.checked) {
-//            $container.css({'opacity': '0.3', 'pointer-events': 'none'});
-//            $container.find('input').val('');
-//        } else {
-//            $container.css({'opacity': '1', 'pointer-events': 'all'});
-//        }
-//    });
-
-$('#isFreeEvent').on('change', function() {
-    const $container = $('#ticket-logic-container');
-    if (this.checked) {
-        $container.hide(); // Hides the inputs but keeps management_form visible if moved outside
-    } else {
-        $container.show();
-    }
-});
-
-    function setupFormset(btnId, containerId, managementId, templateId) {
-        $(`#${btnId}`).on('click', function() {
-            const $totalForms = $(`#${managementId}`);
-            let total = parseInt($totalForms.val());
-            let template = $(`#${templateId}`).html();
-            let newHtml = template.replace(/__prefix__/g, total);
-            $(`#${containerId}`).append(newHtml);
-            $totalForms.val(total + 1);
-        });
-    }
-
-    setupFormset('add-match', 'match-formset-container', 'id_matches-TOTAL_FORMS', 'empty-match-template');
-    setupFormset('add-ticket-tier', 'ticket-formset-container', 'id_tickets-TOTAL_FORMS', 'empty-ticket-tier-template');
-});
-
-function validateCurrentStep() {
-    const activeStep = document.querySelector(".form-step.active");
-    const requiredFields = activeStep.querySelectorAll("[required]");
-    let isValid = true;
-
-    requiredFields.forEach(field => {
-        // Reset previous error styling
-        field.classList.remove("is-invalid");
-
-        // Check if field is empty
-        if (!field.value.trim()) {
-            isValid = false;
-            field.classList.add("is-invalid"); // Bootstrap error class
-
-            // Optional: Shake effect or focus the first empty field
-            field.placeholder = "This field is required";
-        }
-    });
-
-    if (!isValid) {
-        console.warn("Please fill all mandatory fields before proceeding.");
-    }
-
-    return isValid;
-}
-
+// === 4. DATE & STATUS ===
 function setCurrentDateTime() {
     const dateTimeInput = document.getElementById('id_date_time');
     if (dateTimeInput) {
         const now = new Date();
-        // Format: YYYY-MM-DDTHH:MM
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-
-        const formattedNow = `${year}-${month}-${day}T${hours}:${minutes}`;
-
-        // Set the MINIMUM allowed date to now
+        const formattedNow = now.toISOString().slice(0, 16);
         dateTimeInput.setAttribute('min', formattedNow);
-
-        // Only set the default value if it's currently empty
         if (!dateTimeInput.value) {
             dateTimeInput.value = formattedNow;
-            updateStatus(); // Initial status update
+            updateStatus();
         }
     }
 }
@@ -214,16 +166,58 @@ function updateStatus() {
 
     const selectedTime = new Date(dateTimeInput.value);
     const now = new Date();
+    
+    // Buffer: If the event is within the next 1 hour, call it LIVE
+    const oneHourFromNow = new Date(now.getTime() + (60 * 60 * 1000));
 
-    // Logic: If the selected time is in the past, reset it or handle it
+    let newStatus = 'UPCOMING';
+
     if (selectedTime < now) {
-        // Optional: Force the value back to 'now' if they bypass the picker
-        // dateTimeInput.value = dateTimeInput.getAttribute('min');
-        statusField.value = 'PAST';
-    } else if (selectedTime.toDateString() === now.toDateString() &&
-               (selectedTime - now) < 3600000) { // Within 1 hour
-        statusField.value = 'LIVE';
+        newStatus = 'PAST';
+    } else if (selectedTime <= oneHourFromNow) {
+        newStatus = 'LIVE';
     } else {
-        statusField.value = 'UPCOMING';
+        newStatus = 'UPCOMING';
     }
+
+    // Update the dropdown value
+    statusField.value = newStatus;
+    
+    // Trigger a 'change' event so other scripts know it updated
+    statusField.dispatchEvent(new Event('change'));
+    
+    console.log("Status auto-updated to:", newStatus);
 }
+
+// === 5. JQUERY INIT ===
+$(document).ready(function() {
+    setCurrentDateTime();
+    updateNavButtons();
+
+    $('#id_date_time').on('change', updateStatus);
+
+    const $gameType = $('#id_game_type');
+    const $otherDiv = $('#div_id_game_type_other');
+    function toggleOther() { $gameType.val() === 'OTHER' ? $otherDiv.show() : $otherDiv.hide(); }
+    $gameType.on('change', toggleOther);
+    toggleOther();
+
+    $('#isFreeEvent').on('change', function() {
+        $('#ticket-logic-container').toggle(!this.checked);
+    });
+
+    function setupFormset(btnId, containerId, managementId, templateId) {
+        $(`#${btnId}`).on('click', function() {
+            const $totalForms = $(`#${managementId}`);
+            let total = parseInt($totalForms.val());
+            let template = $(`#${templateId}`).html();
+            if(!template) { console.error("Template missing:", templateId); return; }
+            let newHtml = template.replace(/__prefix__/g, total);
+            $(`#${containerId}`).append(newHtml);
+            $totalForms.val(total + 1);
+        });
+    }
+
+    setupFormset('add-match', 'match-formset-container', 'id_matches-TOTAL_FORMS', 'empty-match-template');
+    setupFormset('add-ticket-tier', 'ticket-formset-container', 'id_tickets-TOTAL_FORMS', 'empty-ticket-tier-template');
+});

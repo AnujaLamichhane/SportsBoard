@@ -6,9 +6,9 @@
 {% block extra_head %}
     {{ block.super }}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'organizer/css/player_selection.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
     
     <style>
         .selection-card { border-radius: 16px; overflow: hidden; background: white; margin-top: 20px; }
@@ -17,6 +17,54 @@
         .is-invalid { border-color: #dc3545 !important; }
         .progress { height: 8px; border-radius: 4px; background-color: #e9ecef; }
         .btn-submit { background-color: #0d6efd; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; transition: 0.3s; }
+        /* Fix checkbox/radio clickable area and alignment */
+        /* Ensure checkboxes and radio buttons are visible and clickable */
+        /* Fix visibility and clickability of checkboxes/radios */
+       /* 1. Separate Checkbox and Radio logic */
+input[type="checkbox"] {
+    -webkit-appearance: checkbox !important;
+    appearance: checkbox !important;
+}
+
+input[type="radio"] {
+    -webkit-appearance: radio !important;
+    appearance: radio !important;
+}
+
+/* 2. Common styles for both */
+input[type="checkbox"], 
+input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10; /* Ensure it stays above the .form-check background */
+}
+
+/* 3. Fix the InlineRadios Container */
+/* Crispy's InlineRadios uses .form-check-inline */
+.form-check-inline {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: #f8fafc;
+    border: 1px solid #dee2e6;
+    padding: 8px 15px !important;
+    border-radius: 8px;
+    margin-right: 10px !important;
+    cursor: pointer;
+}
+
+.form-check-inline:hover {
+    background: #eef2ff;
+    border-color: #0d6efd;
+}
+
+/* 4. Ensure the label doesn't block the click */
+.form-check-label {
+    cursor: pointer;
+    padding-left: 5px;
+    margin-bottom: 0 !important;
+}
     </style>
 {% endblock %}
 
@@ -26,7 +74,7 @@
         <div class="col-lg-10 selection-card shadow">
             <div class="card-header-custom">
                 <h2 class="fw-bold mb-1">
-                    {% if is_preview %}<i class="fas fa-eye me-2"></i> Preview: {% endif %}
+                    {% if is_preview %}<i class="fas fa-eye me-2"></i> {% endif %}
                     {{ page_title }}
                 </h2>
                 <p class="mb-0 opacity-75">
@@ -108,6 +156,12 @@ function showStep(n) {
 
 function nextPrev(n) {
     const steps = document.getElementsByClassName("form-step");
+    if (steps.length === 0) {
+            // FALLBACK: If no steps found, just submit
+            document.getElementById("selectionForm").submit();
+            return;
+    }
+
     if (n === 1 && !isPreview && !validateStep(currentStep)) return false;
 
     currentStep = currentStep + n;
@@ -118,7 +172,7 @@ function nextPrev(n) {
             currentStep = steps.length;
             return false;
         }
-        document.getElementById("submitBtn").click();
+        document.getElementById("selectionForm").submit();
         return false;
     }
     showStep(currentStep);
@@ -126,51 +180,86 @@ function nextPrev(n) {
 }
 
 function validateStep(n) {
-    const stepDiv = document.getElementById("step-" + n);
-    if (!stepDiv) return true;
-    const inputs = stepDiv.querySelectorAll("input[required], select[required], textarea[required]");
+    const steps = document.getElementsByClassName("form-step");
+    const currentStepDiv = steps[n - 1];
+    if (!currentStepDiv) return true;
+
+    // 1. Get ALL required inputs including radios
+    const inputs = currentStepDiv.querySelectorAll("input[required], select[required], textarea[required]");
     let valid = true;
+    const radioGroups = new Set();
+
     inputs.forEach(input => {
-        if (!input.value.trim()) {
-            input.classList.add("is-invalid");
-            valid = false;
+        if (input.type === "radio" || input.type === "checkbox") {
+            radioGroups.add(input.name); // Track groups to check later
         } else {
-            input.classList.remove("is-invalid");
+            // Text/Select validation
+            if (!input.value.trim()) {
+                input.classList.add("is-invalid");
+                valid = false;
+            } else {
+                input.classList.remove("is-invalid");
+            }
         }
     });
+
+    // 2. Explicitly validate Radio Groups (like Gender)
+    radioGroups.forEach(name => {
+        const group = currentStepDiv.querySelectorAll(`input[name="${name}"]`);
+        const isChecked = Array.from(group).some(i => i.checked);
+        const container = group[0].closest('.mb-3') || group[0].parentElement;
+        
+        if (!isChecked) {
+            container.style.border = "1px solid #dc3545"; // Red border if not selected
+            container.style.borderRadius = "8px";
+            valid = false;
+        } else {
+            container.style.border = "none";
+        }
+    });
+
     return valid;
 }
-
 document.addEventListener("DOMContentLoaded", function() {
     showStep(currentStep);
 
     // Age Calculation
     const dobInput = document.getElementById('id_dob');
-    const ageField = document.getElementById('age_field');
-    if (dobInput && ageField) {
-        dobInput.addEventListener('change', function() {
-            if (this.value) {
-                const birthDate = new Date(this.value);
-                const today = new Date();
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const m = today.getMonth() - birthDate.getMonth();
-                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
-                ageField.value = age + " Years";
-            }
-        });
-    }
+    const ageDisplay = document.querySelector('.age-display');
+    if (dobInput) {
+            dobInput.addEventListener('change', function() {
+                if (this.value) {
+                    const birthDate = new Date(this.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const m = today.getMonth() - birthDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+                    // You can alert or update a read-only field if you add one to the model
+                    console.log("Calculated Age: " + age);
+                }
+            });
+        }
 
     // Address Logic
-    const sameAddressCheck = document.getElementById('sameAddress');
-    const tempAddr = document.querySelector('[name="temporary_address"]');
-    const permAddr = document.querySelector('[name="permanent_address"]');
-    if (sameAddressCheck) {
-        sameAddressCheck.addEventListener('change', function() {
-            if (this.checked && tempAddr) {
+    const sameAddrCheck = document.getElementById('id_same_as_temporary');
+    const tempAddr = document.getElementById('id_temporary_address');
+    const permAddr = document.getElementById('id_permanent_address');
+    if (sameAddrCheck && tempAddr && permAddr) {
+        sameAddrCheck.addEventListener('change', function() {
+            if (this.checked) {
                 permAddr.value = tempAddr.value;
                 permAddr.readOnly = true;
+                permAddr.style.backgroundColor = "#e9ecef";
             } else {
                 permAddr.readOnly = false;
+                permAddr.style.backgroundColor = "#ffffff";
+            }
+        });
+            
+            // Sync if user types in temporary while box is checked
+        tempAddr.addEventListener('input', function() {
+             if (sameAddrCheck.checked) {
+                permAddr.value = tempAddr.value;
             }
         });
     }
