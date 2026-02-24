@@ -103,6 +103,7 @@ class Feedback(models.Model):
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} - {self.subject}"

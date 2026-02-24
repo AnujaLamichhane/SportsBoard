@@ -57,12 +57,15 @@
 
             <div class="dsidebar-divider"></div>
 
+
+
+
             <li class="dnav-item">
-                <a href="#" class="dnav-link">
-                    <i class="fa-solid fa-gears"></i>
-                    <span class="link-text">System Settings</span>
-                </a>
-            </li>
+    <a href="{% url 'admin_panel:settings' %}" class="dnav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+        <i class="fa-solid fa-gears"></i>
+        <span class="link-text">System Settings</span>
+    </a>
+</li>
 
             <li class="dnav-item mt-auto">
                 <a href="{% url 'logout' %}" class="dnav-link text-danger">

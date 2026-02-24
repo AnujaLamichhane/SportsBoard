@@ -1,0 +1,237 @@
+/* ===============================
+   SETTINGS DASHBOARD
+================================ */
+
+.dashboard-page {
+    display: flex;
+    background: #f8fafc;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+}
+
+/* ===============================
+   LEFT SIDEBAR NAVIGATION
+================================ */
+
+.sidebar {
+    width: 260px;
+    background: #1e293b; /* dark blue sidebar */
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+    flex-shrink: 0;
+    color: #fff;
+}
+
+.sidebar .nav-link {
+    display: block;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-weight: 600;
+    color: #cbd5e1; /* lighter gray text */
+    margin-bottom: 8px;
+    transition: .25s;
+}
+
+.sidebar .nav-link:hover {
+    background: #3b82f6; /* bright blue hover */
+    color: #fff;
+}
+
+.sidebar .nav-link.active {
+    background: #6366f1; /* purple active */
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(99, 102, 241, .3);
+}
+
+/* ===============================
+   MAIN SETTINGS AREA
+================================ */
+
+.settings-content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-header h1,
+.settings-header h2 {
+    font-weight: 800;
+    margin-bottom: 5px;
+    color: #1e293b; /* dark text */
+}
+
+.settings-header p {
+font-size: 20px;
+    color: #64748b; /* gray-blue */
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* ===============================
+   SETTINGS CARDS
+================================ */
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.settings-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: .3s;
+    border-left: 5px solid #3b82f6; /* colored accent */
+}
+
+.settings-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .12);
+}
+
+.settings-card h4 {
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1e293b; /* dark heading */
+}
+
+.settings-card input,
+.settings-card select {
+    padding: 10px;
+    font-size:16px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #f1f5f9;
+    transition: .25s;
+}
+
+.settings-card input:focus,
+.settings-card select:focus {
+    border-color: #3b82f6; /* blue focus */
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, .2);
+    background: #fff;
+}
+
+/* ===============================
+   TOGGLE ROW / MAINTENANCE
+================================ */
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size:16px;
+
+}
+
+.maintenance-box {
+    background: #f0f9ff; /* light blue maintenance */
+    padding: 22px;
+    border-radius: 14px;
+
+
+    border: 1px solid #bfdbfe; /* blue border */
+}
+
+/* ===============================
+   ALERT / SUCCESS MESSAGE
+================================ */
+
+.success-msg {
+    background: #dcfce7; /* light green */
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size:20px;
+    color: #166534; /* dark green text */
+}
+
+/* ===============================
+   SAVE BUTTON / STICKY BAR
+================================ */
+
+.sticky-save {
+    position: sticky;
+    bottom: 0;
+    background: #f8fafc;; /* light gray sticky bar */
+    padding: 20px;
+    margin-top: 40px;
+    border-top: 1px solid #e2e8f0;
+    z-index: 5;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-save {
+    background: #3b82f6; /* blue button */
+    color: #fff;
+    border: none;
+    padding: 12px 34px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size:18px;
+    box-shadow: 0 10px 25px rgba(59, 130, 246, .3);
+    transition: .25s;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    background: #2563eb; /* darker blue hover */
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media(max-width: 992px) {
+    .settings-content {
+        padding: 25px;
+    }
+
+    .settings-card {
+        padding: 25px;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+        border-radius: 12px;
+    }
+
+    .dashboard-page {
+        flex-direction: column;
+    }
+}
+
+/* ===============================
+   BOLD TEXTS
+================================ */
+
+.settings-card label {
+    font-weight: 700;
+    color: #1e293b;
+    font-size:18px;
+}
+
+.settings-card h3 {
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.toggle-row span {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.success-msg {
+    font-weight: 600;
+}

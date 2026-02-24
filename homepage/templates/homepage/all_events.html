@@ -7,18 +7,70 @@
 <div class="container-fluid events-page">
     <div class="flex-main-wrapper">
         <div class="section-left">
-            <div class="title-row-container">
-                <h2 class="event-title-left">🏆 All Scheduled Events</h2>
-                
-                <div class="search-box-wrapper">
-                    <form method="GET" action="" class="search-form">
-                        <input type="text" id="eventSearchInput" name="search" placeholder="Search events..." class="search-input" value="{{ search_query|default:'' }}">
-                        <button type="submit" class="search-btn">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
+
+
+
+<div class="title-row-container">
+    <h2 class="event-title-left">🏆 All Scheduled Events</h2>
+
+    <!-- ===== FILTER DROPDOWN ===== -->
+<div class="filter-wrapper">
+
+    <button id="filterToggle" class="filter-button">
+        <i class="fas fa-filter"></i>
+        <span class="filter-text">
+            {{ selected_filter|default:"All Events" }}
+        </span>
+        <i class="fas fa-chevron-down arrow"></i>
+    </button>
+
+    <div id="filterMenu" class="filter-dropdown">
+
+        <a href="?"
+           class="filter-item {% if not selected_price and not selected_organizer %}active{% endif %}">
+           All Events
+        </a>
+
+        <a href="?price=paid"
+           class="filter-item {% if selected_price == 'paid' %}active{% endif %}">
+           Paid Events
+        </a>
+
+        <a href="?price=free"
+           class="filter-item {% if selected_price == 'free' %}active{% endif %}">
+           Free Events
+        </a>
+
+        <div class="filter-divider"></div>
+
+        <a href="?organizer=verified"
+           class="filter-item {% if selected_organizer == 'verified' %}active{% endif %}">
+           Verified Organizer
+        </a>
+
+        <a href="?organizer=unverified"
+           class="filter-item {% if selected_organizer == 'unverified' %}active{% endif %}">
+           Unverified Organizer
+        </a>
+
+    </div>
+</div>
+
+
+
+
+
+    <div class="search-box-wrapper">
+        <form method="GET" action="" class="search-form">
+            <input type="text" id="eventSearchInput" name="search" placeholder="Search events..." class="search-input" value="{{ search_query|default:'' }}">
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+
+        </form>
+    </div>
+</div>
+
             <div class="event-grid-layout">
                 {% for event in events %}
                     <a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card" data-date="{{ event.date_time|date:'Y-m-d' }}">
@@ -328,6 +380,26 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.event-date-text').forEach(el => {
         el.setAttribute('data-original-text', el.innerText);
     });
+});
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    const wrapper = document.querySelector(".filter-wrapper");
+    const toggle = document.getElementById("filterToggle");
+
+    toggle.addEventListener("click", function(e){
+        e.stopPropagation();
+        wrapper.classList.toggle("active");
+    });
+
+    // close when clicking outside
+    document.addEventListener("click", function(){
+        wrapper.classList.remove("active");
+    });
+
 });
 </script>
 {% endblock %}

@@ -339,7 +339,7 @@ def feedback_view(request):
         # Save to database
         Feedback.objects.create(
             user=request.user,
-            email=request.user.email,
+            # email=request.user.email,
             rating=rating,
             subject=subject,
             category=category,

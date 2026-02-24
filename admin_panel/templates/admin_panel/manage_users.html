@@ -10,7 +10,7 @@
 {% block content %}
 <div class="container-fluid dashboard-page">
     <div class="flex-main-dwrapper" id="adminWrapper">
-        
+
         {% include 'admin_panel/components/_sidebar.html' %}
 
         <div class="dsection-right">
@@ -19,10 +19,10 @@
                     <h2><i class="fa-solid fa-users-gear"></i> Manage Users</h2>
                     <div class="search-sort-group">
         <form method="GET" class="search-form" id="searchForm">
-            <input type="text" name="search" id="userSearch" 
-                   placeholder="Search by name or email..." 
+            <input type="text" name="search" id="userSearch"
+                   placeholder="Search by name or email..."
                    value="{{ query|default:'' }}" autocomplete="off">
-            
+
             <a href="{% url 'admin_panel:manage_users' %}" class="btn-clear" id="clearBtn">
                 <i class="fa-solid fa-xmark"></i>
             </a>
@@ -33,7 +33,7 @@
 
         <form method="GET" id="filterForm">
             <input type="hidden" name="search" value="{{ query }}">
-            
+
             <select name="user_type" class="sort-select" onchange="this.form.submit()">
                 <option value="">All Roles</option>
                 <option value="organizer" {% if user_type == 'organizer' %}selected{% endif %}>Organizer</option>
@@ -41,7 +41,7 @@
             </select>
         </form>
     </div>
-                    
+
                 </div>
 
 
