@@ -74,21 +74,64 @@
             </div>
             <div class="white-card">
                 {% for event in recent_events %}
-                <div class="event-row">
-                    <div class="img-wrap">
-                        {% if event.photo %}<img src="{{ event.photo.url }}">{% endif %}
-                        <span class="badge {{ event.status|lower }}">{{ event.status }}</span>
-                    </div>
-                    <div class="info-wrap">
-                        <strong>{{ event.name }}</strong>
-                        <small><i class="fas fa-calendar-day"></i> {{ event.date_time|date:"M d, Y" }}</small>
-                    </div>
-                    <div class="action-wrap">
-                        <a href="{% url 'organizer:event_edit' event.pk %}" class="btn-icon"><i class="fas fa-edit"></i></a>
-                        <a href="{% url 'organizer:event_delete' event.pk %}" class="btn-icon red"><i class="fas fa-trash-alt"></i></a>
-                        <a href="{% url 'organizer:event_detail' event.pk %}" class="btn-view">View</a>
-                    </div>
-                </div>
+<!--                <div class="event-row">-->
+<!--                    <div class="img-wrap">-->
+<!--                        {% if event.photo %}<img src="{{ event.photo.url }}">{% endif %}-->
+<!--                        <span class="badge {{ event.status|lower }}">{{ event.status }}</span>-->
+<!--                    </div>-->
+<!--                    <div class="info-wrap">-->
+<!--                        <strong>{{ event.name }}</strong>-->
+<!--                        <small><i class="fas fa-calendar-day"></i> {{ event.date_time|date:"M d, Y" }}</small>-->
+<!--                    </div>-->
+<!--                    <div class="action-wrap">-->
+<!--                        <a href="{% url 'organizer:event_edit' event.pk %}" class="btn-icon"><i class="fas fa-edit"></i></a>-->
+<!--                        <a href="{% url 'organizer:event_delete' event.pk %}" class="btn-icon red"><i class="fas fa-trash-alt"></i></a>-->
+<!--                        <a href="{% url 'organizer:event_detail' event.pk %}" class="btn-view">View</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+
+
+
+
+<div class="event-row">
+    <div class="img-wrap">
+        {% if event.photo %}<img src="{{ event.photo.url }}">{% endif %}
+        <span class="badge {{ event.status|lower }}">{{ event.status }}</span>
+    </div>
+    <div class="info-wrap">
+        <strong>{{ event.name }}</strong>
+        <small><i class="fas fa-calendar-day"></i> {{ event.date_time|date:"M d, Y" }}</small>
+    </div>
+
+    <div class="stats-wrap" style="min-width: 100px; text-align: right; margin-right: 15px;">
+        <div style="font-weight: 600; color: #2ecc71; font-size: 0.9rem;">
+            NPR {{ event.event_revenue|default:0|floatformat:2 }}
+        </div>
+        <div style="font-size: 0.75rem; color: #888;">
+            {{ event.event_tickets_sold|default:0 }} sold
+        </div>
+    </div>
+
+    <div class="action-wrap">
+        <a href="{% url 'organizer:event_analytics' event.pk %}" class="btn-icon blue" title="View Analytics">
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="{% url 'organizer:event_edit' event.pk %}" class="btn-icon"><i class="fas fa-edit"></i></a>
+        <a href="{% url 'organizer:event_delete' event.pk %}" class="btn-icon red"><i class="fas fa-trash-alt"></i></a>
+        <a href="{% url 'organizer:event_detail' event.pk %}" class="btn-view">View</a>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
                 {% endfor %}
             </div>
         </div>

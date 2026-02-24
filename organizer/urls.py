@@ -17,6 +17,7 @@ path('help/', views.help_feedback, name='help_feedback'),
     path('events/<int:event_id>/', views.event_detail, name='event_detail'),
     path('events/<int:event_id>/edit/', views.event_edit, name='event_edit'),
     path('events/<int:event_id>/delete/', views.event_delete, name='event_delete'),
+path('events/<int:event_id>/analytics/', views.event_analytics, name='event_analytics'),
 
     # Player Selection / Trial Forms
     path('selection/create/', views.selection_form_create, name='selection_form_create'),

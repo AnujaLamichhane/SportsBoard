@@ -1,6 +1,6 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Sum,  Q
+from django.db.models import Sum,  Q , Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -35,63 +35,141 @@ def is_organizer_check(user):
     return user.is_authenticated and user.groups.filter(name='Organizer').exists()
 
 
+# @login_required(login_url='/accounts/login/')
+# @user_passes_test(is_organizer_check, login_url='/')
+# def organizer_dashboard(request):
+#     organizer_events = Event.objects.filter(organizer=request.user)
+#     now = timezone.now()
+#
+#     # NEW: Fetch or create organizer profile for branding/settings
+#     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
+#
+#     # Check for rejection status to trigger the alert
+#     is_rejected = profile.verification_status == 'rejected'
+#     # --- PROFILE COMPLETION LOGIC ---
+#     # Define fields that you consider "essential" for a complete profile
+#     essential_fields = [
+#         profile.organization_name,
+#         profile.organization_logo,
+#         profile.khalti_merchant_id,
+#         profile.contact_phone,
+#         profile.bio
+#     ]
+#
+#     filled_count = sum(1 for field in essential_fields if field)
+#     completion_percentage = int((filled_count / len(essential_fields)) * 100)
+#     # --------------------------------
+#
+#
+#     paid_sales = TicketSale.objects.filter(
+#         transaction__ticket_type__event__in=organizer_events,  # Changed 'match__event' to 'event'
+#         transaction__status='PAID'
+#     ).select_related('transaction__ticket_type__event')
+#
+#     total_revenue = paid_sales.aggregate(Sum('transaction__amount'))['transaction__amount__sum'] or 0
+#
+#     pending_applications = PlayerSelectionForm.objects.filter(
+#         event__in=organizer_events,
+#         status='PENDING'
+#     ).count()
+#
+#     sales_data = []  # Fetch your real data here
+#     sales_data_json = json.dumps(sales_data)
+#     # upcoming_count = organizer_events.filter(date_time__gt=timezone.now()).count()
+#     upcoming_count = organizer_events.filter(date_time__gt=now).count()
+#     context = {
+#         'profile': profile,
+#         'is_rejected': is_rejected,
+#         'completion_percentage': completion_percentage,  # Pass this to template
+#         'total_revenue': total_revenue,
+#         'total_revenue': total_revenue,
+#         'total_events': organizer_events.count(),
+#         'tickets_sold': paid_sales.count(),
+#         'recent_sales': paid_sales.order_by('-bought_at')[:5],  # Consolidated
+#         'recent_events': organizer_events.order_by('-date_time')[:5],
+#         'pending_applications': pending_applications,
+#         'sales_data_json': sales_data_json,
+#         'upcoming_count': upcoming_count
+#     }
+#     return render(request, 'organizer/organizer_dashboard.html', context)
+
+
 @login_required(login_url='/accounts/login/')
 @user_passes_test(is_organizer_check, login_url='/')
 def organizer_dashboard(request):
-    organizer_events = Event.objects.filter(organizer=request.user)
     now = timezone.now()
-
-    # NEW: Fetch or create organizer profile for branding/settings
     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
-
-    # Check for rejection status to trigger the alert
     is_rejected = profile.verification_status == 'rejected'
-    # --- PROFILE COMPLETION LOGIC ---
-    # Define fields that you consider "essential" for a complete profile
-    essential_fields = [
-        profile.organization_name,
-        profile.organization_logo,
-        profile.khalti_merchant_id,
-        profile.contact_phone,
-        profile.bio
-    ]
 
-    filled_count = sum(1 for field in essential_fields if field)
-    completion_percentage = int((filled_count / len(essential_fields)) * 100)
-    # --------------------------------
+    # 1. TRACEABILITY LOGIC: Annotate each event with its specific PAID revenue and ticket count
+    # This allows us to use {{ event.event_revenue }} and {{ event.event_tickets_sold }} in the template
+    recent_events = Event.objects.filter(organizer=request.user).annotate(
+        event_revenue=Sum(
+            'ticket_tiers__khaltitransaction__amount',
+            filter=Q(ticket_tiers__khaltitransaction__status='PAID')
+        ),
+        event_tickets_sold=Count(
+            'ticket_tiers__khaltitransaction__final_ticket',
+            filter=Q(ticket_tiers__khaltitransaction__status='PAID')
+        )
+    ).order_by('-date_time')[:5]
 
-
+    # 2. GLOBAL STATS (The top-level summary boxes)
     paid_sales = TicketSale.objects.filter(
-        transaction__ticket_type__event__in=organizer_events,  # Changed 'match__event' to 'event'
+        transaction__ticket_type__event__organizer=request.user,
         transaction__status='PAID'
-    ).select_related('transaction__ticket_type__event')
-
+    )
     total_revenue = paid_sales.aggregate(Sum('transaction__amount'))['transaction__amount__sum'] or 0
 
+    # 3. PROFILE COMPLETION LOGIC
+    essential_fields = [
+        profile.organization_name, profile.organization_logo,
+        profile.khalti_merchant_id, profile.contact_phone, profile.bio
+    ]
+    filled_count = sum(1 for field in essential_fields if field)
+    completion_percentage = int((filled_count / len(essential_fields)) * 100)
+
     pending_applications = PlayerSelectionForm.objects.filter(
-        event__in=organizer_events,
-        status='PENDING'
+        organizer=request.user,
+        status='PENDING',
+        is_published=False
     ).count()
 
-    sales_data = []  # Fetch your real data here
-    sales_data_json = json.dumps(sales_data)
-    # upcoming_count = organizer_events.filter(date_time__gt=timezone.now()).count()
-    upcoming_count = organizer_events.filter(date_time__gt=now).count()
     context = {
         'profile': profile,
         'is_rejected': is_rejected,
-        'completion_percentage': completion_percentage,  # Pass this to template
+        'completion_percentage': completion_percentage,
         'total_revenue': total_revenue,
-        'total_revenue': total_revenue,
-        'total_events': organizer_events.count(),
+        'total_events': Event.objects.filter(organizer=request.user).count(),
         'tickets_sold': paid_sales.count(),
-        'recent_sales': paid_sales.order_by('-bought_at')[:5],  # Consolidated
-        'recent_events': organizer_events.order_by('-date_time')[:5],
+        'recent_sales': paid_sales.order_by('-bought_at')[:5],
+        'recent_events': recent_events,
         'pending_applications': pending_applications,
-        'sales_data_json': sales_data_json,
-        'upcoming_count': upcoming_count
+        'upcoming_count': Event.objects.filter(organizer=request.user, date_time__gt=now).count(),
+        'sales_data_json': json.dumps([]),
     }
     return render(request, 'organizer/organizer_dashboard.html', context)
+
+
+@login_required
+@user_passes_test(is_organizer_check)
+def event_analytics(request, event_id):
+    """Provides a deep-dive breakdown of a specific event's performance."""
+    event = get_object_or_404(Event, id=event_id, organizer=request.user)
+
+    # Trace revenue down to the individual Ticket Tiers (e.g., VIP vs Standard)
+    tier_stats = event.ticket_tiers.annotate(
+        sold_count=Count('khaltitransaction__final_ticket', filter=Q(khaltitransaction__status='PAID')),
+        tier_revenue=Sum('khaltitransaction__amount', filter=Q(khaltitransaction__status='PAID'))
+    )
+
+    context = {
+        'event': event,
+        'tier_stats': tier_stats,
+        'total_revenue': tier_stats.aggregate(Sum('tier_revenue'))['tier_revenue__sum'] or 0,
+        'total_tickets_sold': tier_stats.aggregate(Sum('sold_count'))['sold_count__sum'] or 0,
+    }
+    return render(request, 'organizer/event_analytics.html', context)
 
 
 
@@ -196,34 +274,76 @@ def event_delete(request, event_id):
     return render(request, 'organizer/event_confirm_delete.html', {'event': event})
 
 
+# def all_events(request):
+#     search_query = request.GET.get('search', '')
+#     now = timezone.now()
+#
+#     # 1. Start with all events for this organizer
+#     base_events = Event.objects.filter(organizer=request.user)
+#
+#     # 2. Apply search filter to the base queryset if a query exists
+#     if search_query:
+#         base_events = base_events.filter(
+#             Q(name__icontains=search_query) |
+#             Q(location__icontains=search_query)
+#         ).distinct()
+#
+#     # 3. Split the ALREADY FILTERED base_events into two lists
+#     active_events = base_events.filter(date_time__gte=now).order_by('date_time')
+#     past_events = base_events.filter(date_time__lt=now).order_by('-date_time')
+#
+#     # 4. Background maintenance: Update status in DB
+#     base_events.filter(date_time__lt=now).exclude(status='COMPLETED').update(status='COMPLETED')
+#
+#     return render(request, 'organizer/all_events.html', {
+#         'active_events': active_events,
+#         'past_events': past_events,
+#         'events': base_events,  # This ensures {% for event in events %} still works
+#         'search_query': search_query,
+#         'now': now
+#     })
+
+
+@login_required
+@user_passes_test(is_organizer_check, login_url='/')
 def all_events(request):
     search_query = request.GET.get('search', '')
     now = timezone.now()
 
-    # 1. Start with all events for this organizer
-    base_events = Event.objects.filter(organizer=request.user)
+    # 1. TRACEABILITY LOGIC: Annotate EVERY event with its specific revenue and sales
+    # This navigates: Event -> TicketType -> KhaltiTransaction
+    base_events = Event.objects.filter(organizer=request.user).annotate(
+        event_revenue=Sum(
+            'ticket_tiers__khaltitransaction__amount',
+            filter=Q(ticket_tiers__khaltitransaction__status='PAID')
+        ),
+        event_tickets_sold=Count(
+            'ticket_tiers__khaltitransaction__final_ticket',
+            filter=Q(ticket_tiers__khaltitransaction__status='PAID')
+        )
+    )
 
-    # 2. Apply search filter to the base queryset if a query exists
+    # 2. Apply search filter to the annotated queryset
     if search_query:
         base_events = base_events.filter(
             Q(name__icontains=search_query) |
             Q(location__icontains=search_query)
         ).distinct()
 
-    # 3. Split the ALREADY FILTERED base_events into two lists
-    active_events = base_events.filter(date_time__gte=now).order_by('date_time')
-    past_events = base_events.filter(date_time__lt=now).order_by('-date_time')
+    # 3. Final Ordering
+    events = base_events.order_by('-date_time')
 
     # 4. Background maintenance: Update status in DB
     base_events.filter(date_time__lt=now).exclude(status='COMPLETED').update(status='COMPLETED')
 
     return render(request, 'organizer/all_events.html', {
-        'active_events': active_events,
-        'past_events': past_events,
-        'events': base_events,  # This ensures {% for event in events %} still works
+        'events': events, # The main list for the template loop
         'search_query': search_query,
         'now': now
     })
+
+
+
 
 
 def event_detail(request, event_id):
@@ -746,46 +866,6 @@ def organizer_settings(request):
     })
 
 
-
-
-# @login_required
-# @user_passes_test(is_organizer_check)
-# def organizer_settings(request):
-#     # Get the profile or create one
-#     profile, created = OrganizerProfile.objects.get_or_create(user=request.user)
-#
-#     # 1. Define fields for completion calculation
-#     essential_fields = [
-#         profile.organization_name,
-#         profile.organization_logo,
-#         profile.contact_email,
-#         profile.contact_phone,
-#         profile.address,
-#         profile.bio,
-#         profile.certificate
-#     ]
-#     completed = len([f for f in essential_fields if f])
-#     completion_percentage = int((completed / len(essential_fields)) * 100)
-#
-#     if request.method == 'POST':
-#         form = OrganizerSettingsForm(request.POST, request.FILES, instance=profile)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, "Settings updated successfully!")
-#
-#             # 2. Redirect specifically to the SUBMIT tab after saving
-#             # This ensures that after 'Save & Continue', the user sees the Submit button
-#             base_url = reverse('organizer:settings')
-#             return redirect(f"{base_url}?tab=submit-request-tab")
-#     else:
-#         form = OrganizerSettingsForm(instance=profile)
-#
-#     return render(request, 'organizer/settings.html', {
-#         'form': form,
-#         'profile': profile,
-#         'completion_percentage': completion_percentage,
-#         'page_title': 'Account & Organizer Settings'
-#     })
 
 
 
