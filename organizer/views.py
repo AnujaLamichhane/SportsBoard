@@ -497,8 +497,11 @@ def booking_success(request, sale_id):
 def published_forms(request):
     # Fetch forms that are published, ordered by newest first
     # Adjust 'is_published' to match your actual boolean field name
-    forms = PlayerSelectionForm.objects.filter(is_published=True).order_by('-created_at')
-
+    # forms = PlayerSelectionForm.objects.filter(is_published=True).order_by('-created_at')
+    forms = PlayerSelectionForm.objects.filter(
+        organizer=request.user,
+        is_published=True
+    ).order_by('-created_at')
     return render(request, 'organizer/published_form.html', {'forms': forms})
 
 @login_required
