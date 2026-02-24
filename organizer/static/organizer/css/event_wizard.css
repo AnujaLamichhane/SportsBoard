@@ -289,10 +289,20 @@ textarea:focus {
     box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
 }
 
-/* Fix for dark-themed Date/Time icons */
+/* Change this: */
 input::-webkit-calendar-picker-indicator {
-    filter: invert(1); /* Makes the calendar icon white */
+    filter: invert(0) !important; /* Keep it dark for light backgrounds */
+    cursor: pointer;
+    opacity: 1;
 }
+
+/* Ensure the input doesn't hide the browser's native picker */
+input[type="datetime-local"] {
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+}
+
 
 /* --- Base State for Dropdowns --- */
 select.form-control, 

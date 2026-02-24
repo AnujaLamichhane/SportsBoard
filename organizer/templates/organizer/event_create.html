@@ -8,8 +8,50 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.12.0/dist/geosearch.css" />
-    <style>
-        
+
+<style>
+
+
+
+        /* Ensure the location dropdown is visible on top of everything */
+.relative-pos {
+    position: relative;
+}
+
+#geo-results-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white; /* Or #333 if you want dark mode */
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 9999 !important; /* Force it to the front */
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+}
+
+/* Show the box when it has items */
+#geo-results-list:not(:empty) {
+    display: block;
+}
+
+.geo-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.geo-item:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+}
+
+
+
     </style>
 {% endblock %}
 
