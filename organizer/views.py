@@ -1,25 +1,24 @@
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Sum,  Q
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
+from django.template.loader import get_template
 from django.urls import reverse
-from django.db import transaction,IntegrityError
+from django.db import transaction ,IntegrityError
 from django.core.mail import send_mail
 import uuid
 import requests
 import json
-import os
 from decimal import Decimal
 from django.utils import timezone
-from django.http import HttpResponse
-from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-
 # Consolidated Model Imports (Removed 'Application')
-from .models import Event, TicketSale, TicketType, PlayerSelectionForm,KhaltiTransaction,Match,OrganizerProfile,OrganizerFeedback
+from .models import Event, TicketSale, TicketType, PlayerSelectionForm ,KhaltiTransaction ,Match ,OrganizerProfile \
+    ,OrganizerFeedback
 
 # Consolidated Form Imports
 from .forms import (
@@ -228,7 +227,7 @@ def all_events(request):
 
 
 def event_detail(request, event_id):
-    event = get_object_or_404(Event.objects.prefetch_related('matches','ticket_tiers'), pk=event_id)
+    event = get_object_or_404(Event.objects.prefetch_related('matches' ,'ticket_tiers'), pk=event_id)
     matches = event.matches.all().order_by('match_time')
 
     context = {'event': event, 'matches': matches, 'is_organizer': False}
@@ -304,6 +303,12 @@ def selection_form_create(request, pk=None):
     is_org = request.user.groups.filter(name='Organizer').exists()
     is_player = not is_org
 
+    if is_player and template_form and template_form.deadline:
+        if timezone.now() > template_form.deadline:
+            messages.error(request, "Sorry, the registration deadline for this form has passed.")
+            return redirect('accounts:user_dashboard')
+
+
     if request.method == 'POST':
         # Organizer edits existing template OR Athlete submits new data
         form = PlayerSelectionCrispyForm(
@@ -373,7 +378,7 @@ def published_forms(request):
     # Fetch forms that are published, ordered by newest first
     # Adjust 'is_published' to match your actual boolean field name
     forms = PlayerSelectionForm.objects.filter(is_published=True).order_by('-created_at')
-    
+
     return render(request, 'organizer/published_form.html', {'forms': forms})
 
 @login_required
@@ -834,29 +839,28 @@ def submit_verification(request):
         messages.error(request, "Please fill all details before submitting.")
 
     return redirect('organizer:settings')
-
 from django.utils import timezone # Add this import
 
 def athlete_pdf_view(request, pk):
     application = get_object_or_404(PlayerSelectionForm, pk=pk)
     template_path = 'organizer/athlete_detail_pdf.html'
-    
+
     # Add 'today' to the context
     context = {
         'application': application,
-        'today': timezone.now() 
+        'today': timezone.now()
     }
-    
+
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename="athlete_{application.full_name}.pdf"'
-    
+
     template = get_template(template_path)
     html = template.render(context)
 
-    # Note: If you want to show the Profile Photo in the PDF, 
+    # Note: If you want to show the Profile Photo in the PDF,
     # you MUST use the link_callback we discussed earlier.
     pisa_status = pisa.CreatePDF(html, dest=response)
-    
+
     if pisa_status.err:
        return HttpResponse('Error generating PDF')
     return response
