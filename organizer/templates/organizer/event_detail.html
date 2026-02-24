@@ -30,6 +30,12 @@
             padding: 40px 60px;
         }
 
+        /* Forces full-width centering now that sidebar is removed */
+        .public-view-center {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         /* 1. HEADER SECTION */
         .event-detail-header {
             background: var(--bg-white);
@@ -159,23 +165,22 @@
         /* PRINT LOGIC */
         @media print {
             .no-print, .sidebar-container { display: none !important; }
-            .main-content-column { padding: 0; }
+            .main-content-column { padding: 0; max-width: 100%; }
             .content-card { box-shadow: none; border: 1px solid #ccc !important; }
             body { background: white; }
+        }
+
+        /* Responsive tweak */
+        @media (max-width: 992px) {
+            .detail-grid { grid-template-columns: 1fr; }
+            .main-content-column { padding: 20px; }
         }
     </style>
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-main-wrapper">
-
-    {% if user.is_authenticated and user.organizer_profile %}
-    <div class="sidebar-container no-print">
-        {% include "organizer/sidebar.html" %}
-    </div>
-    {% endif %}
-
-    <div class="main-content-column {% if not user.is_authenticated or not user.organizer_profile %}public-view-center{% endif %}">
+    <div class="main-content-column public-view-center">
         
         <div class="event-detail-header">
             <div>
@@ -193,11 +198,12 @@
             <div class="no-print" style="display: flex; gap: 12px;">
                 <a href="{% url 'homepage:home' %}" class="btn-custom btn-outline">Back</a>
                 
-                {% if user.is_authenticated %}
-                    <button onclick="window.print()" class="btn-custom btn-info">
-                        <i class="fas fa-file-pdf"></i> Save PDF
-                    </button>
+                {% if user.is_authenticated %}   
+                        <button onclick="window.print()" class="btn-custom btn-info">
+                            <i class="fas fa-file-pdf"></i> Save PDF
+                        </button>
                 {% else %}
+                    {# Show Login for guests only #}
                     <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-custom btn-info">
                         <i class="fas fa-lock"></i> Login to Save PDF
                     </a>
@@ -206,7 +212,6 @@
         </div>
 
         <div class="detail-grid">
-            
             <div class="left-column">
                 <div class="hero-container">
                     {% if event.photo %}
@@ -241,7 +246,6 @@
             </div>
 
             <div class="right-column">
-                
                 <div class="content-card">
                     <h4 class="section-title">
                         <i class="fas fa-calendar-alt" style="color: var(--primary-blue);"></i> Match Schedule
@@ -298,9 +302,12 @@
                             
                             <div class="no-print">
                                 {% if user.is_authenticated %}
+                                    {# Hide payment for admin too #}
+                                    {% if not user.is_staff and not user.is_superuser %}
                                     <a href="{% url 'organizer:init_payment' tier.id %}" class="btn-custom btn-warning-action">
                                         <i class="fas fa-wallet"></i> PAY WITH KHALTI
                                     </a>
+                                    {% endif %}
                                 {% else %}
                                     <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-custom btn-warning-action" style="background: #e2e8f0; color: var(--text-main);">
                                         <i class="fas fa-lock"></i> LOGIN TO BUY TICKET
@@ -317,6 +324,8 @@
                         </div>
                     {% endif %}
                 </div>
-
-            </div> </div> </div> </div>
+            </div> 
+        </div> 
+    </div> 
+</div>
 {% endblock %}
