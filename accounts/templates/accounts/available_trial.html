@@ -1,9 +1,44 @@
 {% extends 'accounts/user_dashboard.html' %}
 {% load static %}
+
 {% block extra_head %}
-<link rel="stylesheet" href="{% static 'accounts/css/available_trial.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/available_trial.css' %}">
     <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
+    <style>
+        /* Countdown and Deadline Styling */
+        .deadline-container {
+            background: #fff9f0;
+            border: 1px dashed #ff8c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .timer-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #d97706;
+            font-size: 1.1rem;
+        }
+        .timer-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #718096;
+            display: block;
+            margin-bottom: 2px;
+        }
+        /* Style for disabled/expired state */
+        .btn-disabled {
+            color: #a0aec0 !important;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .trial-item-card.expired {
+            opacity: 0.7;
+            border-color: #cbd5e0;
+        }
+    </style>
 {% endblock %}
+
 {% block athlete_dashboard_content %}
 <div class="available-trials-page">
     <header class="section-header-main mb-4">
@@ -16,7 +51,7 @@
             <div class="stat-icon" style="color: #4a5568;"><i class="fas fa-trophy"></i></div>
             <div class="stat-content">
                 <p class="stat-alabel">Total Trials</p>
-                <h2 class="stat-value-primary">{{ available_forms.count }}</h2>
+                <h2 class="stat-value-primary">{{ total_count }}</h2>
             </div>
         </div>
         <div class="stat-card">
@@ -44,10 +79,10 @@
 
     <div class="search-section-wrapper mb-4">
         <form action="" method="GET" class="search-form-inline" style="display: flex; max-width: 500px;">
-            <input type="text" name="search" placeholder="Search by event name..." 
-                   value="{{ request.GET.search }}" 
+            <input type="text" name="search" placeholder="Search by event name..."
+                   value="{{ request.GET.search }}"
                    style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px 0 0 8px;">
-            <button type="submit" class="btn-search" 
+            <button type="submit" class="btn-search"
                     style="background: #ff8c00; color: white; border: none; padding: 10px 20px; border-radius: 0 8px 8px 0;">
                 Search
             </button>
@@ -56,22 +91,31 @@
 
     <div class="card-grid">
         {% for trial in available_forms %}
-        <div class="stat-card trial-item-card" style="padding: 25px; border: 1px solid #eee;">
-            <div class="card-header d-flex justify-content-between">
+        <div class="stat-card trial-item-card" data-event-name="{{ trial.event_name|lower }}">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 style="margin: 0;">{{ trial.event_name }}</h4>
                 <span class="badge" style="background: #fff3e6; color: #ff8c00; padding: 4px 8px; border-radius: 5px; font-size: 11px;">
                     OPEN
                 </span>
             </div>
-            
+
             <div class="card-body-meta mt-3">
                 <p><strong>Sport:</strong> {{ trial.sports }}</p>
                 <p><strong>Level:</strong> {{ trial.get_level_display }}</p>
-                <p><strong>Location:</strong> {{ trial.address|default:"Pokhara 22" }}</p>
+                <p><strong>Location:</strong> {{ trial.address|default:"Not Provided" }}</p>
             </div>
 
-            <div class="card-footer-action mt-4" style="border-top: 2px solid #f1f1f1; padding-top: 25px;">
-                <a href="{% url 'organizer:selection_form_create' trial.pk %}" 
+            <div class="deadline-container text-center">
+                <span class="timer-label">Application Ends In</span>
+                <span class="timer-display countdown-timer"
+                      data-deadline="{{ trial.deadline|date:'c' }}">
+                    --:--:--
+                </span>
+            </div>
+
+            <div class="card-footer-action mt-2" style="border-top: 2px solid #f1f1f1; padding-top: 20px;">
+                <a href="{% url 'organizer:selection_form_create' trial.pk %}"
+                   class="apply-btn"
                    style="color: #ff8c00; text-decoration: none; font-weight: 600;">
                     <i class="fas fa-edit"></i> Fill Application Form
                 </a>
@@ -84,13 +128,14 @@
         {% endfor %}
     </div>
 </div>
+
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Select the input using your form's class
+    /** 1. Search Logic **/
     const searchInput = document.querySelector('.search-form-inline input[name="search"]');
-    // Select all the trial cards using your specific class
     const trialCards = document.querySelectorAll('.trial-item-card');
-    // Select the "no data" message
     const noDataMessage = document.querySelector('.no-data');
 
     searchInput.addEventListener('input', function(e) {
@@ -98,32 +143,67 @@ document.addEventListener('DOMContentLoaded', function() {
         let visibleCount = 0;
 
         trialCards.forEach(card => {
-            // Get text from the H4 (Event name) and metadata (Sport/Location)
             const cardText = card.textContent.toLowerCase();
-
             if (cardText.includes(value)) {
-                card.style.display = "block"; 
+                card.style.display = "block";
                 visibleCount++;
             } else {
                 card.style.display = "none";
             }
         });
 
-        // Handle the "No matches found" message visibility
         if (noDataMessage) {
             if (visibleCount === 0 && value !== "") {
                 noDataMessage.style.display = "block";
-                // Update the paragraph text inside no-data
                 noDataMessage.querySelector('p').textContent = `No matches found for "${value}"`;
             } else if (visibleCount > 0) {
                 noDataMessage.style.display = "none";
-            } else if (value === "") {
-                // Restore original message if input is cleared and list was empty
-                noDataMessage.style.display = "block";
-                noDataMessage.querySelector('p').textContent = "No new trials available at the moment.";
             }
         }
     });
+
+    /** 2. Countdown Logic **/
+    function updateTimers() {
+        const timers = document.querySelectorAll('.countdown-timer');
+
+        timers.forEach(timer => {
+            const deadlineDate = new Date(timer.getAttribute('data-deadline')).getTime();
+            const now = new Date().getTime();
+            const distance = deadlineDate - now;
+
+            const card = timer.closest('.trial-item-card');
+            const applyBtn = card.querySelector('.apply-btn');
+
+            if (distance < 0) {
+                timer.innerHTML = "EXPIRED";
+                timer.style.color = "#e53e3e";
+                applyBtn.innerHTML = '<i class="fas fa-lock"></i> Application Closed';
+                applyBtn.classList.add('btn-disabled');
+                card.classList.add('expired');
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            let displayStr = "";
+            if (days > 0) displayStr += days + "d ";
+            displayStr += hours + "h " + minutes + "m " + seconds + "s";
+
+            timer.innerHTML = displayStr;
+
+            // Visual urgency: Red text if less than 1 hour remains
+            if (days === 0 && hours < 1) {
+                timer.style.color = "#e53e3e";
+            }
+        });
+    }
+
+    // Update every 1 second
+    setInterval(updateTimers, 1000);
+    updateTimers(); // Initial call
 });
 </script>
 {% endblock %}

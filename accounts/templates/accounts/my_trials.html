@@ -4,36 +4,47 @@
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'accounts/css/my_trials.css' %}">
     <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
+    <style>
+        /* Visual style for closed trial cards */
+        .trial-card.expired {
+            opacity: 0.85;
+            filter: grayscale(0.3);
+            border-left: 5px solid #6c757d;
+        }
+        .status-badge.closed-badge {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
 {% endblock %}
-{% block content %}
 
+{% block content %}
 <div class="dashboard-wrapper">
 
-    <!-- Sidebar -->
     <div class="sidebar">
          {% include "accounts/_sidebar.html" %}
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
 
         <div class="page-header">
             <h2>🎯 My Trial Applications</h2>
             <p>Track your submitted applications here</p>
         </div>
+
         <div class="stats-container">
             <div class="stat-card">
                 <div class="stat-icon" style="background: rgba(255, 165, 0, 0.1); color: #ffa500;">📊</div>
                 <div class="stat-info">
-                    <span class="stat-value">{{ applications.count }}</span>
+                    <span class="stat-value">{{ applied_count|default:"0" }}</span>
                     <span class="stat-label">Total Applied</span>
                 </div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-icon" style="background: rgba(40, 167, 69, 0.1); color: #28a745;">✅</div>
                 <div class="stat-info">
-                    <span class="stat-value">{% if approved_count %}{{ approved_count }}{% else %}0{% endif %}</span>
+                    <span class="stat-value">{{ shortlisted_count|default:"0" }}</span>
                     <span class="stat-label">Shortlisted</span>
                 </div>
             </div>
@@ -41,41 +52,54 @@
             <div class="stat-card">
                 <div class="stat-icon" style="background: rgba(0, 123, 255, 0.1); color: #007bff;">⏳</div>
                 <div class="stat-info">
-                    <span class="stat-value">{% if pending_count %}{{ pending_count }}{% else %}0{% endif %}</span>
+                    <span class="stat-value">{{ pending_count|default:"0" }}</span>
                     <span class="stat-label">Pending</span>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">🎯</div>
+                <div class="stat-icon" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">🚫</div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ expired_count|default:"0" }}</span>
+                    <span class="stat-label">Closed</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(102, 16, 242, 0.1); color: #6610f2;">🎯</div>
                 <div class="stat-info">
                     <span class="stat-value">{{ profile_strength }}%</span>
-                    <span class="stat-label">Profile Strength</span>
+                    <span class="stat-label">Strength</span>
                 </div>
             </div>
         </div>
-        <!-- Search Bar -->
+
         <form method="GET" class="search-container">
-            <input type="text" name="q" placeholder="Search by event name..." value="{{ search_query|default:'' }}">
+            <input type="text" name="q" placeholder="Search by event name..." value="{{ query|default:'' }}">
             <button type="submit">Search</button>
         </form>
 
-        <!-- Applications Grid -->
         <div class="trial-grid">
             {% for app in applications %}
-                <div class="trial-card">
+                <div class="trial-card {% if app.deadline < now %}expired{% endif %}">
                     <div class="card-header">
                         <h3>{{ app.event_name }}</h3>
-                        <span class="status-badge {{ app.status|lower }}">
-                            {{ app.status }}
-                        </span>
+
+                        {% if app.deadline < now %}
+                            <span class="status-badge closed-badge">CLOSED</span>
+                        {% else %}
+                            <span class="status-badge {{ app.status|lower }}">
+                                {{ app.status }}
+                            </span>
+                        {% endif %}
                     </div>
-                    
+
                     <div class="card-body">
                         <p><strong>Sport:</strong> {{ app.sports|default:"N/A" }}</p>
                         <p><strong>Level:</strong> {{ app.level|title|default:"N/A" }}</p>
                         <p><strong>Applied On:</strong> {{ app.created_at|date:"M d, Y" }}</p>
-                        <p><strong>Event Address:</strong>{{ trial.address|default:"Not Provided" }}</p>
+                        <p><strong>Deadline:</strong> {{ app.deadline|date:"M d, Y" }}</p>
+
                         <div class="view-button">
                             <a href="{% url 'accounts:trial_detail_view' app.id %}" class="btn-save">
                                 <i class="fas fa-eye"></i> View Application
@@ -92,13 +116,11 @@
 
     </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Select the search input inside your search-container
     const searchInput = document.querySelector('.search-container input');
-    // Select all the trial cards
     const trialCards = document.querySelectorAll('.trial-card');
-    // Select the "no data" message if it exists
     const noDataMessage = document.querySelector('.no-data');
 
     searchInput.addEventListener('input', function(e) {
@@ -106,18 +128,15 @@ document.addEventListener('DOMContentLoaded', function() {
         let visibleCount = 0;
 
         trialCards.forEach(card => {
-            // Get text from the H3 (Event name) and the card body
             const cardText = card.textContent.toLowerCase();
-
             if (cardText.includes(value)) {
-                card.style.display = "block"; // Or "flex" depending on your CSS
+                card.style.display = "block";
                 visibleCount++;
             } else {
                 card.style.display = "none";
             }
         });
 
-        // Handle the "No trial applications found" message visibility
         if (noDataMessage) {
             if (visibleCount === 0 && value !== "") {
                 noDataMessage.style.display = "block";
