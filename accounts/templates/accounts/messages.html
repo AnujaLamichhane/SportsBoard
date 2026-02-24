@@ -1,9 +1,70 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+    .messages-container {
+        position: fixed;
+        top: 110px;
+        right: 10px;
+        z-index: 10000;
+        width: 420px; /* Slightly wider for the icon + text */
+        pointer-events: none; /* Allows clicking things behind the container area */
+    }
+
+    .messages-container .alert {
+        pointer-events: auto; /* Re-enable clicking for the actual alert and close button */
+        font-size: 1.2rem;    /* Large, readable font */
+        font-weight: 500;
+        border: none;
+        border-radius: 19px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        padding: 13px 30px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        color: #fff; /* High contrast text */
+    }
+
+    /* Icon Sizing */
+    .messages-container i {
+        font-size: 1.6rem;
+        flex-shrink: 0;
+    }
+
+    /* Color Overrides for Better Visibility */
+    .alert-success { background-color: #198754 !important; }
+    .alert-danger { background-color: #dc3545 !important; }
+    .alert-warning { background-color: #ffc107 !important; color: #212529 !important; }
+    .alert-info { background-color: #0dcaf0 !important; }
+
+    /* Fix Close Button for Large Alerts */
+    .messages-container .btn-close {
+        filter: brightness(0) invert(1);
+        margin-left: 10px;
+        width: 1.5rem;      /* Increased width from default */
+        height: 1.5rem;     /* Increased height from default */
+        padding: 1rem;      /* Larger clickable area */
+        background-size: 1.2rem; /* Scales the 'X' icon inside the button */
+        opacity: 0.9;
+        color: white;
+        }
+</style>
 {% if messages %}
-    <div class="messages-container">
+    <div class="messages-container" id="django-messages">
         {% for message in messages %}
             <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="d-flex align-items-center">
+                    {% if message.tags == 'success' %}
+                        <i class="bi bi-check-circle-fill me-3"></i>
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}
+                        <i class="bi bi-exclamation-octagon-fill me-3"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="bi bi-exclamation-triangle-fill me-3"></i>
+                    {% else %}
+                        <i class="bi bi-info-circle-fill me-3"></i>
+                    {% endif %}
+                    
+                    <span>{{ message }}</span>
+                </div>
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> -->
             </div>
         {% endfor %}
     </div>

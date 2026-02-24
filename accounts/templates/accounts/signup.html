@@ -1,8 +1,12 @@
 {% extends "accounts/base.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Sign Up | SportsBoard{% endblock %}
-
+{% block messages %}
+    {# This pulls in your centralized messages.html #}
+    {% include 'accounts/messages.html' %}
+{% endblock %}
 {% block content %}
 <div class="login-card">
 <h3 class="text-center mb-3">Create Your Account</h3>
@@ -18,4 +22,5 @@
     Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary">Login</a>
 </p>
 </div>
+<script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}

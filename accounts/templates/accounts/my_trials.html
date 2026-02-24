@@ -21,6 +21,7 @@
             <h2>🎯 My Trial Applications</h2>
             <p>Track your submitted applications here</p>
         </div>
+        {% include 'accounts/messages.html' %}
         <div class="stats-container">
             <div class="stat-card">
                 <div class="stat-icon" style="background: rgba(255, 165, 0, 0.1); color: #ffa500;">📊</div>
@@ -129,4 +130,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}

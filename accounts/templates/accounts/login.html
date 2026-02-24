@@ -15,7 +15,7 @@
 </div>
 {% endif %}
 
-
+{% include 'accounts/messages.html' %}
 
 
 <form method="post">
@@ -66,5 +66,5 @@
     Don’t have an account? <a href="{% url 'accounts:signup' %}" class="text-primary">Sign up</a>
 </p>
 </div>
-
+<script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}

@@ -22,6 +22,7 @@
                 <div class="full-date">{% now "F j, Y" %}</div>
             </div> -->
         </header>
+        {% include "accounts/messages.html" %}
         <!-- <div class="container-fluid">
             {% if messages %}
                 <div class="messages-wrapper" style="margin-top: 20px;">
@@ -143,4 +144,5 @@
         {% endblock athlete_dashboard_content %}
     </main>
 </div>
+<script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}

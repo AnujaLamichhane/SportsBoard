@@ -15,7 +15,7 @@
             We value your thoughts! Whether you have a question, found a bug, or want to help us improve, let us know how we can assist you.
         </p>
     </header>
-    
+    {% include "accounts/messages.html" %}
     <div class="feedback-card-static">
         <form method="POST">
             {% csrf_token %}
@@ -68,4 +68,5 @@
         </div>
     </div>
 </div>
+<script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}

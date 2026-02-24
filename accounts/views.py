@@ -23,10 +23,12 @@ def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
+            user= form.save() #
+            # user = form.save(commit=False)
             role_selected = form.cleaned_data.get('role')
-            user.profile.role = role_selected
-            user.save()
+            profile, created = Profile.objects.get_or_create(user=user) #
+            profile.role = role_selected
+            profile.save()
 
             
 
