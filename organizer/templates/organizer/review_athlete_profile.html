@@ -230,28 +230,15 @@
                         <h4 style="color: #3b82f6; margin-top: 0; margin-bottom: 2rem;"><i class="fas fa-file-alt" style="margin-right: 10px;"></i> Verification Documents</h4>
                         
                         <div class="card-inner-grid">
-                            <div>
-                                <div class="doc-preview-wrapper">
-                                    <span class="data-label">Identity Document</span>
-                                    {% if application.citizenship %}
-                                        <a href="{{ application.citizenship.url }}" target="_blank" class="btn-download-primary">
-                                            <i class="fas fa-id-card" style="margin-right: 8px;"></i> View/Download ID
-                                        </a> 
-                                    {% else %}
-                                        <p style="color: #94a3b8; font-size: 0.9rem; margin: 0;">No ID Uploaded</p>
-                                    {% endif %}
-                                </div>
-
-                                <div class="doc-preview-wrapper">
-                                    <span class="data-label">Achievement Certificate</span>
-                                    {% if application.certificates %}
-                                        <a href="{{ application.certificates.url }}" target="_blank" class="btn-download-primary">
-                                            <i class="fas fa-certificate" style="margin-right: 8px;"></i> View/Download Certificate
-                                        </a> 
-                                    {% else %}
-                                        <p style="color: #94a3b8; font-size: 0.9rem; margin: 0;">No certificates Uploaded</p>
-                                    {% endif %}
-                                </div>
+                            <div class="doc-preview-wrapper">
+                                <span class="data-label">Identity Document</span>
+                                {% if application.citizenship %}
+                                    <a href="{{ application.citizenship.url }}" target="_blank" class="btn-download-primary">
+                                        <i class="fas fa-id-card" style="margin-right: 8px;"></i> View/Download ID
+                                    </a> 
+                                {% else %}
+                                    <p style="color: #94a3b8; font-size: 0.9rem;">No ID Uploaded</p>
+                                {% endif %}
 
                                 <div class="doc-preview-wrapper">
                                     <span class="data-label">PDF Report</span>

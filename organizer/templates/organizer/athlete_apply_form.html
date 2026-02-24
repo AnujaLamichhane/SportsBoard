@@ -81,40 +81,38 @@ input[type="radio"] {
                     {% if is_player or is_preview %}Step-by-step application process.{% else %}Form Setup Mode{% endif %}
                 </p>
             </div>
-            {% include "accounts/_sidebar.html" %}
             <div class="card-body p-4">
-                {% if is_player or is_preview %}
-                    <div class="progress mb-4">
-                        <div id="formProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 33%;"></div>
-                    </div>
-                {% endif %}
+    {% if is_player or is_preview %}
+        <div class="progress mb-4">
+            <div id="formProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 33%;"></div>
+        </div>
+    {% endif %}
 
-                <form method="POST" enctype="multipart/form-data" id="selectionForm">
-                    {% csrf_token %}
-                    {% crispy form %}
+    <form method="POST" enctype="multipart/form-data" id="selectionForm">
+        {% csrf_token %}
 
-                    <div class="d-flex justify-content-between mt-5 pt-3 border-top">
-                        {% if is_player or is_preview %}
-                            <button type="button" id="prevBtn" class="btn btn-secondary px-4 d-none" onclick="nextPrev(-1)">
-                                <i class="fas fa-arrow-left me-2"></i> Previous
-                            </button>
-
-                            {% if is_preview %}
-                                <a href="{% url 'organizer:published_forms' %}" class="btn btn-outline-danger mx-2">Exit Preview</a>
-                            {% endif %}
-
-                            <button type="button" id="nextBtn" class="btn btn-primary px-5 ms-auto" onclick="nextPrev(1)">
-                                Next Step <i class="fas fa-arrow-right ms-2"></i>
-                            </button>
-                            <button type="submit" id="submitBtn" class="d-none"></button>
-                        {% else %}
-                            <button type="submit" class="btn-submit">
-                                <i class="fas fa-save me-2"></i> Save & Publish Form
-                            </button>
-                        {% endif %}
-                    </div>
-                </form>
+        {% if form.errors %}
+            <div class="alert alert-danger shadow-sm border-start border-danger border-4">
+                <h5 class="alert-heading fw-bold">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Actual Submission Errors:
+                </h5>
+                <ul class="mb-0">
+                    {% for field, errors in form.errors.items %}
+                        <li><strong>{{ field }}:</strong> {{ errors|striptags }}</li>
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
             </div>
+        {% endif %}
+        {% crispy form %}
+
+        <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+            </div>
+    </form>
+</div>
+            
         </div>
     </div>
 </div>
@@ -223,70 +221,71 @@ function validateStep(n) {
 document.addEventListener("DOMContentLoaded", function() {
     showStep(currentStep);
 
-<!--    // Age Calculation-->
-<!--    const dobInput = document.getElementById('id_dob');-->
-<!--    const ageDisplay = document.querySelector('.age-display');-->
-<!--    if (dobInput) {-->
-<!--            dobInput.addEventListener('change', function() {-->
-<!--                if (this.value) {-->
-<!--                    const birthDate = new Date(this.value);-->
-<!--                    const today = new Date();-->
-<!--                    let age = today.getFullYear() - birthDate.getFullYear();-->
-<!--                    const m = today.getMonth() - birthDate.getMonth();-->
-<!--                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age&#45;&#45;;-->
-<!--                    // You can alert or update a read-only field if you add one to the model-->
-<!--                    console.log("Calculated Age: " + age);-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
+// <!--    // Age Calculation-->
+// <!--    const dobInput = document.getElementById('id_dob');-->
+// <!--    const ageDisplay = document.querySelector('.age-display');-->
+// <!--    if (dobInput) {-->
+// <!--            dobInput.addEventListener('change', function() {-->
+// <!--                if (this.value) {-->
+// <!--                    const birthDate = new Date(this.value);-->
+// <!--                    const today = new Date();-->
+// <!--                    let age = today.getFullYear() - birthDate.getFullYear();-->
+// <!--                    const m = today.getMonth() - birthDate.getMonth();-->
+// <!--                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age&#45;&#45;;-->
+// <!--                    // You can alert or update a read-only field if you add one to the model-->
+// <!--                    console.log("Calculated Age: " + age);-->
+// <!--                }-->
+// <!--            });-->
+// <!--        }-->
 
-// --- UPDATED AGE CALCULATION ---
-const dobInput = document.getElementById('id_dob');
-const ageField = document.getElementById('age_field'); // Matches the ID in your forms.py
+            // --- UPDATED AGE CALCULATION ---
+            const dobInput = document.getElementById('id_dob');
+            const ageField = document.getElementById('age_field'); // Matches the ID in your forms.py
 
-function calculateAge() {
-    if (dobInput.value) {
-        const birthDate = new Date(dobInput.value);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+            function calculateAge() {
+                if (dobInput && dobInput.value) {
+                    const birthDate = new Date(dobInput.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const m = today.getMonth() - birthDate.getMonth();
 
-        if (ageField) {
-            ageField.value = age + " Years";
-        }
-    }
-}
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) { age--; }
 
-if (dobInput && ageField) {
-    dobInput.addEventListener('change', calculateAge);
-    dobInput.addEventListener('input', calculateAge); // Support more browsers
-    calculateAge(); // Run on load in case of pre-filled data
-}
-
-    // Address Logic
-    const sameAddrCheck = document.getElementById('id_same_as_temporary');
-    const tempAddr = document.getElementById('id_temporary_address');
-    const permAddr = document.getElementById('id_permanent_address');
-    if (sameAddrCheck && tempAddr && permAddr) {
-        sameAddrCheck.addEventListener('change', function() {
-            if (this.checked) {
-                permAddr.value = tempAddr.value;
-                permAddr.readOnly = true;
-                permAddr.style.backgroundColor = "#e9ecef";
-            } else {
-                permAddr.readOnly = false;
-                permAddr.style.backgroundColor = "#ffffff";
+                    if (ageField) {
+                        ageField.value = age ;
+                    }
+                }
             }
-        });
-            
-            // Sync if user types in temporary while box is checked
-        tempAddr.addEventListener('input', function() {
-             if (sameAddrCheck.checked) {
-                permAddr.value = tempAddr.value;
+
+            if (dobInput && ageField) {
+                dobInput.addEventListener('change', calculateAge);
+                dobInput.addEventListener('input', calculateAge); // Support more browsers
+                calculateAge(); // Run on load in case of pre-filled data
             }
-        });
-    }
+
+            // Address Logic
+            const sameAddrCheck = document.getElementById('id_same_as_temporary');
+            const tempAddr = document.getElementById('id_temporary_address');
+            const permAddr = document.getElementById('id_permanent_address');
+            if (sameAddrCheck && tempAddr && permAddr) {
+                sameAddrCheck.addEventListener('change', function() {
+                    if (this.checked) {
+                        permAddr.value = tempAddr.value;
+                        permAddr.readOnly = true;
+                        permAddr.style.backgroundColor = "#e9ecef";
+                    } else {
+                        permAddr.readOnly = false;
+                        permAddr.style.backgroundColor = "#ffffff";
+                    }
+                });
+                    
+                    // Sync if user types in temporary while box is checked
+                tempAddr.addEventListener('input', function() {
+                    if (sameAddrCheck.checked) {
+                        permAddr.value = tempAddr.value;
+                    }
+                });
+            }
 });
 </script>
 {% endblock %}

@@ -121,9 +121,20 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
                 self.fields[field].disabled = True
                 self.fields[field].required = False
 
+            if 'deadline' in self.fields:
+                self.fields['deadline'].required = False
+                self.fields['deadline'].disabled = True
+
             # 2. Make athlete fields mandatory (Unless it's just a preview)
             for field in athlete_fields:
-                self.fields[field].required = not preview_mode
+                if field == 'deadline': continue
+
+                optional = ['medical_details', 'previous_experience_details','certificates']
+                if field in optional:
+                    self.fields[field].required = False
+                else:
+                    self.fields[field].required = not preview_mode
+                    
                 if preview_mode:
                     self.fields[field].disabled = True
 
@@ -207,8 +218,9 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
         # ADD THIS INSIDE PlayerSelectionCrispyForm
     def clean_deadline(self):
             deadline = self.cleaned_data.get('deadline')
-            if deadline and deadline < timezone.now():
-                raise forms.ValidationError("The deadline cannot be in the past. Please select a future date/time.")
+            if deadline and not self.fields['deadline'].disabled:
+                if deadline < timezone.now():
+                    raise forms.ValidationError("The deadline cannot be in the past.")
             return deadline
 
     # Validation Logic (Keep these as they are)
@@ -248,6 +260,9 @@ MatchFormset = inlineformset_factory(
         'venue': forms.TextInput(attrs={'placeholder': 'Stadium Name', 'class': 'form-control'}),
     }
 )
+
+    
+   
 
 
 class OrganizerSettingsForm(forms.ModelForm):

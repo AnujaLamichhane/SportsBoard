@@ -14,32 +14,46 @@
     color: var(--text-color);
     border-left: 5px solid #ff7a18;
     padding-left: 20px;
+    color: #222;
 }
 .container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 30px;
     padding: 10px;
 }
 .value-card {
     position: relative;
     padding: 30px 30px;
-    width: 300px;
-    margin-left: 20px;
+    width: 340px;
+    margin-left: 60px;
     background: #ffffff;
     border-radius: 20px; /* Matches your image radius */
     overflow: hidden; /* Clips the orange bars to the card corners */
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    border: 1px solid #f0f0f0; 
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05); 
+    
+    /* 2. Layered shadow for a soft, realistic "lift" */
+    /* offset-x | offset-y | blur | spread | color */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.4s ease, 
+                border-color 0.4s ease;
     z-index: 1;
+
 }
 .value-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 50px rgba(255, 122, 24, 0.1);
-        border-color: #ff7a18;
+        transform: translateY(-12px);
+    
+    /* 3. Brighter shadow on hover using your brand orange */
+    box-shadow: 0 25px 50px -12px rgba(255, 122, 24, 0.25);
+    
+    /* 4. Match the border to your title accent color */
+    border-color: #ff7a18;
 }
 
 .value-card h3 {
