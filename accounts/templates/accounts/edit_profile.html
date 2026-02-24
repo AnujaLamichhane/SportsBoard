@@ -181,16 +181,7 @@
                 <h1 class="main-title">Profile Settings</h1>
                 <p class="sub-text">Manage your personal information and athlete credentials.</p>
             </div>
-            {% if messages %}
-                <div class="messages-container" style="margin-bottom: 20px;">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid transparent; {% if message.tags == 'success' %} background-color: #d4edda; color: #155724; border-color: #c3e6cb; {% else %} background-color: #fff3cd; color: #856404; border-color: #ffeeba; {% endif %}">
-                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            {% include "accounts/messages.html" %}
             <form method="POST" enctype="multipart/form-data" class="profile-form">
                 {% csrf_token %}
 
@@ -250,5 +241,15 @@
         document.getElementById('avatar-preview').src = URL.createObjectURL(file);
     }
 };
+</script>
+<script>
+    setTimeout(function() {
+        let alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            alert.style.transition = "opacity 0.5s ease";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 4000);
 </script>
 {% endblock %}

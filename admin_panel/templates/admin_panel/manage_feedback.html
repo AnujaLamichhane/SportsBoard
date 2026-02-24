@@ -167,7 +167,6 @@
         <td>
             <div class="d-flex justify-content-end gap-2">
                 {% if not f.is_resolved %}
-<!--                <a href="{% url 'admin_panel:resolve_feedback' f.pk %}" class="btn-action btn-check"><i class="fas fa-check"></i></a>-->
      <a href="{% url 'admin_panel:resolve_feedback' 'organizer' f.pk %}" class="btn-action btn-check">
     <i class="fas fa-check"></i>
 </a>
