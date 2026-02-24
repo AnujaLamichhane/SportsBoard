@@ -5,13 +5,13 @@
         top: 110px;
         right: 10px;
         z-index: 10000;
-        width: 420px; /* Slightly wider for the icon + text */
+        width: 500px; /* Slightly wider for the icon + text */
         pointer-events: none; /* Allows clicking things behind the container area */
     }
 
     .messages-container .alert {
         pointer-events: auto; /* Re-enable clicking for the actual alert and close button */
-        font-size: 1.2rem;    /* Large, readable font */
+        font-size: 1.1rem;    /* Large, readable font */
         font-weight: 500;
         border: none;
         border-radius: 19px;
@@ -69,3 +69,34 @@
         {% endfor %}
     </div>
 {% endif %}
+
+<script>
+    // static/accounts/js/messages.js
+
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+
+    alerts.forEach(alert => {
+        // 1. Determine the timing: 2 seconds for warnings/errors, 5 for others
+        let displayTime = 3000; 
+        if (alert.classList.contains('alert-warning') || alert.classList.contains('alert-danger')) {
+            displayTime = 2000; // Fast-track warning messages
+        }
+
+        // 2. Schedule the fade out for this specific alert
+        setTimeout(function() {
+            // Smooth transition effects
+            alert.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+            alert.style.opacity = "0";
+            alert.style.transform = "translateY(-10px)"; 
+            
+            // 3. Remove from DOM after transition completes
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 600);
+        }, displayTime);
+    });
+});
+</script>

@@ -170,7 +170,7 @@
                 <i class="fas fa-calendar-alt"></i> {{ event.date_time|date:"M d, Y @ P" }}
             </p>
         </div>
-
+        {% include 'accounts/messages.html' %}
         <form method="post">
             {% csrf_token %}
 

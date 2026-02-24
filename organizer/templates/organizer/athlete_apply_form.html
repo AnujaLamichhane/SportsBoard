@@ -81,7 +81,7 @@ input[type="radio"] {
                     {% if is_player or is_preview %}Step-by-step application process.{% else %}Form Setup Mode{% endif %}
                 </p>
             </div>
-
+            {% include "accounts/_sidebar.html" %}
             <div class="card-body p-4">
                 {% if is_player or is_preview %}
                     <div class="progress mb-4">

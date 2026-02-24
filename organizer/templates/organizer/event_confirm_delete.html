@@ -136,7 +136,7 @@
             <i class="fas fa-circle-exclamation" style="margin-right: 5px;"></i>
             <strong>Action Required:</strong> Please note that this process is irreversible. All related match data, ticket configurations, and sales records will be destroyed.
         </div>
-
+        {% include 'accounts/messages.html' %}
         <form method="post">
             {% csrf_token %}
             <div class="button-group">
