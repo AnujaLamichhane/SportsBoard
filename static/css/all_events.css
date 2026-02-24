@@ -542,3 +542,98 @@
     color: white;
     font-weight: bold;
 }
+
+/* ===============================
+   FILTER DROPDOWN UI
+================================*/
+
+.filter-wrapper{
+    position:relative;
+}
+
+/* BUTTON */
+
+.filter-button{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    padding:10px 18px;
+    border-radius:30px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.filter-button:hover{
+    border-color:#ff7b00;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.filter-text{
+    color:#1e293b;
+}
+
+.arrow{
+    font-size:.8rem;
+    transition:.3s;
+}
+
+/* OPEN STATE */
+
+.filter-wrapper.active .arrow{
+    transform:rotate(180deg);
+}
+
+/* DROPDOWN */
+
+.filter-dropdown{
+    position:absolute;
+    top:120%;
+    left:0;
+    background:#fff;
+    border-radius:14px;
+    min-width:220px;
+    padding:10px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+    display:none;
+    z-index:999;
+}
+
+.filter-wrapper.active .filter-dropdown{
+    display:block;
+}
+
+/* ITEMS */
+
+.filter-item{
+    display:block;
+    padding:10px 14px;
+    border-radius:10px;
+    text-decoration:none;
+    color:#334155;
+    font-weight:500;
+    transition:.25s;
+}
+
+.filter-item:hover{
+    background:#fff4ec;
+    color:#ff7b00;
+}
+
+.filter-item.active{
+    background:#ff7b00;
+    color:white;
+    font-weight:600;
+}
+
+/* DIVIDER */
+
+.filter-divider{
+    height:1px;
+    background:#e5e7eb;
+    margin:8px 0;
+}

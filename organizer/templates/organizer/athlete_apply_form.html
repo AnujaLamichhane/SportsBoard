@@ -223,22 +223,46 @@ function validateStep(n) {
 document.addEventListener("DOMContentLoaded", function() {
     showStep(currentStep);
 
-    // Age Calculation
-    const dobInput = document.getElementById('id_dob');
-    const ageDisplay = document.querySelector('.age-display');
-    if (dobInput) {
-            dobInput.addEventListener('change', function() {
-                if (this.value) {
-                    const birthDate = new Date(this.value);
-                    const today = new Date();
-                    let age = today.getFullYear() - birthDate.getFullYear();
-                    const m = today.getMonth() - birthDate.getMonth();
-                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
-                    // You can alert or update a read-only field if you add one to the model
-                    console.log("Calculated Age: " + age);
-                }
-            });
+<!--    // Age Calculation-->
+<!--    const dobInput = document.getElementById('id_dob');-->
+<!--    const ageDisplay = document.querySelector('.age-display');-->
+<!--    if (dobInput) {-->
+<!--            dobInput.addEventListener('change', function() {-->
+<!--                if (this.value) {-->
+<!--                    const birthDate = new Date(this.value);-->
+<!--                    const today = new Date();-->
+<!--                    let age = today.getFullYear() - birthDate.getFullYear();-->
+<!--                    const m = today.getMonth() - birthDate.getMonth();-->
+<!--                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age&#45;&#45;;-->
+<!--                    // You can alert or update a read-only field if you add one to the model-->
+<!--                    console.log("Calculated Age: " + age);-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+// --- UPDATED AGE CALCULATION ---
+const dobInput = document.getElementById('id_dob');
+const ageField = document.getElementById('age_field'); // Matches the ID in your forms.py
+
+function calculateAge() {
+    if (dobInput.value) {
+        const birthDate = new Date(dobInput.value);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+
+        if (ageField) {
+            ageField.value = age + " Years";
         }
+    }
+}
+
+if (dobInput && ageField) {
+    dobInput.addEventListener('change', calculateAge);
+    dobInput.addEventListener('input', calculateAge); // Support more browsers
+    calculateAge(); // Run on load in case of pre-filled data
+}
 
     // Address Logic
     const sameAddrCheck = document.getElementById('id_same_as_temporary');

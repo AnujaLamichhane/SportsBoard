@@ -38,7 +38,7 @@
     max-width: 450px;
     transition: all 0.3s ease;
     margin-top: 12px;
-    
+
 }
 
 .search-form:focus-within {
@@ -81,7 +81,7 @@
 /* Pill-styled Sort Dropdown */
 .sort-select {
     padding: 14px 24px;
-    
+
     border-radius: 50px;
     border: 1px solid #e2e8f0;
     background-color: #ffffff;

@@ -10,6 +10,8 @@ urlpatterns = [
 path('settings/', views.organizer_settings, name='settings'),
 path('settings/submit-verification/', views.submit_verification, name='submit_verification'),
 path('help/', views.help_feedback, name='help_feedback'),
+
+
     # Event CRUD
     path('events/create/', views.create_event, name='event_create'),
     path('events/<int:event_id>/', views.event_detail, name='event_detail'),

@@ -97,10 +97,10 @@
             transition: all 0.2s ease;
         }
 
-        .btn-outline { 
-            border: 1px solid #e2e8f0; 
-            background: white; 
-            color: #475569; 
+        .btn-outline {
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #475569;
         }
 
         .btn-pdf-blue {
@@ -177,7 +177,7 @@
 
     <div class="main-content-column">
         <div class="content-width-limiter">
-            
+
             <div class="overview-header">
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <a href="javascript:history.back()" class="btn-base btn-outline" style="background: #f1f5f9; border: none;">
@@ -185,7 +185,7 @@
                     </a>
                     <h2 style="margin:0; font-weight: 700;">Athlete Review: {{ application.full_name }}</h2>
                 </div>
-                
+
                 <div class="action-container">
                     {% if application.status == 'PENDING' %}
                         <button class="btn-base" style="background: #10b981; color: white;" onclick="confirmStatus('APPROVED')">Approve Athlete</button>
@@ -225,7 +225,7 @@
                             {{ application.medical_history|default:"No medical history provided." }}
                         </div>
                     </div>
-                    
+
                     <div class="review-card-white">
                         <h4 style="color: #3b82f6; margin-top: 0; margin-bottom: 2rem;"><i class="fas fa-file-alt" style="margin-right: 10px;"></i> Verification Documents</h4>
                         
@@ -303,18 +303,25 @@
     function toggleDropdown() {
         document.getElementById("statusDropdown").classList.toggle("show");
     }
+
     function confirmStatus(status) {
-        if(confirm("Change athlete status to " + status + "?")) {
-            // Update this URL to match your status update logic
-            window.location.href = `/organizer/applications/{{ application.pk }}/update-status/?status=${status}`;
+        // We use the URL structure from your working code: /organizer/applications/<pk>/<STATUS>/
+        const appId = "{{ application.pk }}";
+        const targetUrl = `/organizer/applications/${appId}/${status}/`;
+
+        if(confirm("Are you sure you want to change athlete status to " + status + "? This will send an automated email notification.")) {
+            window.location.href = targetUrl;
         }
     }
+
     // Close dropdown when clicking outside
     window.onclick = function(event) {
         if (!event.target.matches('.btn-outline') && !event.target.matches('.fa-edit')) {
             var dropdowns = document.getElementsByClassName("dropdown-content");
             for (var i = 0; i < dropdowns.length; i++) {
-                if (dropdowns[i].classList.contains('show')) dropdowns[i].classList.remove('show');
+                if (dropdowns[i].classList.contains('show')) {
+                    dropdowns[i].classList.remove('show');
+                }
             }
         }
     }

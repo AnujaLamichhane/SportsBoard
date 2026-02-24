@@ -10,10 +10,11 @@ urlpatterns = [
     path('manage-users/', views.manage_users, name='manage_users'),
     path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
     path('feedback/', views.manage_feedback, name='manage_feedback'),
-    path('feedback/resolve/<int:pk>/', views.resolve_feedback, name='resolve_feedback'),
+path('feedback/resolve/<str:user_type>/<int:pk>/', views.resolve_feedback, name='resolve_feedback'),
+    # path('feedback/resolve/<int:pk>/', views.resolve_feedback, name='resolve_feedback'),
     # path('verify-organizer/<int:pk>/<str:action>/', views.verify_organizer, name='verify_organizer'),
     path('sports/', views.manage_sports, name='manage_sports'),
     path('reports/', views.reports_view, name='reports'),
-
+path('settings/', views.settings_view, name='settings'),
 path('verify/<int:pk>/<str:action>/', views.verify_organizer, name='verify_organizer'),
 ]

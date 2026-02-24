@@ -54,28 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    const themeToggle = document.getElementById("themeToggle");
-
-    // Load theme from localStorage
-    if (localStorage.getItem("theme") === "dark") {
-        document.body.classList.add("dark-mode");
-        themeToggle.textContent = "☀️";
-    }
-
-    themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
-
-        // Swap button icon
-        if (document.body.classList.contains("dark-mode")) {
-            themeToggle.textContent = "☀️"; // light icon
-            localStorage.setItem("theme", "dark");
-        } else {
-            themeToggle.textContent = "🌙"; // dark icon
-            localStorage.setItem("theme", "light");
-        }
-    });
-});
 
 
 

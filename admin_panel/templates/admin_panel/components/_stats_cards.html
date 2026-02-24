@@ -1,16 +1,16 @@
+
 <div class="stats-grid mb-5">
     <div class="stat-card shadow-sm">
         <div class="stat-content">
             <div class="stat-text">
                 <p class="stat-label">Total Events</p>
-                <h3 class="stat-value">{{ stats.total_events }}</h3>
-            </div>
+                <h3 class="stat-value">{{ total_events }}</h3> </div>
             <div class="stat-icon-box bg-soft-orange"><i class="fas fa-trophy text-orange"></i></div>
         </div>
         <div class="stat-footer">
-            <span class="{% if stats.event_trend >= 0 %}trend-up{% else %}trend-down{% endif %}">
-                <i class="fas {% if stats.event_trend >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i> 
-                {{ stats.event_trend|slugify }}%
+            <span class="{% if event_trend >= 0 %}trend-up{% else %}trend-down{% endif %}">
+                <i class="fas {% if event_trend >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i>
+                {{ event_trend|slugify }}%
             </span>
             <span class="footer-text">from last month</span>
         </div>
@@ -20,14 +20,13 @@
         <div class="stat-content">
             <div class="stat-text">
                 <p class="stat-label">Active Users</p>
-                <h3 class="stat-value">{{ stats.active_users }}</h3>
-            </div>
+                <h3 class="stat-value">{{ active_users }}</h3> </div>
             <div class="stat-icon-box bg-soft-blue"><i class="fas fa-users text-blue"></i></div>
         </div>
         <div class="stat-footer">
-            <span class="{% if stats.user_trend >= 0 %}trend-up{% else %}trend-down{% endif %}">
-                <i class="fas {% if stats.user_trend >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i> 
-                {{ stats.user_trend|slugify }}%
+            <span class="{% if user_trend >= 0 %}trend-up{% else %}trend-down{% endif %}">
+                <i class="fas {% if user_trend >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i>
+                {{ user_trend|slugify }}%
             </span>
             <span class="footer-text">new registrations</span>
         </div>
@@ -37,14 +36,13 @@
         <div class="stat-content">
             <div class="stat-text">
                 <p class="stat-label">Pending Requests</p>
-                <h3 class="stat-value {% if stats.pending_requests > 0 %}text-danger{% endif %}">{{ stats.pending_requests }}</h3>
-            </div>
+                <h3 class="stat-value {% if pending_requests > 0 %}text-danger{% endif %}">{{ pending_requests }}</h3> </div>
             <div class="stat-icon-box bg-soft-red"><i class="fas fa-clock text-red"></i></div>
         </div>
         <div class="stat-footer">
-            <span class="{% if stats.req_trend <= 0 %}trend-up{% else %}trend-down{% endif %}">
-                <i class="fas {% if stats.req_trend <= 0 %}fa-arrow-down{% else %}fa-arrow-up{% endif %}"></i> 
-                {{ stats.req_trend|slugify }}%
+            <span class="{% if req_trend <= 0 %}trend-up{% else %}trend-down{% endif %}">
+                <i class="fas {% if req_trend <= 0 %}fa-arrow-down{% else %}fa-arrow-up{% endif %}"></i>
+                {{ req_trend|slugify }}%
             </span>
             <span class="footer-text">inbound volume</span>
         </div>
@@ -54,14 +52,13 @@
         <div class="stat-content">
             <div class="stat-text">
                 <p class="stat-label">Total Revenue</p>
-                <h3 class="stat-value">Rs. {{ stats.total_revenue }}</h3>
-            </div>
+                <h3 class="stat-value">Rs. {{ total_revenue }}</h3> </div>
             <div class="stat-icon-box bg-soft-green"><i class="fas fa-wallet text-green"></i></div>
         </div>
         <div class="stat-footer">
-            <span class="{% if stats.rev_trend >= 0 %}trend-up{% else %}trend-down{% endif %}">
-                <i class="fas {% if stats.rev_trend >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i> 
-                {{ stats.rev_trend|slugify }}%
+            <span class="{% if rev_trend >= 0 %}trend-up{% else %}trend-down{% endif %}">
+                <i class="fas {% if rev_trend >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i>
+                {{ rev_trend|slugify }}%
             </span>
             <span class="footer-text">than last month</span>
         </div>

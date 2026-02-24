@@ -1,0 +1,83 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'admin_panel/css/adashboard.css' %}">
+<link rel="stylesheet" href="{% static 'admin_panel/css/settings.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+
+    <!-- LEFT SIDEBAR -->
+    {% include 'admin_panel/components/_sidebar.html' %}
+
+    <!-- MAIN SETTINGS CONTENT -->
+    <div class="settings-content">
+
+        <div class="settings-header">
+            <h1>⚙️ System Settings</h1>
+            <p>Manage platform configuration and security.</p>
+        </div>
+
+        {% if messages %}
+        <div class="success-msg">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="settings-grid">
+
+                <!-- GENERAL -->
+                <div class="settings-card" id="general">
+                    <h3><i class="bi bi-gear"></i> General</h3>
+                    <label>Site Name</label>
+                    {{ form.site_name }}
+                    <label>Support Email</label>
+                    {{ form.support_email }}
+                    <div class="toggle-row">
+                        <span>Maintenance Mode</span>
+                        {{ form.maintenance_mode }}
+                    </div>
+                </div>
+
+                <!-- PLATFORM -->
+                <div class="settings-card" id="platform">
+                    <h3><i class="bi bi-sliders"></i> Platform Rules</h3>
+                    <label>Commission (%)</label>
+                    {{ form.commission }}
+                    <label>Max Event Duration</label>
+                    {{ form.max_duration }}
+                </div>
+
+                <!-- SECURITY -->
+                <div class="settings-card danger" id="security">
+                    <h3><i class="bi bi-shield-lock"></i> Security</h3>
+                    <label>Admin Session Timeout (minutes)</label>
+                    {{ form.admin_session_timeout }}
+                </div>
+
+            </div>
+
+            <div class="sticky-save">
+                <button type="submit" class="btn-save">Save Settings</button>
+            </div>
+        </form>
+
+    </div> <!-- /.settings-content -->
+
+</div> <!-- /.dashboard-page -->
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById("adminSidebar");
+    sidebar.classList.toggle("collapsed");
+}
+</script>
+{% endblock %}

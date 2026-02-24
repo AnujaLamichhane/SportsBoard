@@ -129,6 +129,9 @@ class PlayerSelectionForm(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registration_forms', null=True, blank=True)
     applicant = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='submissions')
 
+    deadline = models.DateTimeField(null=True, blank=True, help_text="Form closes after this date")
+
+
     # Event Info (Mirrored from Template)
     event_name = models.CharField(max_length=255, blank=True)
     sports = models.CharField(max_length=100, blank=True)

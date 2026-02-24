@@ -11,7 +11,7 @@ from .models import PlayerSelectionForm, OrganizerProfile
 from crispy_forms.bootstrap import InlineRadios, PrependedText
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-
+from django.utils.safestring import mark_safe
 
 
 class EventCreationForm(forms.ModelForm):
@@ -89,6 +89,16 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
         exclude = ['organizer', 'is_published', 'status', 'applicant', 'event']
         widgets = {
             'dob': forms.DateInput(attrs={'type': 'date', 'id': 'id_dob'}),
+
+            'deadline': forms.DateTimeInput(
+                attrs={
+                    'type': 'datetime-local',
+                    'class': 'form-control',
+                    # This helps browsers like Chrome/Safari trigger the native picker
+                },
+                format='%Y-%m-%dT%H:%M'  # Critical for the calendar to load existing data
+            ),
+
             'email': forms.EmailInput(attrs={'id': 'id_email'}),
             'previous_experience_details': forms.Textarea(
                 attrs={'rows': 3, 'placeholder': 'List major tournaments or clubs...'}),
@@ -178,6 +188,8 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
             for field in context_fields:
                 self.fields[field].required = True
 
+            self.fields['deadline'].required = True
+
             self.helper.layout = Layout(
                 Fieldset(
                     "🛠️ Setup Trial Form Template",
@@ -185,8 +197,19 @@ class PlayerSelectionCrispyForm(forms.ModelForm):
                         "<p class='text-muted small'>Fill these details to define the trial context for athletes.</p>"),
                     Row(Column('event_name', css_class='col-md-7 mb-1'), Column('sports', css_class='col-md-5 mb-1')),
                     Row(Column('level', css_class='col-md-4 mb-2'), Column('address', css_class='col-md-8 mb-2')),
+
+                    # Row(Column(PrependedText('deadline', '<i class="fas fa-clock"></i>'), css_class='col-md-4 mb-2')),
+
+                    Row(Column(PrependedText('deadline', mark_safe('<i class="fas fa-calendar-alt"></i>')), css_class='col-md-4 mb-2')),
                 ),
             )
+
+        # ADD THIS INSIDE PlayerSelectionCrispyForm
+    def clean_deadline(self):
+            deadline = self.cleaned_data.get('deadline')
+            if deadline and deadline < timezone.now():
+                raise forms.ValidationError("The deadline cannot be in the past. Please select a future date/time.")
+            return deadline
 
     # Validation Logic (Keep these as they are)
     def clean_phone(self):
