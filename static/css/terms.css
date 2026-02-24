@@ -1,0 +1,70 @@
+/* static/terms.css */
+
+.terms-container {
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 0 30px; /* Matching Privacy padding */
+    line-height: 1.8;
+    color: var(--text-color, #333);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.terms-container h1 {
+    font-size: 3rem; /* Large Title - Same as Privacy */
+    margin-bottom: 1rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    /* color: #000; */
+}
+
+.terms-container h2 {
+    font-size: 2.2rem; /* Section Headers - Same as Privacy */
+    margin-top: 3.5rem;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 12px;
+    color: #000;
+}
+
+.update-date {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #666;
+    margin-bottom: 50px;
+    display: block;
+}
+
+.section-block {
+    margin-bottom: 2rem;
+}
+
+.terms-container p {
+    font-size: 1.25rem; /* Large Paragraph Text */
+    margin-bottom: 2rem;
+    margin-left: 20px;
+}
+
+.terms-container ul {
+    margin-bottom: 2rem;
+    padding-left: 25px;
+}
+
+.terms-container li {
+    margin-bottom: 18px;
+    font-size: 1.2rem;
+}
+
+/* Accenting the email link with your brand orange */
+.terms-container a {
+    color: #ff9f43;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.terms-container a:hover {
+    color: #e67e22;
+    text-decoration: none;
+    border-bottom: 2px solid  #e67e22; /* Adds a nice underline on hover */
+    opacity: 0.8;
+}

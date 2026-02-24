@@ -1,12 +1,22 @@
 {% extends "homepage/base.html" %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
     .contact-section {
         max-width: 900px;
         margin: 80px auto;
         padding: 20px;
         color: var(--text-color); /* White text for your dark theme */
+    }
+    .contact-section h1{
+        margin-bottom: 9px;
+        font-size: 3rem;
+        font-weight: 700;
+    }
+    .contact-section p{
+        font-size: 1.3rem;
+        margin-left: 4px;
     }
     .contact-grid {
         display: grid;
@@ -26,38 +36,59 @@
     }
     .contact-card h3 {
         margin-top: 0;
+        margin-bottom: 3px;
+        font-size: 1.5rem;
         color: #ff9f43;
     }
     .contact-card p {
         color:var(--text-color);
+        margin-bottom: 3px;
     }
-    .contact-link {
-        color: #0984e3;
+    /* Mail Link Styles */
+    .contact-card a.mail-link {
+        color: #ff9f43;
         text-decoration: none;
+        transition: all 0.3s ease; /* Smooth transition for the hover effect */
+        border-bottom: 2px solid transparent; /* Prepare for a bottom border effect */
     }
+
+    /* Hover Effect */
+    .contact-card a.mail-link:hover {
+        color:  #e67e22; /* Darker blue on hover */
+        text-decoration: none;
+        border-bottom: 2px solid  #e67e22; /* Adds a nice underline on hover */
+        opacity: 0.8;
+    }
+ 
+
+
 </style>
 
 <div class="contact-section">
-    <h1>Get in Touch</h1>
-    <p>Have questions about SportsBoard? We're here to help you manage your events better.</p>
+    <h1><i class="fas fa-comments"></i> Get in Touch</h1>
+    <p class="sub-header"><i class="fas fa-handshake"></i> Have questions about SportsBoard? We're here to help you manage your events better.</p>
 
     <div class="contact-grid">
         <div class="contact-card">
-            <h3>Email Support</h3>
+            <h3><i class="fas fa-headset"></i> Email Support</h3>
             <p>For general inquiries and technical support:</p>
-            <strong>support@sportsboard.com</strong>
+            <strong>
+                <a href="mailto:sportsboard2021@gmail.com" class="mail-link">
+                     sportsboard2021@gmail.com
+                </a>
+            </strong>
         </div>
 
         <div class="contact-card">
             <h3>Our Office</h3>
-            <p>123 Sports Avenue, Athletic City<br>
-            AC 45678, Nepal</p>
+            <p>Pokhara-8, Phirke<br>
+             Nepal</p>
         </div>
 
         <div class="contact-card">
             <h3>Call Us</h3>
-            <p>Available Mon-Fri, 9am - 5pm:</p>
-            <strong>+977 1-2345678</strong>
+            <p>Available Sun-Fri, 10am - 5pm:</p>
+            <strong>+977 9865438765</strong>
         </div>
     </div>
 </div>

@@ -1,0 +1,81 @@
+/* static/privacy.css */
+
+.privacy-container {
+    max-width: 1000px; /* Increased width for larger text */
+    margin: 60px auto;
+    padding: 0 30px;
+    line-height: 1.8;
+    color: var(--text-color, #333);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.privacy-container h1 {
+    font-size: 3rem; /* Larger Title */
+    margin-bottom: 1rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.privacy-container h2 {
+    font-size: 2.2rem; /* Larger Section Headers */
+    margin-top: 3.5rem;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 12px;
+}
+
+.privacy-container p {
+    font-size: 1.25rem; /* Base paragraph text */
+    margin-bottom: 2rem;
+    margin-left: 20px;
+}
+
+.academic-notice {
+    background-color: #f0f7ff;
+    border-left: 6px solid #007bff;
+    padding: 25px;
+    margin: 40px 0;
+    border-radius: 10px;
+    font-size: 1.2rem; /* Slightly larger notice text */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.update-date {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #666;
+    margin-bottom: 50px;
+    display: block;
+}
+
+.privacy-container ul {
+    margin-bottom: 2rem;
+    padding-left: 35px;
+}
+
+.privacy-container li {
+    margin-bottom: 18px; /* Increased spacing between items */
+    font-size: 1.2rem;
+}
+
+.privacy-container strong {
+    color: #000;
+}
+
+
+/* Mail Link Styles */
+.privacy-container a.mail-link {
+    color: #ff9f43;
+    text-decoration: none;
+    transition: all 0.3s ease; /* Smooth transition for the hover effect */
+    border-bottom: 2px solid transparent; /* Prepare for a bottom border effect */
+}
+
+/* Hover Effect */
+.privacy-container a.mail-link:hover {
+    color:  #e67e22; /* Darker blue on hover */
+    text-decoration: none;
+    border-bottom: 2px solid  #e67e22; /* Adds a nice underline on hover */
+    opacity: 0.8;
+}

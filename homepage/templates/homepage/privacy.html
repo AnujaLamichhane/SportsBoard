@@ -1,43 +1,18 @@
 {% extends "homepage/base.html" %}
+{% load static %}
 
-{% block title %}Privacy Policy | [SportsBoard]{% endblock %}
+{% block title %}Privacy Policy | SportsBoard{% endblock %}
 
 {% block content %}
-<style>
-    .privacy-container {
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 20px;
-        line-height: 1.6;
-        color: var(--text-color);
-    }
-    .privacy-container h1, .privacy-container h2 {
-        color: var(--text-color);
-        font-size: 30px;
-    }
-     .privacy-container p{
-        font-size: 20px;
-     }
-    .academic-notice {
-        background-color: var(--bg-color);
-        border-left: 4px solid #007bff;
-        padding: 15px;
-        margin-bottom: 30px;
-        border-radius: 4px;
-    }
-    .update-date {
-        font-style: italic;
-        color: var(--text-color);
-        margin-bottom: 20px;
-    }
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/privacy.css' %}">
 
 <div class="privacy-container">
-    <h1>Privacy Policy</h1>
-    <p class="update-date">Last Updated: 2025/12/26</p>
+    <h1><i class="fas fa-shield-alt"></i> Privacy Policy</h1>
+    <span class="update-date"><i class="far fa-calendar-check"></i> Last Updated: 2026/2/24</span>
 
     <div class="academic-notice">
-        <strong>Academic Project Notice:</strong> This website is a final year academic project. Data collected is used solely for demonstrating project functionality and will be deleted upon completion of the academic term.
+        <strong><i class="fas fa-graduation-cap"></i> Academic Project Notice:</strong> This website is a final year academic project. Data collected is used solely for demonstrating project functionality and will be deleted upon completion of the academic term.
     </div>
 
     <p>This Privacy Policy describes how <strong>SportsBoard</strong> collects, uses, and shares your personal information when you use our services.</p>
@@ -60,6 +35,13 @@
     <p>We do not sell your personal data. We implement standard security measures, though no internet transmission is 100% secure.</p>
 
     <h2>4. Contact Us</h2>
-    <p>For questions regarding this policy, contact: <strong> admin@sportsboard.local</strong></p>
+    <p>
+        For questions regarding this policy, contact: 
+        <strong>
+            <a href="mailto:sportsboard2021@gmail.com" class="mail-link">
+                sportsboard2021@gmail.com
+            </a>
+        </strong>
+    </p>
 </div>
 {% endblock %}
