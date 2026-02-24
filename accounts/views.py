@@ -16,7 +16,7 @@ from accounts.models import Profile, Feedback
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.shortcuts import get_object_or_404
-
+from django.utils import timezone
 
 @csrf_protect
 def register_view(request):
@@ -222,18 +222,53 @@ def edit_profile(request):
         profile_form = ProfileForm(instance=request.user.profile)
     
     return render(request, 'accounts/edit_profile.html', {'form': form , 'profile_form': profile_form})
+# @login_required
+# def my_trials(request):
+#     query = request.GET.get('q')
+#     profile, created = Profile.objects.get_or_create(user=request.user)
+#
+#     applications = PlayerSelectionForm.objects.filter(
+#         applicant=request.user,
+#         is_published=False
+#     )
+#
+#     if query:
+#         applications = applications.filter(event_name__icontains=query)
+#
+#     context = {
+#         'applications': applications,
+#         'query': query,
+#         'applied_count': applications.count(),
+#         'pending_count': applications.filter(status__iexact='Pending').count(),
+#         'shortlisted_count': applications.filter(status__iexact='Approved').count(),
+#         'profile_strength': profile.get_profile_strength(),
+#     }
+#
+#     return render(request, 'accounts/my_trials.html', context)
+
 @login_required
 def my_trials(request):
+    """
+    Shows applications the athlete has already submitted.
+    Includes a count for how many of those events have now passed their deadline.
+    """
+    now = timezone.now()
     query = request.GET.get('q')
     profile, created = Profile.objects.get_or_create(user=request.user)
 
+    # 1. Fetch user's submissions
     applications = PlayerSelectionForm.objects.filter(
         applicant=request.user,
         is_published=False
     )
 
+    # 2. Search logic
     if query:
         applications = applications.filter(event_name__icontains=query)
+
+    # 3. Calculate "Expired/Closed" count for the athlete's specific applications
+    # This checks how many of their submitted apps are for events that are now closed
+    expired_count = applications.filter(deadline__lt=now).count()
 
     context = {
         'applications': applications,
@@ -241,10 +276,13 @@ def my_trials(request):
         'applied_count': applications.count(),
         'pending_count': applications.filter(status__iexact='Pending').count(),
         'shortlisted_count': applications.filter(status__iexact='Approved').count(),
+        'expired_count': expired_count, # This is the count you requested
         'profile_strength': profile.get_profile_strength(),
+        'now': now, # Pass 'now' to handle badges in the template
     }
 
     return render(request, 'accounts/my_trials.html', context)
+
 
 def download_trial_pdf(request, pk):
     # Fetch the specific submission based on ID and current user
@@ -282,31 +320,38 @@ def trial_detail_view(request, pk):
         'active_tab': 'my_trials'
     })
 
+
 @login_required
 def available_trials_view(request):
-    # 1. Fetch search query
+    """
+    Shows trials currently open for application (Published & Deadline not passed).
+    Calculates expired trials as those that are Published but Deadline has passed.
+    """
+    now = timezone.now()
     search_query = request.GET.get('search', '')
+
+    # 1. Base Query: All trials published by organizers
     total_published = PlayerSelectionForm.objects.filter(is_published=True)
-    # 2. Get names of trials the user has already applied for (is_published=False)
+
+    # 2. Get names of trials the user has already applied for to exclude them
     applied_event_names = PlayerSelectionForm.objects.filter(
         applicant=request.user,
         is_published=False
     ).values_list('event_name', flat=True)
-    
-    # 3. FIX: Use 'is_published=True' instead of 'is_active'
-    # available_forms = PlayerSelectionForm.objects.filter(
-    #     is_published=True
-    # ).exclude(event_name__in=applied_event_names)
-    available_forms = total_published.exclude(event_name__in=applied_event_names)
-    
-    # 4. Expired/Unavailable: Published trials that are now closed
-    # We use .filter(is_published=False) excluding the user's own submissions
-    expired_count = PlayerSelectionForm.objects.filter(is_published=False).exclude(applicant=request.user).count()
-    # 4. Search logic
+
+    # 3. Available Trials: Published, NOT applied yet, and NOT expired
+    available_forms = total_published.filter(
+        deadline__gte=now
+    ).exclude(event_name__in=applied_event_names)
+
+    # 4. Expired/Closed Count: Published trials where the deadline is in the past
+    expired_count = total_published.filter(deadline__lt=now).count()
+
+    # 5. Search logic
     if search_query:
         available_forms = available_forms.filter(event_name__icontains=search_query)
 
-    # 5. Get submissions for sidebar count
+    # 6. Sidebar/Stat Count data
     my_submissions = PlayerSelectionForm.objects.filter(
         applicant=request.user,
         is_published=False
@@ -316,12 +361,57 @@ def available_trials_view(request):
         'available_forms': available_forms,
         'my_submissions': my_submissions,
         'search_query': search_query,
-        'total_count': total_published.count(), # Returns '2' as seen in edit
+        'total_count': total_published.count(),
         'available_count': available_forms.count(),
-        'expired_count': expired_count,
+        'expired_count': expired_count,  # Correctly calculated based on time
+        'now': now,
     }
-    
+
     return render(request, 'accounts/available_trial.html', context)
+
+
+# @login_required
+# def available_trials_view(request):
+#     # 1. Fetch search query
+#     search_query = request.GET.get('search', '')
+#     total_published = PlayerSelectionForm.objects.filter(is_published=True)
+#     # 2. Get names of trials the user has already applied for (is_published=False)
+#     applied_event_names = PlayerSelectionForm.objects.filter(
+#         applicant=request.user,
+#         is_published=False
+#     ).values_list('event_name', flat=True)
+#
+#     # 3. FIX: Use 'is_published=True' instead of 'is_active'
+#     # available_forms = PlayerSelectionForm.objects.filter(
+#     #     is_published=True
+#     # ).exclude(event_name__in=applied_event_names)
+#     available_forms = total_published.exclude(event_name__in=applied_event_names)
+#
+#     # 4. Expired/Unavailable: Published trials that are now closed
+#     # We use .filter(is_published=False) excluding the user's own submissions
+#     expired_count = PlayerSelectionForm.objects.filter(is_published=False).exclude(applicant=request.user).count()
+#     # 4. Search logic
+#     if search_query:
+#         available_forms = available_forms.filter(event_name__icontains=search_query)
+#
+#     # 5. Get submissions for sidebar count
+#     my_submissions = PlayerSelectionForm.objects.filter(
+#         applicant=request.user,
+#         is_published=False
+#     )
+#
+#     context = {
+#         'available_forms': available_forms,
+#         'my_submissions': my_submissions,
+#         'search_query': search_query,
+#         'total_count': total_published.count(), # Returns '2' as seen in edit
+#         'available_count': available_forms.count(),
+#         'expired_count': expired_count,
+#     }
+#
+#     return render(request, 'accounts/available_trial.html', context)
+
+
 @login_required
 def feedback_view(request):
     if request.method == 'POST':

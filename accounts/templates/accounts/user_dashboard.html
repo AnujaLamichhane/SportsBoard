@@ -3,12 +3,42 @@
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'accounts/css/user_dashboard.css' %}">
+    <style>
+        /* Countdown Styling for Dashboard Cards */
+        .dashboard-timer {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 140, 0, 0.05);
+            border: 1px solid rgba(255, 140, 0, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .timer-val {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #ff8c00;
+            font-size: 0.9rem;
+        }
+        .timer-label-sm {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #718096;
+            letter-spacing: 0.5px;
+        }
+        /* Style for expired cards on dashboard */
+        .trial-card.expired {
+            pointer-events: none;
+            opacity: 0.6;
+            filter: grayscale(1);
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
     {% include 'accounts/_sidebar.html' %}
-    
 
     <main class="main-content">
         {% block athlete_dashboard_content %}
@@ -17,40 +47,8 @@
                 <h1>Performance Dashboard</h1>
                 <p class="subtitle">Track your trial applications and event status.</p>
             </div>
-            <!-- <div class="header-date">
-                <div class="day-name">{% now "l" %}</div>
-                <div class="full-date">{% now "F j, Y" %}</div>
-            </div> -->
         </header>
-        {% include "accounts/messages.html" %}
-        <!-- <div class="container-fluid">
-            {% if messages %}
-                <div class="messages-wrapper" style="margin-top: 20px;">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}" 
-                            style="padding: 15px; 
-                                    border-radius: 8px; 
-                                    margin-bottom: 20px; 
-                                    display: flex; 
-                                    align-items: center;
-                                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                                    {% if message.tags == 'info' %} background-color: #e3f2fd; color: #0d47a1; border-left: 5px solid #2196f3;
-                                    {% elif message.tags == 'success' %} background-color: #d4edda; color: #155724; border-left: 5px solid #28a745;
-                                    {% elif message.tags == 'error' %} background-color: #f8d7da; color: #721c24; border-left: 5px solid #dc3545;
-                                    {% endif %}">
-                            <span style="margin-right: 10px;">
-                                {% if message.tags == 'info' %}ℹ️{% elif message.tags == 'success' %}✅{% else %}⚠️{% endif %}
-                            </span>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            <div class="stats-grid">
-                ...
-            </div>
-        </div> -->
+        {% include 'accounts/messages.html' %}
         <div class="stats-grid">
             <div class="stat-card">
                 <p class="stat-label">Applied Trials</p>
@@ -66,12 +64,20 @@
             <h3 class="section-title">🔥 Open Selection Trials</h3>
             <div class="card-grid">
                 {% for trial in available_forms %}
-                <a href="{% url 'organizer:selection_form_create' trial.pk %}" class="trial-card">
+                <a href="{% url 'organizer:selection_form_create' trial.pk %}" class="trial-card" id="trial-{{ trial.pk }}">
                     <div class="card-header">
                         <h4>{{ trial.event_name }}</h4>
                         <span class="badge-apply">Apply Now</span>
                     </div>
                     <p class="card-meta">⚽ {{ trial.sports }} | 🏆 {{ trial.get_level_display }}</p>
+
+                    <div class="dashboard-timer">
+                        <span class="timer-label-sm">Closing In</span>
+                        <span class="timer-val countdown-timer" data-deadline="{{ trial.deadline|date:'c' }}">
+                            --:--:--
+                        </span>
+                    </div>
+
                     <div class="card-footer">
                         <small class="location-text">📍 {{ trial.address|truncatechars:15 }}</small>
                         <span class="btn-fill">Fill Form</span>
@@ -79,29 +85,6 @@
                 </a>
                 {% empty %}
                 <p class="empty-msg">No new trials available.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-        <section class="dashboard-section">
-            <h3 class="section-title">My Trial Applications</h3>
-            <div class="card-grid">
-                {% for sub in my_submissions %}
-                <div class="stat-card">
-                    <div class="card-header">
-                        <h4>{{ sub.event_name }}</h4>
-                        <span class="status-badge {{ sub.status|lower }}">
-                            {{ sub.get_status_display }}
-                        </span>
-                    </div>
-                    <p class="card-meta">⚽ {{ sub.sports }} | 🏆 {{ sub.get_level_display }}</p>
-                    <small class="location-text" style="display: block; margin-top: 5px; color: #666;">
-                        📍 {{ sub.event_venue_address|default:"Not Provided" }}
-                    </small>
-                    <small class="timestamp">Applied: {{ sub.created_at|date:"M d, Y" }}</small>
-                </div>
-                {% empty %}
-                <p class="empty-msg">No trial applications submitted yet.</p>
                 {% endfor %}
             </div>
         </section>
@@ -121,16 +104,11 @@
                         <small>🎟️ {{ app.transaction.ticket_type.name }}</small>
                     </div>
                 </div>
-<!--                <div class="ticket-actions">-->
-<!--                    <span class="paid-badge">PAID</span>-->
-<!--                    <a href="{% url 'organizer:booking_success' app.id %}" class="arrow-link">➔</a>-->
-<!--                </div>-->
-
-            <div style="display: flex; align-items: center; gap: 25px;">
+                <div style="display: flex; align-items: center; gap: 25px;">
                     <span style="background: rgba(40, 167, 69, 0.15); color: #28a745; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 800;">PAID</span>
                     <a href="{% url 'organizer:booking_success' app.id %}" style="color: var(--text-color); opacity: 0.8; text-decoration: none; font-size: 1.1rem;">➔</a>
                 </div>
-                </div>
+            </div>
             {% empty %}
             <div class="empty-placeholder">
                 <div class="icon">🏟️</div>
@@ -139,10 +117,54 @@
                 <a href="{% url 'homepage:view_events' %}" class="btn-primary">Browse Events</a>
             </div>
             {% endfor %}
-
         </section>
         {% endblock athlete_dashboard_content %}
     </main>
 </div>
+
+<script>
+/** Countdown Logic for Dashboard **/
+function updateDashboardTimers() {
+    const timers = document.querySelectorAll('.countdown-timer');
+
+    timers.forEach(timer => {
+        const deadlineDate = new Date(timer.getAttribute('data-deadline')).getTime();
+        const now = new Date().getTime();
+        const distance = deadlineDate - now;
+
+        const card = timer.closest('.trial-card');
+
+        if (distance < 0) {
+            timer.innerHTML = "CLOSED";
+            timer.style.color = "#dc3545";
+            if (card) {
+                card.classList.add('expired');
+                const badge = card.querySelector('.badge-apply');
+                if (badge) badge.innerHTML = "Closed";
+            }
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        let displayStr = "";
+        if (days > 0) displayStr += days + "d ";
+        displayStr += hours + "h " + minutes + "m " + seconds + "s";
+
+        timer.innerHTML = displayStr;
+
+        // Change to red if under 24 hours
+        if (days === 0) {
+            timer.style.color = "#e53e3e";
+        }
+    });
+}
+
+setInterval(updateDashboardTimers, 1000);
+updateDashboardTimers();
+</script>
 <script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}
