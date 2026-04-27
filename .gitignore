@@ -1,47 +1,53 @@
-# Environment variables
+# ========================
+# ENVIRONMENT VARIABLES
+# ========================
 .env
+.env.*
 
-
-# SQLite database
+# ========================
+# DATABASE FILES (DANGER ZONE)
+# ========================
 db.sqlite3
+db_backup.sqlite3
 
-# Python cache files
+# ========================
+# PYTHON CACHE
+# ========================
 __pycache__/
-*.pyc
+*.py[cod]
 
-
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-
-# Virtual environment
+# ========================
+# VIRTUAL ENVIRONMENTS
+# ========================
 .venv/
 venv/
 env/
 
-# SQLite database (Do NOT push)
-db.sqlite3
-
-# Media uploads
+# ========================
+# MEDIA FILES
+# ========================
 media/
 
-# Django staticfiles compiled output
+# ========================
+# STATIC FILES (build output)
+# ========================
 staticfiles/
 
-# VS Code
+# ========================
+# IDEs
+# ========================
 .vscode/
-
-# PyCharm
 .idea/
 
-# OS files
+# ========================
+# OS FILES
+# ========================
 .DS_Store
 Thumbs.db
 
+# Git internals
+FETCH_HEAD
 
-**/migrations/*.py
-!**/migrations/__init__.py
+# Debug/fix scripts (never commit these)
+final_fix.py
+fix_ticketsale.py
