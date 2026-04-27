@@ -23,3 +23,8 @@ django-apscheduler==0.7.0
 tzlocal
 cryptography
 pyjwt
+xhtml2pdf==0.2.16
+python-bidi==0.4.2
+arabic-reshaper==3.0.0
+reportlab==4.2.5
+pycparser==2.21
