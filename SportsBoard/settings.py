@@ -1,38 +1,26 @@
-# Django settings for SportsBoard project.
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+import dj_database_url
 
-
-  # <-- this will load all variables from .env
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-# SECRET_KEY = os.getenv('SECRET_KEY')
-# DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev')
-DEBUG = True
-KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY')
-# GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 
+# ─────────────────────────────────────────
+# CORE SETTINGS
+# ─────────────────────────────────────────
 
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev-only')
 
-# ALLOWED_HOSTS is not strictly required when DEBUG is True,
-# but keeping it is harmless.
-ALLOWED_HOSTS = ['127.0.0.1','localhost',
-                 'unliquefiable-barbra-streakily.ngrok-free.dev',
-                ]
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://unliquefiable-barbra-streakily.ngrok-free.dev'
-]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(',')
 
-
-# Application definition
+# ─────────────────────────────────────────
+# INSTALLED APPS
+# ─────────────────────────────────────────
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,82 +30,54 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'admin_panel',#
+    'admin_panel',
     'homepage',
     'organizer',
     'payments',
-
-    # 'accounts',
     'accounts.apps.AccountsConfig',
-
 
     'crispy_forms',
     'crispy_bootstrap5',
     'news',
-    # django-allauth apps
-    'django.contrib.sites',  # Required by allauth
+
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',  # For Google
+    'allauth.socialaccount.providers.google',
 ]
+
+# ─────────────────────────────────────────
+# MIDDLEWARE
+# ─────────────────────────────────────────
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',   # Must be second, right after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # Allauth middleware
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SITE_ID = 4 # Required for django.contrib.sites (for allauth)
-
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
-
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/accounts/login/"
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/"
-
-# --- django-allauth Specific Settings ---
-# Authentication backends (unified and correct)
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Required for Django admin
-    'allauth.account.auth_backends.AuthenticationBackend',  # For allauth methods (email, social)
-]
-
-# ACCOUNT_AUTHENTICATION_METHOD = "username_email"  # <--- CHANGED: Allows login with either username or email
-# ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_LOGIN_METHODS = {'username', 'email'}
-# ACCOUNT_SIGNUP_FIELDS = ['email', 'username', 'password1', 'password2']
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
-
-# ACCOUNT_USERNAME_REQUIRED = True  # User must still provide a username
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Or "optional" if you don't want to force email verification
-# LOGIN_REDIRECT_URL ='/accounts/dashboard-redirect/' # Where to go after a successful login
-ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # Where to go after logout
-LOGIN_URL = '/accounts/login/'  # The URL where allauth's login form is located
-LOGIN_REDIRECT_URL = 'accounts:dashboard_redirect'
-# Forms customisation (if you have them; comment out if not using yet)
-# ACCOUNT_FORMS = {
-#     'login': 'accounts.forms.MyCustomLoginForm',
-#     'signup': 'accounts.forms.MyCustomSignupForm',
-# }
-
 ROOT_URLCONF = 'SportsBoard.urls'
+
+# ─────────────────────────────────────────
+# TEMPLATES
+# ─────────────────────────────────────────
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Add your project-level templates directory if you have one
-        'DIRS': [BASE_DIR / 'templates'],  # Example: Project-wide templates folder
-        'APP_DIRS': True,  # This tells Django to look for 'templates' in each app
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',  # Good to have for DEBUG=True
-                'django.template.context_processors.request',  # Required by allauth
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'homepage.context_processors.sports_menu',
@@ -128,124 +88,150 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SportsBoard.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# ─────────────────────────────────────────
+# DATABASE
+# ─────────────────────────────────────────
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# In production (Render), DATABASE_URL env var is set automatically.
+# Locally, it falls back to SQLite.
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# ─────────────────────────────────────────
+# PASSWORD VALIDATION
+# ─────────────────────────────────────────
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# ─────────────────────────────────────────
+# INTERNATIONALIZATION
+# ─────────────────────────────────────────
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kathmandu'
-
 USE_I18N = True
-
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# ─────────────────────────────────────────
+# STATIC & MEDIA FILES
+# ─────────────────────────────────────────
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Correctly configure STATICFILES_DIRS to find static assets within your apps
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # For any project-level static files
-    BASE_DIR / "accounts" / "static",  # Explicitly include your accounts app's static files
-    BASE_DIR / "organizer" / "static",
-    # Add other app's static directories if they have them:
-    # BASE_DIR / "homepage" / "static",
-    # BASE_DIR / "matches" / "static",
+# Only include dirs that actually exist to avoid collectstatic crashes
+_static_dirs = [
+    BASE_DIR / 'static',
+    BASE_DIR / 'accounts' / 'static',
+    BASE_DIR / 'organizer' / 'static',
 ]
+STATICFILES_DIRS = [d for d in _static_dirs if d.exists()]
 
-# STATIC_ROOT is for `collectstatic` in production.
-# Ensure it's outside of any app's directory.
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Whitenoise compression for production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-DOMAIN = "unliquefiable-barbra-streakily.ngrok-free.dev"
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+# ─────────────────────────────────────────
+# CRISPY FORMS
+# ─────────────────────────────────────────
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
-
+# ─────────────────────────────────────────
+# EMAIL
+# ─────────────────────────────────────────
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-# Email settings for allauth's verification (essential if ACCOUNT_EMAIL_VERIFICATION is 'mandatory')
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development: prints emails to console
-# For production, you'd use a real email backend like SendGrid, Mailgun, etc.
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')
-
 DEFAULT_FROM_EMAIL = f"SportsBoard <{os.getenv('EMAIL_USER')}>"
+
+# ─────────────────────────────────────────
+# DJANGO ALLAUTH
+# ─────────────────────────────────────────
+
+# SITE_ID must match the domain entry in django_site table.
+# Set to 1 for fresh deployments (default site created by migrations).
+# If your production site breaks on login, run:
+#   python manage.py shell
+#   from django.contrib.sites.models import Site
+#   Site.objects.update_or_create(id=1, defaults={'domain': 'your-app.onrender.com', 'name': 'SportsBoard'})
+SITE_ID = int(os.getenv('SITE_ID', '1'))
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = 'accounts:dashboard_redirect'
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
+
+# Use https in production, http locally
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = os.getenv('ACCOUNT_HTTP_PROTOCOL', 'http')
+
+ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login/?verify_email=true'
+SOCIALACCOUNT_STORE_TOKENS = True
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        # 'APP': {
-        #     'client_id': os.getenv('GOOGLE_CLIENT_ID'),
-        #     'secret': os.getenv('GOOGLE_SECRET_KEY'),
-        #     'key': '',  # Usually empty for Google
-        # },
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
+        'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {
             'access_type': 'online',
             'prompt': 'select_account',
         },
     }
 }
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
-SOCIALACCOUNT_AUTO_SIGNUP = True
-# ACCOUNT_SIGNUP_REDIRECT_URL = LOGIN_URL
-ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/login/?verify_email=true'
 
-# Skip the intermediate confirmation page
-SOCIALACCOUNT_LOGIN_ON_GET = True
-SOCIALACCOUNT_EMAIL_REQUIRED = True
-SOCIALACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# 1. The Adapter for standard Email (Fixes the 127.0.0.1 link)
-ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
+# ─────────────────────────────────────────
+# PAYMENTS
+# ─────────────────────────────────────────
 
-SOCIALACCOUNT_ADAPTER = 'accounts.adapters.CustomSocialAccountAdapter'
+KHALTI_SECRET_KEY = os.getenv('KHALTI_SECRET_KEY')
 
-# Session settings for Remember Me
+# ─────────────────────────────────────────
+# SESSION
+# ─────────────────────────────────────────
+
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
