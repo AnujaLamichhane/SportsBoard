@@ -21,3 +21,5 @@ twilio
 APScheduler==3.11.2
 django-apscheduler==0.7.0
 tzlocal
+cryptography
+pyjwt
