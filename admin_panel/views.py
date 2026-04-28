@@ -60,7 +60,7 @@ def login_view(request):
 
 
 
-@admin_required
+
 def calculate_trend(current, previous):
     """Returns the percentage change between current and previous."""
     if previous == 0:
