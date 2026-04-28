@@ -21,17 +21,44 @@ from .forms import SiteSettingsForm
 from accounts.models import Feedback as UserFeedback
 # --- AUTH & DASHBOARD ---
 
+
+
+from django.contrib.auth import authenticate, login
+
+
+
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('admin_panel:dashboard')
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and user.is_superuser:
+            login(request, user)
+            return redirect('admin_panel:dashboard')
+        else:
+            messages.error(request, 'Invalid Admin credentials. Access Denied.')
+
     return render(request, 'admin_panel/login.html')
 
+def admin_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_superuser:
+            return redirect('admin_panel:login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
-
+@admin_required
 def calculate_trend(current, previous):
     """Returns the percentage change between current and previous."""
     if previous == 0:
         return 100 if current > 0 else 0
     return int(((current - previous) / previous) * 100)
 
+@admin_required
 def dashboard(request):
     now = timezone.now()
     last_30 = now - timedelta(days=30)
@@ -80,6 +107,7 @@ def dashboard(request):
     return render(request, 'admin_panel/adashboard.html', stats)
 # --- USER MANAGEMENT ---
 
+@admin_required
 def manage_users(request):
     # Get all users initially
     users = User.objects.all().order_by('-date_joined')
@@ -106,6 +134,7 @@ def manage_users(request):
         'user_type': user_type
     })
 
+@admin_required
 def delete_user(request, user_id):
     user_to_delete = get_object_or_404(User, id=user_id)
     
@@ -120,26 +149,13 @@ def delete_user(request, user_id):
 
 
 # --- ORGANIZER VERIFICATION ---
-
+@admin_required
 def organizer_requests(request):
     profiles = OrganizerProfile.objects.all().order_by('-verification_status')
     return render(request, 'admin_panel/organizer_requests.html', {'profiles': profiles})
 
 
-# def verify_organizer(request, pk, action):
-#     profile = get_object_or_404(OrganizerProfile, pk=pk)
-#     if action == 'approve':
-#         profile.verification_status = 'verified'
-#         profile.is_verified = True
-#         messages.success(request, f"Organizer {profile.organization_name} has been verified.")
-#     elif action == 'reject':
-#         profile.verification_status = 'rejected'
-#         profile.is_verified = False
-#         messages.warning(request, f"Verification for {profile.organization_name} was rejected.")
-#     profile.save()
-#     return redirect('admin_panel:organizer_requests')
-
-
+@admin_required
 def verify_organizer(request, pk, action):
     profile = get_object_or_404(OrganizerProfile, pk=pk)
 
@@ -173,28 +189,8 @@ def verify_organizer(request, pk, action):
 
 # --- FEEDBACK MANAGEMENT (FIXED) ---
 
-# def manage_feedback(request):
-#     """List all feedback, showing unresolved issues first."""
-#     # FIXED: Removed the nested function 'def manage_feedback'
-#     feedbacks = OrganizerFeedback.objects.all().order_by('is_resolved', '-created_at')
-#     unresolved_count = feedbacks.filter(is_resolved=False).count()
-#
-#     return render(request, 'admin_panel/manage_feedback.html', {
-#         'feedbacks': feedbacks,
-#         'unresolved_count': unresolved_count
-#     })
-#
-# #
-# # def resolve_feedback(request, pk):
-# #     """Mark a specific feedback entry as resolved."""
-# #     feedback = get_object_or_404(OrganizerFeedback, pk=pk)
-# #     feedback.is_resolved = True
-# #     feedback.save()
-# #     messages.success(request, f"Feedback from {feedback.organizer.username} marked as resolved.")
-# #     return redirect('admin_panel:manage_feedback')
 
-# admin_panel/views.py
-
+@admin_required
 def manage_feedback(request):
     """List all feedback from both Organizers and Athletes."""
     query = request.GET.get('search', '').strip()
@@ -220,7 +216,7 @@ def manage_feedback(request):
         'query': query
     })
 
-
+@admin_required
 def resolve_feedback(request, user_type, pk):
     """Mark feedback as resolved based on user type."""
     if user_type == 'organizer':
@@ -233,7 +229,7 @@ def resolve_feedback(request, user_type, pk):
     messages.success(request, f"Feedback from {user_type} marked as resolved.")
     return redirect('admin_panel:manage_feedback')
 
-
+@admin_required
 def manage_sports(request):
     # Use timezone-aware 'now' since date_time is a DateTimeField
     now = timezone.now()
@@ -257,7 +253,7 @@ def manage_sports(request):
     return render(request, 'admin_panel/sports.html', context)
 
 
-
+@admin_required
 def reports_view(request):
     # 1. Events by Sport Chart
     sport_data = Event.objects.values('game_type').annotate(count=Count('id'))
@@ -301,7 +297,7 @@ def reports_view(request):
     }
     return render(request, 'admin_panel/reports.html', context)
 
-
+@admin_required
 def settings_view(request):
 
     settings = SiteSettings.load()
