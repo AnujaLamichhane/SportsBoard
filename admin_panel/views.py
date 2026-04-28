@@ -46,15 +46,42 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
 
-        user = authenticate(request, username=username, password=password)
+        # Use ModelBackend directly — bypass allauth completely
+        from django.contrib.auth.backends import ModelBackend
+        from django.contrib.auth.models import User
 
-        if user is not None and user.is_superuser:
-            login(request, user)
-            return redirect('admin_panel:adashboard')
-        else:
+        try:
+            user = User.objects.get(username=username)
+            if user.check_password(password) and user.is_superuser:
+                # Manually set backend and log in
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                login(request, user)
+                return redirect('admin_panel:adashboard')
+            else:
+                messages.error(request, 'Invalid Admin credentials. Access Denied.')
+        except User.DoesNotExist:
             messages.error(request, 'Invalid Admin credentials. Access Denied.')
 
     return render(request, 'admin_panel/login.html')
+
+
+# def login_view(request):
+#     if request.user.is_authenticated and request.user.is_superuser:
+#         return redirect('admin_panel:adashboard')
+#
+#     if request.method == 'POST':
+#         username = request.POST.get('username', '').strip()
+#         password = request.POST.get('password', '').strip()
+#
+#         user = authenticate(request, username=username, password=password)
+#
+#         if user is not None and user.is_superuser:
+#             login(request, user)
+#             return redirect('admin_panel:adashboard')
+#         else:
+#             messages.error(request, 'Invalid Admin credentials. Access Denied.')
+#
+#     return render(request, 'admin_panel/login.html')
 
 
 
