@@ -18,6 +18,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import SiteSettings
 from .forms import SiteSettingsForm
+from functools import wraps
+from django.shortcuts import render, redirect
 from accounts.models import Feedback as UserFeedback
 # --- AUTH & DASHBOARD ---
 
@@ -26,6 +28,14 @@ from accounts.models import Feedback as UserFeedback
 from django.contrib.auth import authenticate, login
 
 from django.contrib.auth import authenticate, login
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_superuser:
+            return redirect('admin_panel:login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 def login_view(request):
@@ -48,12 +58,7 @@ def login_view(request):
 
 
 
-def admin_required(view_func):
-    def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_superuser:
-            return redirect('admin_panel:login')
-        return view_func(request, *args, **kwargs)
-    return wrapper
+
 
 @admin_required
 def calculate_trend(current, previous):
