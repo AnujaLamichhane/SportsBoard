@@ -25,24 +25,28 @@ from accounts.models import Feedback as UserFeedback
 
 from django.contrib.auth import authenticate, login
 
+from django.contrib.auth import authenticate, login
 
 
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('admin_panel:dashboard')
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('admin_panel:adashboard')
 
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+
         user = authenticate(request, username=username, password=password)
 
         if user is not None and user.is_superuser:
             login(request, user)
-            return redirect('admin_panel:dashboard')
+            return redirect('admin_panel:adashboard')
         else:
             messages.error(request, 'Invalid Admin credentials. Access Denied.')
 
     return render(request, 'admin_panel/login.html')
+
+
 
 def admin_required(view_func):
     def wrapper(request, *args, **kwargs):

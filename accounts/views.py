@@ -69,56 +69,108 @@ def login_view(request):
             user = authenticate(username=username, password=password)
 
             if user is not None:
-                # 2. Check the user's actual group membership
+                # Superusers bypass all role checks
+                if user.is_superuser:
+                    login(request, user)
+                    request.session.set_expiry(1209600 if remember_me else 0)
+                    return redirect('accounts:dashboard_redirect')
+
                 is_organizer = user.groups.filter(name__iexact='Organizer').exists()
                 is_athlete = user.groups.filter(name__iexact='Athlete').exists()
 
-                # 3. Validation Logic: Block mismatched roles with an alert
                 if selected_role == 'organizer' and not is_organizer:
                     messages.error(request,
-                                   f"Access Denied. '{username}' is registered as an Athlete. Please select the correct role.")
+                                   f"Access Denied. '{username}' is registered as an Athlete.")
                     return render(request, 'accounts/login.html', {'form': form})
 
                 elif selected_role == 'athlete' and not is_athlete:
                     messages.error(request,
-                                   f"Access Denied. '{username}' is registered as an Organizer. Please select the correct role.")
+                                   f"Access Denied. '{username}' is registered as an Organizer.")
                     return render(request, 'accounts/login.html', {'form': form})
 
-                # 4. If everything is correct, log the user in
                 login(request, user)
                 request.session.set_expiry(1209600 if remember_me else 0)
                 return redirect('accounts:dashboard_redirect')
             else:
                 messages.error(request, "Invalid username or password.")
+
+            # if user is not None:
+            #     # 2. Check the user's actual group membership
+            #     is_organizer = user.groups.filter(name__iexact='Organizer').exists()
+            #     is_athlete = user.groups.filter(name__iexact='Athlete').exists()
+            #
+            #     # 3. Validation Logic: Block mismatched roles with an alert
+            #     if selected_role == 'organizer' and not is_organizer:
+            #         messages.error(request,
+            #                        f"Access Denied. '{username}' is registered as an Athlete. Please select the correct role.")
+            #         return render(request, 'accounts/login.html', {'form': form})
+            #
+            #     elif selected_role == 'athlete' and not is_athlete:
+            #         messages.error(request,
+            #                        f"Access Denied. '{username}' is registered as an Organizer. Please select the correct role.")
+            #         return render(request, 'accounts/login.html', {'form': form})
+            #
+            #     # 4. If everything is correct, log the user in
+            #     login(request, user)
+            #     request.session.set_expiry(1209600 if remember_me else 0)
+            #     return redirect('accounts:dashboard_redirect')
+            # else:
+            #     messages.error(request, "Invalid username or password.")
+
+
+
     else:
         form = CustomAuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
 
 
-
 @login_required
 def role_based_redirect(request):
     user = request.user
-    # Capture whether they clicked 'athlete' or 'organizer' card
-    clicked_role = request.GET.get('role_type')
 
-    # 1. Handle Organizer Group
+    # Check superuser/admin first — before any group check
+    if user.is_superuser or (hasattr(user, 'profile') and user.profile.role == 'ADMIN'):
+        return redirect('admin_panel:adashboard')
+
+    # Check organizer group
     if user.groups.filter(name__iexact='Organizer').exists():
-        # if clicked_role == 'athlete':
-        #     messages.info(request, "Note: You are logged in as an Organizer, so you've been sent to your management dashboard.")
         return redirect('organizer:dashboard')
 
-    # 2. Handle Athlete Group
+    # Check athlete group
     if user.groups.filter(name__iexact='Athlete').exists():
-        # if clicked_role == 'organizer':
-        #     # They are an athlete trying to enter the organizer dashboard
-        #     messages.warning(request, "Access denied. You must have an Organizer account.")
-            return redirect('accounts:user_dashboard')
+        return redirect('accounts:user_dashboard')
+
+    # Fallback
     return redirect('accounts:user_dashboard')
 
-    # 3. Fallback: If logged in but no group assigned yet
-    messages.warning(request, "Please contact support to assign a role to your account.")
-    return redirect('accounts:user_dashboard')
+
+
+
+
+
+# @login_required
+# def role_based_redirect(request):
+#     user = request.user
+#     # Capture whether they clicked 'athlete' or 'organizer' card
+#     clicked_role = request.GET.get('role_type')
+#
+#     # 1. Handle Organizer Group
+#     if user.groups.filter(name__iexact='Organizer').exists():
+#         # if clicked_role == 'athlete':
+#         #     messages.info(request, "Note: You are logged in as an Organizer, so you've been sent to your management dashboard.")
+#         return redirect('organizer:dashboard')
+#
+#     # 2. Handle Athlete Group
+#     if user.groups.filter(name__iexact='Athlete').exists():
+#         # if clicked_role == 'organizer':
+#         #     # They are an athlete trying to enter the organizer dashboard
+#         #     messages.warning(request, "Access denied. You must have an Organizer account.")
+#             return redirect('accounts:user_dashboard')
+#     return redirect('accounts:user_dashboard')
+#
+#     # 3. Fallback: If logged in but no group assigned yet
+#     messages.warning(request, "Please contact support to assign a role to your account.")
+#     return redirect('accounts:user_dashboard')
 
 
 @login_required
