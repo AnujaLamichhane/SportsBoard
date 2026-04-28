@@ -229,11 +229,22 @@ def organizer_dashboard(request):
 
 def custom_google_login(request):
     role = request.GET.get('role')
-    if role not in ['user', 'organizer']:
-        messages.error(request, "Please choose a valid role before signing in.")
-        return redirect('login')
+    if role not in ['athlete', 'organizer']:  # Fixed: check for 'athlete' not 'user'
+        messages.error(request, "Please choose a valid role.")
+        return redirect('accounts:login')
+
     request.session['login_role'] = role
+    request.session.modified = True  # <--- FORCE session to save
     return oauth2_login(request)
+
+
+# def custom_google_login(request):
+#     role = request.GET.get('role')
+#     if role not in ['user', 'organizer']:
+#         messages.error(request, "Please choose a valid role before signing in.")
+#         return redirect('login')
+#     request.session['login_role'] = role
+#     return oauth2_login(request)
 
 @login_required
 def edit_profile(request):
