@@ -29,9 +29,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-'cloudinary_storage',
     'django.contrib.staticfiles',
 
+'cloudinary_storage', # Move this BELOW staticfiles
+    'cloudinary',
     'admin_panel',
     'homepage',
     'organizer',
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 
 
-    'cloudinary',
+
 
 ]
 
@@ -267,3 +268,4 @@ if not DEBUG:
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
