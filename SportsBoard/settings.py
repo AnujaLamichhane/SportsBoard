@@ -23,11 +23,13 @@ CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost').spl
 # ─────────────────────────────────────────
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+'cloudinary_storage',
     'django.contrib.staticfiles',
 
     'admin_panel',
@@ -46,7 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
-'cloudinary_storage',
+
     'cloudinary',
 
 ]
