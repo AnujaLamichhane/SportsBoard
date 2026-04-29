@@ -28,3 +28,5 @@ python-bidi==0.4.2
 arabic-reshaper==3.0.0
 reportlab==4.2.5
 pycparser==2.21
+django-cloudinary-storage
+cloudinary

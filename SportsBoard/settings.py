@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+
+'cloudinary_storage',
+    'cloudinary',
+
 ]
 
 # ─────────────────────────────────────────
@@ -243,3 +247,21 @@ import mimetypes
 mimetypes.add_type("text/css", ".css", True)
 mimetypes.add_type("application/javascript", ".js", True)
 mimetypes.add_type("video/mp4", ".mp4", True)
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET')
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+
+# 4. Fix Email Backend Logic
+if not DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    # Force HTTPS for email links on Render
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
