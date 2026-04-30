@@ -16,7 +16,11 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,sportsboard.onrender.com').split(',')
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(',')
+# This looks for the environment variable, but provides defaults if not found
+csrf_default = 'https://sportsboard.onrender.com,http://localhost,http://127.0.0.1'
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', csrf_default).split(',')
+
+# CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(',')
 
 # ─────────────────────────────────────────
 # INSTALLED APPS
@@ -30,8 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-'cloudinary_storage', # Move this BELOW staticfiles
+    'cloudinary_storage',
     'cloudinary',
     'admin_panel',
     'homepage',
@@ -269,3 +272,4 @@ else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
 
+X_FRAME_OPTIONS = 'ALLOWALL'
