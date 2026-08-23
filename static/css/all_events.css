@@ -87,9 +87,25 @@
 }
 .event-grid-layout {
     display: grid;
-    grid-template-columns: repeat(3,1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 15px;
     padding: 15px;
+}
+
+@media (max-width: 991px) {
+    .event-grid-layout {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .event-grid-layout {
+        grid-template-columns: 1fr;
+        padding: 5px;
+    }
+    .events-page {
+        padding: 15px;
+    }
 }
 
 .event-glass-card {
@@ -153,23 +169,38 @@
 
 /* Responsive: Stack sections on top of each other for mobile */
 @media (max-width: 991px) {
+    .flex-main-wrapper {
+        flex-direction: column;
+    }
     .section-left, .section-right {
         flex: 0 0 100%;
-        max-width: 100%;
+        max-width: 100% !important;
         border-right: none;
-        padding: 0;
+        padding: 0 !important;
+    }
+    
+    .section-right {
+        order: 1;
+        margin-bottom: 30px;
     }
     
     .section-left {
+        order: 2;
         border-bottom: 1px solid #e0e0e0;
         padding-bottom: 30px;
         margin-bottom: 30px;
     }
+
+    .calendar-widget-box {
+        max-width: 100% !important;
+        padding: 15px !important;
+    }
+
+    .event-title-right {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
 }
-
-
-
-
 
 .event-title-right{
     font-size: 30px;
@@ -221,7 +252,7 @@
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
-    font-size: 3.3rem;
+    font-size: 1rem !important;
 }
 
 /* Day Headers (Su, Mo, Tu...) */

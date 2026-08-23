@@ -5,7 +5,6 @@
 {% block title %}Login | SportsBoard{% endblock %}
 
 {% block content %}
-<div class="login-box">
 <h3 class="login-title">Welcome to SportsBoard</h3>
 
     {% if request.GET.verify_email %}
@@ -21,14 +20,6 @@
 <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
-
-    {# Remember Me checkbox #}
-<!--    <div class="form-check mt-2 mb-3">-->
-<!--        <input class="form-check-input" type="checkbox" name="remember_me" id="rememberMe">-->
-<!--        <label class="form-check-label" for="rememberMe">-->
-<!--            Remember Me-->
-<!--        </label>-->
-<!--    </div>-->
 
     <button type="submit" class="btn btn-primary btn-block mt-2">Log In</button>
 </form>
@@ -53,18 +44,8 @@
     <a href="{% url 'account_reset_password' %}" class="text-primary">Forgot Password?</a>
 </p>
 
-<!--{% if not user.is_authenticated %}-->
-<!--<p class="forgot-password-link mt-4">-->
-<!--    <a href="{% url 'account_reset_password' %}" class="text-primary">Forgot Password?</a>-->
-<!--</p>-->
-<!--{% endif %}-->
-
-
-
-
 <p class="text-center mt-3 text-white">
     Don’t have an account? <a href="{% url 'accounts:signup' %}" class="text-primary">Sign up</a>
 </p>
-</div>
 <script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}

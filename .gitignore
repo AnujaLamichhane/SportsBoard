@@ -51,3 +51,4 @@ FETCH_HEAD
 # Debug/fix scripts (never commit these)
 final_fix.py
 fix_ticketsale.py
+/.idea

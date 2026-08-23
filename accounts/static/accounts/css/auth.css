@@ -51,19 +51,12 @@ html, body {
     padding: 0;
     font-family: 'Montserrat', sans-serif;
     background-color: transparent;
-
-    /* ✅ remove flex — it causes weird scroll behavior */
-    /*display: block;*/
-    display: grid;
-  place-items: center;
-
-
-
-
-    /* ✅ allow vertical scroll on full page */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     overflow-y: auto;
     overflow-x: hidden;
-
 }
 
 /* --- Full-screen Video Background --- */
@@ -71,9 +64,7 @@ html, body {
     position: fixed; /* Fixed to viewport */
     top: 0;
     left: 0;
-    /*width: 100%;
-    height: 100%;*/
-     width: 100vw;     /* ✅ use viewport width */
+    width: 100vw;     /* ✅ use viewport width */
     height: 100vh;    /* ✅ use viewport height */
     overflow: hidden;
     z-index: -2; /* Behind all other content */
@@ -102,69 +93,40 @@ html, body {
 
 /* --- Main Login/Auth Card Container (Glassmorphism) --- */
 .login-container {
-   /* z-index: 1; /* Above video and overlay */
-    /*padding: 20px 15px; /* Space around the login-box */
-     /*padding: 20px;
-    overflow: visible;
-    width: 100%;
-    max-width: 600px; /* Constrain max width of the card */
-    /*margin: 80px auto;*/
     z-index: 1;
-    padding: 40px 20px;
+    padding: 20px 15px;
     overflow: visible;
     width: 100%;
-    max-width: 600px;
-
-    /* ✅ centers vertically while allowing scroll */
-    margin: 30px auto;
-
-
+    max-width: 550px;
+    margin: 20px auto 40px auto;
+    box-sizing: border-box;
 }
 
-/*.login-box { /* The frosted glass card itself */
-
-   /* border-radius: 70px; /* Very rounded corners */
-   /* padding: 80px 20px 30px 20px;
-    ;
-   /* box-shadow: 0 15px 50px var(--shadow-medium); /* Deep shadow for depth */
-    /*text-align: center;
-
-    /*overflow-y: visible; /* ✅ Let the page handle scroll, not the box */
-  /*  max-height: unset;
-    overflow: visible;
-
-    animation: fadeInUp 0.8s ease-in-out; /* Fade-in animation */
-    /* Default text color for elements in the box */
-/*}*/
-
 .login-box {
-    border-radius: 70px;
-    padding: 30px 20px 30px 20px;  /* reduced top padding */
+    border-radius: 40px;
+    padding: 30px 25px;
     text-align: center;
     max-height: unset;
     overflow: visible;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     animation: fadeInUp 0.8s ease-in-out;
 }
 
-
-/* --- Specific Styles for Elements within the Login Box --- */
-
 /* Main Title "Welcome to SportsBoard" */
 .login-title, h3 {
-    color: var(--text-color-on-transparent-bg); /* White title */
-    margin-bottom: 40px;
-    font-size: 2.2em; /* Scales based on screen size*/
-
-    margin-top: 0;
-
-    /*margin-top: 0; */
-
-    margin-bottom: 25px;
-    font-weight: 800; /* Extra bold */
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for pop */
+    color: #ffffff !important;
+    font-size: clamp(1.5rem, 5vw, 2.2rem) !important;
+    margin-top: 0 !important;
+    margin-bottom: 20px !important;
+    font-weight: 800 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
     letter-spacing: 0.5px;
-
-
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* Labels for "Username", "Password", "Login As" */
@@ -382,22 +344,22 @@ label {
 @media (max-width: 576px) {
     /* Make the title smaller on phones */
     .login-title, h3 {
-        font-size: 8vw; /* Use Viewport Width, which scales aggressively on small screens */
-        margin-top: 50px; /* Set a specific pixel value for top margin on phones */
-        margin-bottom: 25px; /* Reduce bottom margin */
-
-
-       
+        font-size: 1.8rem;
+        margin-top: 15px;
+        margin-bottom: 20px;
     }
 
     /* FIX: Reduce padding on the card itself for small screens */
     .login-box {
-        padding: 40px 15px; /* Less top/bottom padding, tighter side padding */
+        padding: 25px 15px;
+        border-radius: 30px;
     }
 
     /* FIX: Reduce overall container margin for small screens */
     .login-container {
-        margin: 20px auto; 
+        margin: 15px auto;
+        padding: 15px 10px;
+        width: 95%;
     }
 }
 

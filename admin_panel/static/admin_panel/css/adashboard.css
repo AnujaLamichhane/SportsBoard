@@ -247,3 +247,22 @@ main {
 .adashboard-header h2{
     margin-bottom: 10px;
 }
+
+@media (max-width: 768px) {
+    .flex-main-dwrapper {
+        flex-direction: column;
+    }
+    .dsection-left {
+        width: 100% !important;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .dsection-right {
+        padding: 15px !important;
+    }
+    .adashboard-header h2 {
+        font-size: 1.8rem !important;
+    }
+}

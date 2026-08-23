@@ -311,81 +311,129 @@ body.dark-mode {
       }
 
     
+    /* --- MOBILE RESPONSIVE ENHANCEMENTS --- */
     @media (max-width: 850px) {
-    main {
-        padding-top: 25px; /* Maintain vertical clearance */
-
-        /* NEW: Use a fixed padding for smaller screens */
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-
+      body {
+        overflow-x: hidden;
+      }
+      .navbar {
+        padding: 10px 15px;
+      }
+      .navbar-logo {
+        height: 65px;
+        transform: none;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      main {
+        padding-top: 85px;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
       .nav-links {
         display: none;
         flex-direction: column;
         text-align: center;
         width: 100%;
         padding: 20px 0;
-        /* background: rgba(0,0,0,0.95); */
         background-color: var(--nav-bg);
         position: absolute;
         top: 65px;
         left: 0;
         align-items: center;
-        gap: 20px;
+        gap: 15px;
         z-index: 99999;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       }
       .nav-links.active {
         display: flex;
-        /* flex-direction: column;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        position: absolute;
-        top: 60px;
-        left: 0;
-        padding: 10px 0;
-        text-align: center; */
       }
       .menu-toggle {
         display: block;
-        margin-right: 33px;
+        margin-right: 15px;
       }
-    
-      .match-cards{
+      .user-box {
+        display: flex;
+        align-items: center;
+        padding: 6px 12px;
+        gap: 8px;
+        margin-right: 10px;
+      }
+      .user-box a {
+        padding: 5px 10px;
+        font-size: 0.85em;
+      }
+      .match-cards {
         scrollbar-width: none;
       }
       .dropdown-content {
         display: none;
-        /* position: static; */
-        /* box-shadow: none; */
         background-color: var(--nav-bg);
         padding-left: 20px;
+        position: static;
+        box-shadow: none;
       }
-      .dropdown-content a{
-        padding: 12px 0;
+      .dropdown-content a {
+        padding: 10px 0;
       }
       .dropdown-content.open {
-        display: block ;         /* show when JS toggles "open" */
+        display: block;
       }
-      .hero-content h2{
-        max-width: 450px;
+      .hero-content h2 {
+        max-width: 100%;
         gap: 5px;
         position: relative;
         top: 0%;
-        font-size: 2em;
+        font-size: 1.8em;
       }
-      .hero.auth-links a{
-        margin-top: 5px;
-      }
-      .user-box{
-        display: flex;
-      }
-      .theme-toggle-container{
+      .theme-toggle-container {
         order: 3;
-        margin-right:10px;
+        margin-right: 10px;
       }
-      
+    }
+
+    @media (max-width: 576px) {
+      .navbar {
+        padding: 8px 10px;
+      }
+      .user-box .welcome-text {
+        display: none;
+      }
+      .user-box {
+        margin-right: 5px;
+        padding: 4px 8px;
+      }
+      .hero h1 {
+        font-size: clamp(28px, 7vw, 45px) !important;
+      }
+      .hero p {
+        font-size: 16px !important;
+        margin: 15px 0 25px !important;
+      }
+      .btn-group {
+        flex-direction: column;
+        width: 100%;
+      }
+      .btn-group button, .btn-group a {
+        width: 100%;
+        text-align: center;
+      }
+      .stats-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .footer-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 25px;
+      }
+      .footer-logo img {
+        margin-left: auto;
+        margin-right: auto;
+        transform: none;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
     }
 
         :root {

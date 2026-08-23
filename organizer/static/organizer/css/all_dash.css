@@ -283,3 +283,11 @@
         height: 150px;
     }
 }
+
+/* Touch & Table Responsive Helpers */
+.table-responsive, table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}

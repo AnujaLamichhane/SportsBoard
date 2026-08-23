@@ -8,19 +8,16 @@
     {% include 'accounts/messages.html' %}
 {% endblock %}
 {% block content %}
-<div class="login-card">
-<h3 class="text-center mb-3">Create Your Account</h3>
+<h3 class="login-title">Create Your Account</h3>
 
 <form method="post">
     {% csrf_token %}
-    {{ form|crispy }}  {# ✅ This renders all fields + Submit button #}
+    {{ form|crispy }}
 <button type="submit" class="btn btn-primary btn-block mt-3">Sign Up</button>
 </form>
-
 
 <p class="text-center mt-3 text-light">
     Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary">Login</a>
 </p>
-</div>
 <script src="{% static 'accounts/js/messages.js' %}"></script>
 {% endblock %}
