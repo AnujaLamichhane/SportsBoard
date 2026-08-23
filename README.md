@@ -274,7 +274,6 @@ SportsBoard/
 |---|---|
 | [Anuja Lamichhane](https://github.com/AnujaLamichhane) | Developer |
 | Alisha Baral | Developer |
-| Sheeksha Kaji Baral | Developer |
 
 Supervised by **Er. Basanta Subedi**, Pokhara Engineering College, affiliated to Pokhara University.
 
