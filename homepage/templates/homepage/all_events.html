@@ -76,7 +76,7 @@
                     <a href="{% url 'organizer:event_detail' event.id %}" class="event-glass-card" data-date="{{ event.date_time|date:'Y-m-d' }}">
                         <div class="events-img">
                             {% if event.photo %}
-                                <img src="{{ event.photo.url }}" alt="{{ event.name }}" onerror="this.onerror=null; this.src='{% static \'images/major_logo1.png\' %}';">
+                                <img src="{{ event.photo.url }}" alt="{{ event.name }}" onerror="this.onerror=null; this.src='{% static 'images/major_logo1.png' %}';">
                             {% else %}
                                 <img src="{% static 'images/major_logo1.png' %}" alt="{{ event.name }}" style="object-fit: contain; padding: 10px; background: #111;">
                             {% endif %}

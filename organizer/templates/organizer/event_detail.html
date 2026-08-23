@@ -215,7 +215,7 @@
             <div class="left-column">
                 <div class="hero-container">
                     {% if event.photo %}
-                        <img src="{{ event.photo.url }}" class="event-hero-img" alt="{{ event.name }}" onerror="this.onerror=null; this.src='{% static \'images/major_logo1.png\' %}';">
+                        <img src="{{ event.photo.url }}" class="event-hero-img" alt="{{ event.name }}" onerror="this.onerror=null; this.src='{% static 'images/major_logo1.png' %}';">
                     {% else %}
                         <div style="height: 350px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #cbd5e1;">
                             <i class="fas fa-image fa-4x"></i>
