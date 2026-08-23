@@ -154,6 +154,7 @@ _static_dirs = [
     BASE_DIR / 'static',
     BASE_DIR / 'accounts' / 'static',
     BASE_DIR / 'organizer' / 'static',
+    BASE_DIR / 'admin_panel' / 'static',
 ]
 STATICFILES_DIRS = [d for d in _static_dirs if d.exists()]
 
