@@ -45,7 +45,7 @@
 
         <div class="event-info-group" style="display: flex; align-items: center; flex: 1; min-width: 0;">
             {% if event.photo %}
-                <img src="{{ event.photo.url }}" class="event-thumb-img" style="width: 50px; height: 50px; flex-shrink: 0;">
+                <img src="{{ event.photo.url }}" class="event-thumb-img" style="width: 50px; height: 50px; flex-shrink: 0; object-fit: cover;" onerror="this.onerror=null; this.src='{% static \'images/major_logo1.png\' %}';">
             {% else %}
                 <div class="event-thumb-placeholder" style="width: 50px; height: 50px; flex-shrink: 0; background: #eee;"></div>
             {% endif %}

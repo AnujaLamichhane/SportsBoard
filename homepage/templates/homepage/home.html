@@ -31,9 +31,9 @@
                         
                         <div class="featured-img">
                             {% if event.photo %}
-                                <img src="{{ event.photo.url }}" alt="{{ event.name }}">
+                                <img src="{{ event.photo.url }}" alt="{{ event.name }}" onerror="this.onerror=null; this.src='{% static \'images/major_logo1.png\' %}';">
                             {% else %}
-                                <div class="img-placeholder"></div>
+                                <img src="{% static 'images/major_logo1.png' %}" alt="{{ event.name }}" style="object-fit: contain; padding: 10px; background: #111;">
                             {% endif %}
                         </div>
 
