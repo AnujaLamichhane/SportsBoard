@@ -1,71 +1,94 @@
 /* news/static/css/style.css */
 
-/* 1. Main Container: Fixes the margin issues from your first screenshots */
+/* 1. Main Container */
 .news-container {
     max-width: 1000px;
-    margin: 50px auto;
+    margin: 40px auto;
     padding: 0 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    justify-content: center;
+    box-sizing: border-box;
 }
 
 /* 2. Main Heading Styling */
 .news-container h1 {
-    font-size: 3rem;
-    color: #333;
-    margin-bottom: 40px;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: var(--text-color, #111111);
+    margin-bottom: 30px;
     display: flex;
     align-items: center;
     font-weight: 800;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .news-container h1 i {
-    margin-right: 15px;
-    color: #333; /* Matches the dark icon in your screenshot */
+    color: #ff7a18;
 }
 
-/* 3. The News Card: Matches image_50da79.jpg */
+/* 3. The News Card */
 .news-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 15px;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 18px;
     padding: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); 
-    transition: transform 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    word-break: break-word;
 }
 
 .news-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* 4. News Title Link */
+.news-card h2 {
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    margin-bottom: 12px;
+}
+
 .news-link {
-    font-size: 1.8rem;
-    color: #3498db; 
+    color: #007bff; 
     text-decoration: none;
-    font-weight: 600;
-    line-height: 1.3;
+    font-weight: 700;
+    line-height: 1.35;
+    transition: color 0.2s ease;
 }
 
 .news-link:hover {
-    color: #2980b9;
+    color: #ff7a18;
     text-decoration: underline;
 }
 
 /* 5. Content and Meta spacing */
 .news-content {
-    font-size: 1.1rem;
-    color: #555;
+    font-size: 1rem;
+    color: var(--text-color, #444);
+    opacity: 0.9;
     margin: 15px 0;
     line-height: 1.6;
 }
 
 .news-meta {
-    font-size: 0.9rem;
-    color: #888;
-    border-top: 1.5px solid black;
-    padding-top: 15px;
-    margin-top: 10px;
+    font-size: 0.88rem;
+    color: var(--text-color, #666);
+    opacity: 0.8;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    padding-top: 12px;
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+@media (max-width: 576px) {
+    .news-container {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+    .news-card {
+        padding: 18px 15px;
+        border-radius: 14px;
+    }
 }
