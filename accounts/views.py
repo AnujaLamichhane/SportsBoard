@@ -229,11 +229,11 @@ def organizer_dashboard(request):
 
 def custom_google_login(request):
     role = request.GET.get('role')
-    if role not in ['athlete', 'organizer']:  # Fixed: check for 'athlete' not 'user'
+    if role not in ['athlete', 'user', 'organizer']:
         messages.error(request, "Please choose a valid role.")
         return redirect('accounts:login')
 
-    request.session['login_role'] = role
+    request.session['login_role'] = 'athlete' if role == 'user' else role
     request.session.modified = True  # <--- FORCE session to save
     return oauth2_login(request)
 

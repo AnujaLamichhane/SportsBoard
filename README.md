@@ -255,6 +255,17 @@ SportsBoard/
 
 ---
 
+### QA Audit Evidence
+
+#### 1. Jira Kanban Defect Board
+![Jira Kanban Board](qa/screenshots/jira.jpg)
+
+#### 2. Postman Unauthenticated Endpoint Audit (`TC59` — `500 TypeError`)
+![Postman Endpoint Security Audit](qa/screenshots/image.png)
+
+#### 3. Test Plan Execution Summary (`SportsBoard_Test_Plan.xlsx`)
+![Test Plan Summary](qa/screenshots/test%20plan%20execution%20summary.jpg)
+
 ## 🔮 Future Improvements
 
 - [ ] Mobile app (React Native or Flutter)
@@ -272,7 +283,7 @@ SportsBoard/
 
 | Name | Role |
 |---|---|
-| [Anuja Lamichhane](https://github.com/AnujaLamichhane) | Developer |
+| [Anuja Lamichhane](https://github.com/AnujaLamichhane) | Developer, QA Tester |
 | Alisha Baral | Developer |
 
 Supervised by **Er. Basanta Subedi**, Pokhara Engineering College, affiliated to Pokhara University.

@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: 127.0.0.1:8000/organizer/applications/pdf/16/
+method: GET
+order: 8000

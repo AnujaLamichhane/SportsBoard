@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: 127.0.0.1:8000/organizer/book/1/
+method: GET
+order: 7000

@@ -47,14 +47,18 @@
         <div id="loginContainer" class="hidden">
             <i class="fa-solid fa-shield-halved fa-3x mb-3 text-primary"></i>
             <h2>Admin Verification</h2>
-            <div id="errorMessage" class="error"></div>
-            
-            <input type="text" id="username" placeholder="Username" autocomplete="off">
-            <input type="password" id="password" placeholder="Password">
-            
-            <button class="btn-login" onclick="handleLogin()">
-                Access Dashboard
-            </button>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Username" autocomplete="username" required>
+                <input type="password" name="password" placeholder="Password" autocomplete="current-password" required>
+                <button type="submit" class="btn-login">Access Dashboard</button>
+            </form>
             <p class="mt-3"><a href="#" onclick="location.reload()" class="text-decoration-none text-muted small">Go Back</a></p>
         </div>
     </div>
@@ -65,27 +69,5 @@
         document.getElementById('loginContainer').classList.remove('hidden');
     }
 
-    function handleLogin() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
-        const errorMsg = document.getElementById('errorMessage');
-
-        if (user === 'Admin' && pass === 'Admin') {
-            // STEP 1: Save the session flag (This was missing!)
-            sessionStorage.setItem('isAdminLoggedIn', 'true');
-            
-            // STEP 2: Redirect to the dashboard
-            window.location.href = "{% url 'admin_panel:adashboard' %}";
-        } else {
-            errorMsg.innerText = "Invalid Admin credentials. Access Denied.";
-        }
-    }
-
-    // Optional: Allow "Enter" key to trigger login
-    document.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            handleLogin();
-        }
-    });
 </script>
 {% endblock %}
